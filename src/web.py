@@ -241,9 +241,20 @@ def reader_search(request: Request, q: str = Query(""), page: int = Query(1, ge=
         per_page = 50
         offset = (page - 1) * per_page
         if q:
-            query = db.query(Article).filter(
-                Article.title.ilike(f"%{q}%") | Article.summary.ilike(f"%{q}%")
-            )
+            # Multi-word AND search: each word must appear somewhere
+            from sqlalchemy import and_, or_
+
+            words = q.strip().split()
+            conditions = []
+            for word in words[:10]:  # limit to 10 words
+                w = f"%{word}%"
+                conditions.append(or_(
+                    Article.title.ilike(w),
+                    Article.summary.ilike(w),
+                    Article.content.ilike(w),
+                    Article.author.ilike(w),
+                ))
+            query = db.query(Article).filter(and_(*conditions)) if conditions else db.query(Article)
         else:
             query = db.query(Article)
 
@@ -348,6 +359,61 @@ def admin_dashboard(request: Request):
             "top_feeds": top_feeds,
             "recent": recent,
             "dept_stats": dept_stats,
+        })
+    finally:
+        db.close()
+
+
+@app.get("/admin/monitoring", response_class=HTMLResponse)
+def admin_monitoring(request: Request):
+    user = _get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/login", status_code=303)
+    db = db_module.SessionLocal()
+    try:
+        from .models import FetchLog
+
+        total_feeds = db.query(func.count(Feed.id)).scalar()
+        active_feeds = db.query(func.count(Feed.id)).filter(Feed.is_active).scalar()
+        disabled_feeds = total_feeds - active_feeds
+
+        # Feeds with errors (sorted by error count desc)
+        error_feeds = (
+            db.query(Feed)
+            .filter(Feed.consecutive_errors > 0)
+            .order_by(desc(Feed.consecutive_errors))
+            .all()
+        )
+
+        # Disabled feeds
+        disabled_list = (
+            db.query(Feed)
+            .filter(Feed.is_active == False)  # noqa: E712
+            .order_by(desc(Feed.consecutive_errors))
+            .all()
+        )
+
+        # Recent fetch logs (last 50)
+        recent_logs = (
+            db.query(FetchLog)
+            .order_by(desc(FetchLog.started_at))
+            .limit(50)
+            .all()
+        )
+
+        # Health score
+        health_pct = round((active_feeds / total_feeds * 100) if total_feeds else 0, 1)
+
+        return templates.TemplateResponse("admin/monitoring.html", {
+            "request": request,
+            "user": user,
+            "total_feeds": total_feeds,
+            "active_feeds": active_feeds,
+            "disabled_feeds": disabled_feeds,
+            "error_feeds": error_feeds,
+            "disabled_list": disabled_list,
+            "recent_logs": recent_logs,
+            "health_pct": health_pct,
         })
     finally:
         db.close()

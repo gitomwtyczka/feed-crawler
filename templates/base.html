@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="pl" data-theme="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Feed Crawler{% endblock %} — AI Press Agency</title>
     <meta name="description" content="AI-powered news aggregation platform — 500+ sources, 35,000+ articles">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --bg-primary: #0a0a0f;
@@ -26,14 +28,18 @@
             --danger: #ef4444;
             --gradient-1: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a78bfa 100%);
             --gradient-2: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
-            --shadow-md: 0 4px 20px rgba(0,0,0,0.4);
-            --shadow-lg: 0 10px 40px rgba(0,0,0,0.5);
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.5);
             --radius: 12px;
             --radius-sm: 8px;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -53,6 +59,7 @@
             top: 0;
             z-index: 100;
         }
+
         .navbar-inner {
             max-width: 1400px;
             margin: 0 auto;
@@ -61,6 +68,7 @@
             height: 60px;
             gap: 2rem;
         }
+
         .navbar-brand {
             font-weight: 800;
             font-size: 1.1rem;
@@ -70,15 +78,18 @@
             text-decoration: none;
             letter-spacing: -0.5px;
         }
+
         .navbar-brand span {
             font-weight: 400;
             opacity: 0.7;
         }
+
         .nav-links {
             display: flex;
             gap: 0.25rem;
             list-style: none;
         }
+
         .nav-links a {
             color: var(--text-secondary);
             text-decoration: none;
@@ -88,16 +99,20 @@
             font-weight: 500;
             transition: all 0.2s;
         }
-        .nav-links a:hover, .nav-links a.active {
+
+        .nav-links a:hover,
+        .nav-links a.active {
             color: var(--text-primary);
             background: var(--accent-glow);
         }
+
         .nav-search {
             margin-left: auto;
             position: relative;
         }
+
         .nav-search input {
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border);
             border-radius: 20px;
             padding: 0.4rem 1rem 0.4rem 2.2rem;
@@ -107,11 +122,13 @@
             transition: all 0.3s;
             outline: none;
         }
+
         .nav-search input:focus {
             border-color: var(--accent);
             width: 300px;
             box-shadow: 0 0 20px var(--accent-glow);
         }
+
         .nav-search::before {
             content: '🔍';
             position: absolute;
@@ -127,14 +144,17 @@
             margin: 0 auto;
             padding: 2rem;
         }
+
         .page-header {
             margin-bottom: 2rem;
         }
+
         .page-header h1 {
             font-size: 1.8rem;
             font-weight: 700;
             letter-spacing: -0.5px;
         }
+
         .page-header p {
             color: var(--text-secondary);
             margin-top: 0.25rem;
@@ -149,6 +169,7 @@
             backdrop-filter: blur(10px);
             transition: all 0.3s ease;
         }
+
         .card:hover {
             border-color: var(--border-hover);
             box-shadow: var(--shadow-md);
@@ -161,6 +182,7 @@
             gap: 1rem;
             margin-bottom: 2rem;
         }
+
         .stat-card {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -169,6 +191,7 @@
             position: relative;
             overflow: hidden;
         }
+
         .stat-card::before {
             content: '';
             position: absolute;
@@ -180,7 +203,11 @@
             opacity: 0;
             transition: opacity 0.3s;
         }
-        .stat-card:hover::before { opacity: 1; }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
         .stat-label {
             font-size: 0.75rem;
             text-transform: uppercase;
@@ -188,6 +215,7 @@
             color: var(--text-muted);
             font-weight: 600;
         }
+
         .stat-value {
             font-size: 2rem;
             font-weight: 800;
@@ -196,6 +224,7 @@
             -webkit-text-fill-color: transparent;
             margin-top: 0.25rem;
         }
+
         .stat-sub {
             font-size: 0.8rem;
             color: var(--text-secondary);
@@ -208,10 +237,12 @@
             border-radius: var(--radius);
             border: 1px solid var(--border);
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
         }
+
         th {
             text-align: left;
             padding: 0.75rem 1rem;
@@ -223,15 +254,20 @@
             background: var(--bg-secondary);
             border-bottom: 1px solid var(--border);
         }
+
         td {
             padding: 0.75rem 1rem;
             border-bottom: 1px solid var(--border);
             font-size: 0.9rem;
         }
+
         tr:hover td {
             background: rgba(99, 102, 241, 0.03);
         }
-        tr:last-child td { border-bottom: none; }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
 
         /* ── Article List ── */
         .article-list {
@@ -239,6 +275,7 @@
             flex-direction: column;
             gap: 0.75rem;
         }
+
         .article-item {
             background: var(--bg-card);
             border: 1px solid var(--border);
@@ -249,22 +286,29 @@
             color: inherit;
             display: block;
         }
+
         .article-item:hover {
             border-color: var(--accent);
             box-shadow: 0 0 30px var(--accent-glow);
             transform: translateY(-1px);
         }
+
         .article-title {
             font-size: 1rem;
             font-weight: 600;
             margin-bottom: 0.4rem;
             line-height: 1.4;
         }
+
         .article-title a {
             color: var(--text-primary);
             text-decoration: none;
         }
-        .article-title a:hover { color: var(--accent-light); }
+
+        .article-title a:hover {
+            color: var(--accent-light);
+        }
+
         .article-meta {
             display: flex;
             gap: 1rem;
@@ -272,6 +316,7 @@
             font-size: 0.8rem;
             color: var(--text-secondary);
         }
+
         .article-summary {
             color: var(--text-secondary);
             font-size: 0.875rem;
@@ -288,10 +333,26 @@
             font-weight: 600;
             letter-spacing: 0.5px;
         }
-        .badge-success { background: rgba(34,197,94,0.15); color: var(--success); }
-        .badge-warning { background: rgba(245,158,11,0.15); color: var(--warning); }
-        .badge-danger { background: rgba(239,68,68,0.15); color: var(--danger); }
-        .badge-info { background: var(--accent-glow); color: var(--accent-light); }
+
+        .badge-success {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+
+        .badge-danger {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+        }
+
+        .badge-info {
+            background: var(--accent-glow);
+            color: var(--accent-light);
+        }
 
         /* ── Buttons ── */
         .btn {
@@ -309,18 +370,21 @@
             color: var(--text-primary);
             background: transparent;
         }
+
         .btn:hover {
             border-color: var(--accent);
             box-shadow: 0 0 15px var(--accent-glow);
         }
+
         .btn-primary {
             background: var(--gradient-1);
             border: none;
             color: white;
         }
+
         .btn-primary:hover {
             transform: translateY(-1px);
-            box-shadow: 0 4px 20px rgba(99,102,241,0.4);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
         }
 
         /* ── Pagination ── */
@@ -331,7 +395,9 @@
             margin-top: 2rem;
             flex-wrap: wrap;
         }
-        .pagination a, .pagination span {
+
+        .pagination a,
+        .pagination span {
             padding: 0.4rem 0.8rem;
             border-radius: var(--radius-sm);
             font-size: 0.85rem;
@@ -340,10 +406,12 @@
             color: var(--text-secondary);
             transition: all 0.2s;
         }
+
         .pagination a:hover {
             border-color: var(--accent);
             color: var(--text-primary);
         }
+
         .pagination .active {
             background: var(--accent);
             color: white;
@@ -351,8 +419,17 @@
         }
 
         /* ── Grid ── */
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1.5rem;
+        }
 
         /* ── Department Tags ── */
         .dept-tag {
@@ -365,6 +442,7 @@
             text-decoration: none;
             transition: all 0.2s;
         }
+
         .dept-tag:hover {
             background: var(--accent);
             color: white;
@@ -372,25 +450,55 @@
 
         /* ── Responsive ── */
         @media (max-width: 768px) {
-            .grid-2, .grid-3 { grid-template-columns: 1fr; }
-            .container { padding: 1rem; }
-            .navbar-inner { padding: 0 1rem; }
-            .nav-search input { width: 150px; }
+
+            .grid-2,
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .navbar-inner {
+                padding: 0 1rem;
+            }
+
+            .nav-search input {
+                width: 150px;
+            }
         }
 
         /* ── Animations ── */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-in { animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeIn 0.3s ease-out;
+        }
     </style>
 </head>
+
 <body>
     <nav class="navbar">
         <div class="navbar-inner">
             <a href="/" class="navbar-brand">Feed Crawler <span>AI</span></a>
             <ul class="nav-links">
-                <li><a href="/" {% if request.url.path == "/" %}class="active"{% endif %}>📰 Reader</a></li>
-                <li><a href="/admin" {% if "/admin" in request.url.path %}class="active"{% endif %}>⚙️ Admin</a></li>
-                <li><a href="/admin/feeds" {% if request.url.path == "/admin/feeds" %}class="active"{% endif %}>📡 Feeds</a></li>
+                <li><a href="/" {% if request.url.path=="/" %}class="active" {% endif %}>📰 Reader</a></li>
+                <li><a href="/admin" {% if "/admin" in request.url.path %}class="active" {% endif %}>⚙️ Admin</a></li>
+                <li><a href="/admin/feeds" {% if request.url.path=="/admin/feeds" %}class="active" {% endif %}>📡
+                        Feeds</a></li>
+                <li><a href="/admin/monitoring" {% if request.url.path=="/admin/monitoring" %}class="active" {% endif
+                        %}>🩺 Monitoring</a></li>
                 <li><a href="/api/stats" target="_blank">🔗 API</a></li>
             </ul>
             <form class="nav-search" action="/search" method="get">
@@ -403,4 +511,5 @@
         {% block content %}{% endblock %}
     </main>
 </body>
+
 </html>

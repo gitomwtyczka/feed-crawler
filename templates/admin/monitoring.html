@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% block title %}Monitoring — Feed Crawler{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>📡 Monitoring</h1>
+    <p>Feed health overview — crawl status & error tracking</p>
+</div>
+
+<!-- Health Overview -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-label">Health Score</div>
+        <div class="stat-value"
+            style="color: {% if health_pct >= 95 %}#57f287{% elif health_pct >= 80 %}#fee75c{% else %}#ed4245{% endif %}">
+            {{ health_pct }}%</div>
+        <div class="stat-sub">aktywne / łącznie</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Active Feeds</div>
+        <div class="stat-value" style="color: #57f287">{{ active_feeds }}</div>
+        <div class="stat-sub">sprawne</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">With Errors</div>
+        <div class="stat-value" style="color: #fee75c">{{ error_feeds|length }}</div>
+        <div class="stat-sub">w backoff</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Disabled</div>
+        <div class="stat-value" style="color: #ed4245">{{ disabled_feeds }}</div>
+        <div class="stat-sub">auto-disabled</div>
+    </div>
+</div>
+
+<div class="grid-2">
+    <!-- Feeds with Errors -->
+    <div class="card">
+        <h3
+            style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">
+            ⚠️ Feeds z błędami ({{ error_feeds|length }})</h3>
+        {% if error_feeds %}
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Feed</th>
+                        <th>Errors</th>
+                        <th>Backoff</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for feed in error_feeds %}
+                    <tr>
+                        <td><a href="/feed/{{ feed.id }}" style="color: var(--accent-light); text-decoration: none;">{{
+                                feed.name[:35] }}{% if feed.name|length > 35 %}...{% endif %}</a></td>
+                        <td><span class="badge"
+                                style="background: {% if feed.consecutive_errors >= 10 %}rgba(237,66,69,0.2); color: #ed4245{% elif feed.consecutive_errors >= 5 %}rgba(254,231,92,0.2); color: #fee75c{% else %}rgba(88,101,242,0.2); color: #818cf8{% endif %}">{{
+                                feed.consecutive_errors }}</span></td>
+                        <td style="color: var(--text-muted); font-size: 0.8rem;">{{ feed.backoff_until|timeago if
+                            feed.backoff_until else '—' }}</td>
+                        <td>{% if feed.is_active %}<span style="color: #57f287">●</span>{% else %}<span
+                                style="color: #ed4245">■ disabled</span>{% endif %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p style="color: var(--text-muted); text-align: center; padding: 2rem;">✅ Brak feedów z błędami</p>
+        {% endif %}
+    </div>
+
+    <!-- Disabled Feeds -->
+    <div class="card">
+        <h3
+            style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">
+            🔴 Wyłączone feedy ({{ disabled_list|length }})</h3>
+        {% if disabled_list %}
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Feed</th>
+                        <th>Errors</th>
+                        <th>Akcja</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for feed in disabled_list %}
+                    <tr>
+                        <td style="color: var(--text-muted)">{{ feed.name[:35] }}{% if feed.name|length > 35 %}...{%
+                            endif %}</td>
+                        <td><span class="badge" style="background: rgba(237,66,69,0.2); color: #ed4245">{{
+                                feed.consecutive_errors }}</span></td>
+                        <td>
+                            <form method="POST" action="/admin/feeds/{{ feed.id }}/toggle" style="display: inline">
+                                <button type="submit"
+                                    style="background: rgba(87,242,135,0.15); color: #57f287; border: 1px solid rgba(87,242,135,0.3); padding: 4px 12px; border-radius: 6px; cursor: pointer; font-size: 0.75rem;">
+                                    🔄 Reaktywuj
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p style="color: var(--text-muted); text-align: center; padding: 2rem;">✅ Brak wyłączonych feedów</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Recent Fetch Logs -->
+<div class="card" style="margin-top: 1.5rem;">
+    <h3
+        style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">
+        📋 Ostatnie logi pobierania</h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Feed</th>
+                    <th>Status</th>
+                    <th>Articles</th>
+                    <th>New</th>
+                    <th>Time</th>
+                    <th>Error</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in recent_logs %}
+                <tr>
+                    <td style="font-size: 0.85rem;">{{ log.feed.name[:30] if log.feed else '?' }}{% if log.feed and
+                        log.feed.name|length > 30 %}...{% endif %}</td>
+                    <td>
+                        {% if log.status == 'success' %}
+                        <span class="badge badge-success">✅</span>
+                        {% else %}
+                        <span class="badge badge-error">❌</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ log.articles_found or 0 }}</td>
+                    <td>{{ log.articles_new or 0 }}</td>
+                    <td style="color: var(--text-muted); font-size: 0.8rem;">{{ log.started_at|timeago }}</td>
+                    <td
+                        style="color: #ed4245; font-size: 0.75rem; max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        {{ log.error_message[:80] if log.error_message else '' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
