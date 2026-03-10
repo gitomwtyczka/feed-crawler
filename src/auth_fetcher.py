@@ -2,8 +2,8 @@
 Authenticated source fetcher for closed/paywalled sources.
 
 Supports login-based sources like:
-- Newseria (info.newseria.pl) — video, transcripts, audio
-- ISBNews (portal.isbnews.pl) — news agency dispatches
+- Newseria (info.newseria.pl) — HTML form login (video, transcripts, audio)
+- ISBNews (portal.isbnews.pl) — HTTP Basic Auth (news agency dispatches)
 
 Credentials are NEVER stored in code — loaded from .env only.
 Each source has a dedicated fetcher class with login + scrape logic.
@@ -14,8 +14,7 @@ from __future__ import annotations
 import logging
 import os
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
-from datetime import datetime
+from dataclasses import dataclass
 
 import httpx
 from dotenv import load_dotenv
@@ -50,7 +49,10 @@ def load_credential(source_slug: str) -> AuthCredential:
 
     cred = AuthCredential(username=username, password=password, source_name=source_slug)
     if not cred.is_valid:
-        logger.warning("Credentials not configured for source: %s (set %s_USERNAME and %s_PASSWORD in .env)", source_slug, prefix, prefix)
+        logger.warning(
+            "Credentials not configured for source: %s (set %s_USERNAME / %s_PASSWORD in .env)",
+            source_slug, prefix, prefix,
+        )
     return cred
 
 
@@ -59,7 +61,6 @@ class BaseAuthFetcher(ABC):
 
     def __init__(self, credential: AuthCredential):
         self.credential = credential
-        self.session_cookies: dict = {}
         self.is_logged_in = False
 
     @abstractmethod
@@ -91,38 +92,54 @@ class BaseAuthFetcher(ABC):
             return articles
 
 
+# ══════════════════════════════════════════════════
+#  NEWSERIA — info.newseria.pl
+#  Login: HTML form POST
+#  Categories: BIZNES, LIFESTYLE, INNOWACJE
+#  Media: video + transcriptions + audio
+# ══════════════════════════════════════════════════
+
+
 class NewseriaFetcher(BaseAuthFetcher):
-    """Fetcher for info.newseria.pl — video, transcripts, audio materials.
+    """Fetcher for info.newseria.pl.
 
-    Newseria is a multimedia news agency providing content in:
-    - Politics, Economy, Lifestyle
-    - Video + transcriptions + audio formats
-
-    Login: form-based authentication at info.newseria.pl
+    Login flow (discovered via browser inspection 2026-03-10):
+    - Login URL: https://info.newseria.pl/?body=account
+    - Form POST with fields:
+      - id="emial"  (NOTE: typo in HTML — 'emial' not 'email')
+      - id="haslo_uzytkownika" (password)
+    - Submit button: class="btn btn-primary", value="ZALOGUJ SIĘ"
+    - No CSRF token detected
     """
 
     BASE_URL = "https://info.newseria.pl"
-    LOGIN_URL = f"{BASE_URL}/login"  # Placeholder — needs real endpoint discovery
+    LOGIN_URL = f"{BASE_URL}/?body=account"
 
     async def login(self, client: httpx.AsyncClient) -> bool:
-        """Login to Newseria via form POST."""
+        """Login to Newseria via HTML form POST."""
         try:
-            # Step 1: GET login page (for CSRF token if needed)
-            login_page = await client.get(self.LOGIN_URL)
-            if login_page.status_code != 200:
-                logger.warning("Newseria login page returned %d", login_page.status_code)
+            # GET login page (session cookies)
+            await client.get(self.LOGIN_URL)
 
-            # Step 2: POST credentials
-            # NOTE: Actual form fields need to be discovered by inspecting the login page
-            # This is a template — will be refined after testing with real site
+            # POST credentials — real field names from Newseria HTML
             login_data = {
-                "username": self.credential.username,
-                "password": self.credential.password,
+                "emial": self.credential.username,  # NOTE: typo in Newseria HTML!
+                "haslo_uzytkownika": self.credential.password,
             }
             response = await client.post(self.LOGIN_URL, data=login_data)
 
+            # Check for successful login (redirect or content change)
             if response.status_code in (200, 302):
-                logger.info("Newseria login successful")
+                # Verify we're actually logged in by checking response
+                if "wyloguj" in response.text.lower() or "logout" in response.text.lower():
+                    logger.info("Newseria login successful (user: %s)", self.credential.username)
+                    return True
+                # 200 but still seeing login form = failed
+                if "zaloguj" in response.text.lower() and "emial" in response.text.lower():
+                    logger.warning("Newseria login returned 200 but login form still visible — bad credentials?")
+                    return False
+                # Assume success if redirected
+                logger.info("Newseria login returned %d — assuming success", response.status_code)
                 return True
 
             logger.warning("Newseria login failed: HTTP %d", response.status_code)
@@ -133,63 +150,85 @@ class NewseriaFetcher(BaseAuthFetcher):
             return False
 
     async def fetch_articles(self, client: httpx.AsyncClient) -> list[dict]:
-        """Fetch latest articles from Newseria after login.
+        """Fetch latest articles from all Newseria categories."""
+        all_articles = []
 
-        NOTE: Actual scraping logic needs to be implemented after
-        inspecting the authenticated page structure.
+        # Newseria categories (from navigation)
+        categories = ["biznes", "lifestyle", "innowacje"]
+
+        for category in categories:
+            try:
+                response = await client.get(f"{self.BASE_URL}/{category}")
+                if response.status_code != 200:
+                    logger.warning("Newseria /%s returned %d", category, response.status_code)
+                    continue
+
+                # Parse articles from HTML
+                articles = self._parse_category_page(response.text, category)
+                all_articles.extend(articles)
+                logger.info("Newseria /%s: %d articles", category, len(articles))
+
+            except Exception as e:
+                logger.exception("Newseria /%s fetch error: %s", category, e)
+
+        return all_articles
+
+    def _parse_category_page(self, html: str, category: str) -> list[dict]:
+        """Parse article list from Newseria category page.
+
+        TODO: Implement HTML parsing after inspecting authenticated page.
+        For now returns empty — needs BeautifulSoup or lxml.
         """
-        try:
-            # Fetch main content page
-            response = await client.get(f"{self.BASE_URL}/news")
+        # Placeholder — real parsing requires inspecting authenticated content
+        logger.debug("Newseria /%s page: %d bytes (parsing not yet implemented)", category, len(html))
+        return []
 
-            if response.status_code != 200:
-                logger.warning("Newseria content page returned %d", response.status_code)
-                return []
 
-            # TODO: Parse HTML response to extract articles
-            # This requires inspecting the actual Newseria page structure
-            # Typical fields: title, url, summary, category, media_type (video/audio/text)
-            logger.info("Newseria page fetched (%d bytes) — parsing not yet implemented", len(response.text))
-            return []
-
-        except Exception as e:
-            logger.exception("Newseria fetch error: %s", e)
-            return []
+# ══════════════════════════════════════════════════
+#  ISBNews — portal.isbnews.pl
+#  Login: HTTP Basic Auth (no HTML form!)
+#  Content: dispatches, calendar, macroeconomic data
+#  Frequency: dozens of dispatches per day
+# ══════════════════════════════════════════════════
 
 
 class ISBNewsFetcher(BaseAuthFetcher):
-    """Fetcher for portal.isbnews.pl — Polish news agency dispatches.
+    """Fetcher for portal.isbnews.pl.
 
-    ISBNews provides dozens of dispatches daily covering:
-    - Business, economy, finance
-    - Real-time breaking news
+    Login flow (discovered via browser inspection 2026-03-10):
+    - portal.isbnews.pl uses HTTP Basic Auth (server-level, not HTML form)
+    - Browser triggers native credential prompt
+    - In httpx: pass credentials via httpx.BasicAuth
 
-    Features:
-    - Calendar-based navigation (can go back in time)
-    - High-frequency updates (monitor throughout the day)
-    - Needs aggressive fetch_interval (5-10 min)
+    Content structure:
+    - Kalendarium ISBnews (corporate calendar)
+    - Kalendarium makroekonomiczne (macroeconomic calendar)
+    - Depesze (news dispatches) — dozens daily
+
+    Must be monitored aggressively (fetch_interval: 5-10 min).
     """
 
     BASE_URL = "http://portal.isbnews.pl"
-    LOGIN_URL = f"{BASE_URL}"  # Placeholder — needs real endpoint discovery
 
     async def login(self, client: httpx.AsyncClient) -> bool:
-        """Login to ISBNews via form POST."""
+        """Verify credentials via HTTP Basic Auth."""
         try:
-            login_page = await client.get(self.LOGIN_URL)
+            auth = httpx.BasicAuth(
+                username=self.credential.username,
+                password=self.credential.password,
+            )
+            response = await client.get(self.BASE_URL, auth=auth)
 
-            # NOTE: Actual form fields need to be discovered
-            login_data = {
-                "username": self.credential.username,
-                "password": self.credential.password,
-            }
-            response = await client.post(self.LOGIN_URL, data=login_data)
-
-            if response.status_code in (200, 302):
-                logger.info("ISBNews login successful")
+            if response.status_code == 200:
+                logger.info("ISBNews login successful (HTTP Basic Auth)")
+                # Store auth for subsequent requests
+                self._auth = auth
                 return True
+            if response.status_code == 401:
+                logger.warning("ISBNews login failed: 401 Unauthorized — bad credentials")
+                return False
 
-            logger.warning("ISBNews login failed: HTTP %d", response.status_code)
+            logger.warning("ISBNews returned unexpected status: %d", response.status_code)
             return False
 
         except Exception as e:
@@ -197,30 +236,56 @@ class ISBNewsFetcher(BaseAuthFetcher):
             return False
 
     async def fetch_articles(self, client: httpx.AsyncClient) -> list[dict]:
-        """Fetch latest dispatches from ISBNews after login.
+        """Fetch today's dispatches from ISBNews portal."""
+        all_articles = []
+        auth = getattr(self, "_auth", None)
 
-        NOTE: Actual scraping logic needs to be implemented after
-        inspecting the authenticated page structure. ISBNews has
-        a calendar feature — we can fetch today's dispatches and
-        optionally backfill from previous days.
-        """
         try:
-            # Fetch today's dispatches
-            today = datetime.utcnow().strftime("%Y-%m-%d")
-            response = await client.get(f"{self.BASE_URL}/depesze/{today}")
+            # Fetch main portal page (dispatches)
+            response = await client.get(self.BASE_URL, auth=auth)
 
             if response.status_code != 200:
-                logger.warning("ISBNews dispatches page returned %d", response.status_code)
+                logger.warning("ISBNews portal returned %d", response.status_code)
                 return []
 
-            # TODO: Parse HTML response to extract dispatches
-            # ISBNews dispatches are typically: title, time, category, full text
-            logger.info("ISBNews page fetched (%d bytes) — parsing not yet implemented", len(response.text))
-            return []
+            articles = self._parse_dispatches(response.text)
+            all_articles.extend(articles)
+            logger.info("ISBNews dispatches: %d articles", len(articles))
 
         except Exception as e:
             logger.exception("ISBNews fetch error: %s", e)
-            return []
+
+        return all_articles
+
+    def _parse_dispatches(self, html: str) -> list[dict]:
+        """Parse dispatch list from ISBNews portal page.
+
+        TODO: Implement HTML parsing after inspecting authenticated content.
+        Dispatches typically have: timestamp, title, category, full text.
+        """
+        logger.debug("ISBNews portal: %d bytes (parsing not yet implemented)", len(html))
+        return []
+
+    async def fetch_historical(self, client: httpx.AsyncClient, date: str) -> list[dict]:
+        """Fetch dispatches from a specific date (calendar feature).
+
+        Args:
+            client: httpx client
+            date: Date string in YYYY-MM-DD format
+
+        Returns:
+            List of dispatch articles from that date.
+        """
+        auth = getattr(self, "_auth", None)
+        try:
+            # ISBNews calendar URL pattern (to be discovered)
+            response = await client.get(f"{self.BASE_URL}/depesze/{date}", auth=auth)
+            if response.status_code == 200:
+                return self._parse_dispatches(response.text)
+            logger.warning("ISBNews calendar %s: HTTP %d", date, response.status_code)
+        except Exception as e:
+            logger.exception("ISBNews historical fetch error: %s", e)
+        return []
 
 
 # ── Registry of authenticated fetchers ──
