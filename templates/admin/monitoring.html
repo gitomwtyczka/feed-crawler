@@ -5,6 +5,42 @@
     <h1>📡 Monitoring</h1>
     <p>Feed health overview — crawl status & error tracking</p>
 </div>
+<!-- Crawl Control -->
+<div class="card" style="margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 2rem;">
+    <div style="display: flex; align-items: center; gap: 1rem;">
+        {% if crawl_enabled %}
+        <span style="display: inline-block; width: 14px; height: 14px; border-radius: 50%; background: #57f287; box-shadow: 0 0 12px rgba(87,242,135,0.5); animation: pulse-green 2s infinite;"></span>
+        <div>
+            <div style="font-weight: 600; font-size: 1rem;">Crawling aktywny</div>
+            <div style="color: var(--text-muted); font-size: 0.8rem;">Co {{ crawl_interval }} min · {{ active_feeds }} feedów</div>
+        </div>
+        {% else %}
+        <span style="display: inline-block; width: 14px; height: 14px; border-radius: 50%; background: #ed4245; box-shadow: 0 0 12px rgba(237,66,69,0.4);"></span>
+        <div>
+            <div style="font-weight: 600; font-size: 1rem;">Crawling wyłączony</div>
+            <div style="color: var(--text-muted); font-size: 0.8rem;">Kliknij aby uruchomić</div>
+        </div>
+        {% endif %}
+    </div>
+    <form method="POST" action="/admin/crawl/toggle">
+        {% if crawl_enabled %}
+        <button type="submit" style="background: rgba(237,66,69,0.15); color: #ed4245; border: 1px solid rgba(237,66,69,0.3); padding: 10px 24px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: all 0.2s;" onmouseover="this.style.background='rgba(237,66,69,0.25)'" onmouseout="this.style.background='rgba(237,66,69,0.15)'">
+            ⏹ Zatrzymaj crawling
+        </button>
+        {% else %}
+        <button type="submit" style="background: rgba(87,242,135,0.15); color: #57f287; border: 1px solid rgba(87,242,135,0.3); padding: 10px 24px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: all 0.2s;" onmouseover="this.style.background='rgba(87,242,135,0.25)'" onmouseout="this.style.background='rgba(87,242,135,0.15)'">
+            ▶ Uruchom crawling
+        </button>
+        {% endif %}
+    </form>
+</div>
+
+<style>
+@keyframes pulse-green {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+</style>
 
 <!-- Health Overview -->
 <div class="stats-grid">

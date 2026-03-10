@@ -40,6 +40,8 @@ from .auth import (
     decode_access_token,
     ensure_default_admin,
 )
+from .crawl_state import get_state as get_crawl_state
+from .crawl_state import toggle_crawl
 from .models import Article, Department, Feed
 
 # ── App Setup ──
@@ -404,6 +406,9 @@ def admin_monitoring(request: Request):
         # Health score
         health_pct = round((active_feeds / total_feeds * 100) if total_feeds else 0, 1)
 
+        # Crawl state
+        crawl_state = get_crawl_state()
+
         return templates.TemplateResponse("admin/monitoring.html", {
             "request": request,
             "user": user,
@@ -414,9 +419,22 @@ def admin_monitoring(request: Request):
             "disabled_list": disabled_list,
             "recent_logs": recent_logs,
             "health_pct": health_pct,
+            "crawl_enabled": crawl_state.get("crawl_enabled", False),
+            "crawl_interval": crawl_state.get("crawl_interval_minutes", 10),
         })
     finally:
         db.close()
+
+
+@app.post("/admin/crawl/toggle")
+def admin_crawl_toggle(request: Request):
+    user = _get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/login", status_code=303)
+    new_state = toggle_crawl()
+    import logging
+    logging.getLogger(__name__).info("Crawl toggled to %s by %s", new_state, user)
+    return RedirectResponse(url="/admin/monitoring", status_code=303)
 
 
 @app.get("/admin/feeds", response_class=HTMLResponse)

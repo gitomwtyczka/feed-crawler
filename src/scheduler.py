@@ -348,6 +348,12 @@ def run_scheduled(interval_minutes: int = 10) -> None:
 
     def _cycle_job():
         """Single fetch cycle job for APScheduler."""
+        from .crawl_state import is_crawl_enabled
+
+        if not is_crawl_enabled():
+            logger.info("Crawl disabled via admin panel — skipping cycle")
+            return
+
         try:
             result = asyncio.run(run_fetch_cycle())
 
