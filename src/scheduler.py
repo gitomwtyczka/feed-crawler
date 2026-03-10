@@ -133,11 +133,68 @@ def store_articles(db: Session, result: FetchResult, feed: Feed) -> int:
     return new_count
 
 
+# ── Backoff & health helpers ──
+
+MAX_CONSECUTIVE_ERRORS = 10  # auto-disable after this many
+BACKOFF_BASE_MINUTES = 5     # backoff = 2^errors * base (capped at 24h)
+BACKOFF_MAX_MINUTES = 60 * 24  # 24 hours
+BATCH_SIZE = 50              # feeds per batch
+BATCH_PAUSE_SECONDS = 1.0    # pause between batches
+
+
+def _compute_backoff_until(errors: int) -> datetime:
+    """Compute next allowed fetch time with exponential backoff."""
+    from datetime import timedelta
+
+    minutes = min(BACKOFF_BASE_MINUTES * (2 ** errors), BACKOFF_MAX_MINUTES)
+    return datetime.utcnow() + timedelta(minutes=minutes)
+
+
+def _is_feed_due(feed: Feed, now: datetime) -> bool:
+    """Check if a feed is ready to be fetched (respects interval + backoff)."""
+    from datetime import timedelta
+
+    # In backoff?
+    if feed.backoff_until and now < feed.backoff_until:
+        return False
+
+    # Never fetched → fetch now
+    if not feed.last_fetched:
+        return True
+
+    # Check fetch interval
+    interval = timedelta(minutes=feed.fetch_interval or 30)
+    return now >= feed.last_fetched + interval
+
+
+def _update_feed_health(db: Session, feed: Feed, success: bool) -> None:
+    """Update feed error tracking and apply backoff on failure."""
+    if success:
+        feed.consecutive_errors = 0
+        feed.backoff_until = None
+    else:
+        feed.consecutive_errors = (feed.consecutive_errors or 0) + 1
+        feed.backoff_until = _compute_backoff_until(feed.consecutive_errors)
+
+        if feed.consecutive_errors >= MAX_CONSECUTIVE_ERRORS:
+            feed.is_active = False
+            logger.warning(
+                "Auto-disabled feed '%s' after %d consecutive errors",
+                feed.name, feed.consecutive_errors,
+            )
+
+
 # ── Single fetch cycle ──
 
 
 async def run_fetch_cycle(sources_path: str = "config/sources.yaml", departments_path: str = "config/departments.yaml") -> dict:
     """Run a single fetch cycle for all active feeds.
+
+    Features:
+    - Per-feed interval scheduling (skips feeds not yet due)
+    - Exponential backoff on errors (2^n * 5 min, max 24h)
+    - Auto-disable feeds after 10 consecutive errors
+    - Staggered batching (50 feeds per batch with pause)
 
     Returns summary dict with counts.
     """
@@ -146,47 +203,77 @@ async def run_fetch_cycle(sources_path: str = "config/sources.yaml", departments
         # Ensure config is synced
         sync_config_to_db(db, sources_path, departments_path)
 
-        # Get active feeds
-        active_feeds = db.query(Feed).filter(Feed.is_active).all()
-        if not active_feeds:
-            logger.warning("No active feeds found")
-            return {"feeds": 0, "articles_new": 0, "errors": 0}
+        now = datetime.utcnow()
 
-        logger.info("Starting fetch cycle: %d active feeds", len(active_feeds))
+        # Get active feeds that are due for fetching
+        active_feeds = db.query(Feed).filter(Feed.is_active).all()
+        due_feeds = [f for f in active_feeds if _is_feed_due(f, now)]
+
+        if not due_feeds:
+            logger.info("No feeds due for fetching (total active: %d)", len(active_feeds))
+            return {"feeds": len(active_feeds), "feeds_fetched": 0, "articles_new": 0, "errors": 0, "skipped": len(active_feeds)}
+
+        logger.info(
+            "Starting fetch cycle: %d due / %d active feeds (batch size: %d)",
+            len(due_feeds), len(active_feeds), BATCH_SIZE,
+        )
 
         # Filter RSS/Atom feeds only (scrapers handled separately)
-        rss_feeds = [f for f in active_feeds if f.rss_url]
-        feed_dicts = [{"rss_url": f.rss_url, "name": f.name} for f in rss_feeds]
+        rss_feeds = [f for f in due_feeds if f.rss_url]
 
-        # Fetch all RSS feeds
-        results = await fetch_batch(feed_dicts)
-
-        # Process results
         total_new = 0
         total_errors = 0
+        disabled_count = 0
 
-        for feed_obj, result in zip(rss_feeds, results):
-            # Create fetch log
-            fetch_log = FetchLog(
-                feed_id=feed_obj.id,
-                started_at=datetime.utcnow(),
-                status=result.status,
-                articles_found=len(result.articles),
-                error_message=result.error_message or None,
-            )
+        # ── Staggered batching ──
+        for batch_idx in range(0, len(rss_feeds), BATCH_SIZE):
+            batch = rss_feeds[batch_idx:batch_idx + BATCH_SIZE]
+            batch_num = batch_idx // BATCH_SIZE + 1
+            total_batches = (len(rss_feeds) + BATCH_SIZE - 1) // BATCH_SIZE
 
-            if result.status == "success":
-                new_count = store_articles(db, result, feed_obj)
-                fetch_log.articles_new = new_count
-                total_new += new_count
-            else:
-                total_errors += 1
+            if total_batches > 1:
+                logger.info("Batch %d/%d: %d feeds", batch_num, total_batches, len(batch))
 
-            fetch_log.finished_at = datetime.utcnow()
-            feed_obj.last_fetched = datetime.utcnow()
-            db.add(fetch_log)
+            feed_dicts = [{"rss_url": f.rss_url, "name": f.name} for f in batch]
 
-        db.commit()
+            # Fetch batch
+            results = await fetch_batch(feed_dicts)
+
+            # Process results with health tracking
+            for feed_obj, result in zip(batch, results):
+                is_success = result.status == "success"
+
+                # Create fetch log
+                fetch_log = FetchLog(
+                    feed_id=feed_obj.id,
+                    started_at=datetime.utcnow(),
+                    status=result.status,
+                    articles_found=len(result.articles),
+                    error_message=result.error_message or None,
+                )
+
+                if is_success:
+                    new_count = store_articles(db, result, feed_obj)
+                    fetch_log.articles_new = new_count
+                    total_new += new_count
+                else:
+                    total_errors += 1
+
+                fetch_log.finished_at = datetime.utcnow()
+                feed_obj.last_fetched = datetime.utcnow()
+                db.add(fetch_log)
+
+                # Update health tracking (backoff / auto-disable)
+                was_active = feed_obj.is_active
+                _update_feed_health(db, feed_obj, is_success)
+                if was_active and not feed_obj.is_active:
+                    disabled_count += 1
+
+            db.commit()
+
+            # Pause between batches to respect servers
+            if batch_idx + BATCH_SIZE < len(rss_feeds):
+                await asyncio.sleep(BATCH_PAUSE_SECONDS)
 
         # Deliver new articles to SaaS via webhook (if configured)
         from .webhook import (
@@ -211,12 +298,16 @@ async def run_fetch_cycle(sources_path: str = "config/sources.yaml", departments
 
         summary = {
             "feeds": len(active_feeds),
+            "feeds_fetched": len(due_feeds),
             "articles_new": total_new,
             "errors": total_errors,
+            "skipped": len(active_feeds) - len(due_feeds),
+            "disabled": disabled_count,
         }
         logger.info(
-            "Fetch cycle complete: %d feeds, %d new articles, %d errors",
-            summary["feeds"], summary["articles_new"], summary["errors"],
+            "Fetch cycle complete: %d/%d feeds fetched, %d new articles, %d errors, %d skipped, %d disabled",
+            summary["feeds_fetched"], summary["feeds"], summary["articles_new"],
+            summary["errors"], summary["skipped"], summary["disabled"],
         )
         return summary
 

@@ -40,6 +40,8 @@ class Feed(Base):
     fetch_interval = Column(Integer, nullable=False, default=30, doc="Fetch interval in minutes")
     is_active = Column(Boolean, nullable=False, default=True)
     last_fetched = Column(DateTime, nullable=True)
+    consecutive_errors = Column(Integer, nullable=False, default=0, doc="Consecutive fetch failures (reset on success)")
+    backoff_until = Column(DateTime, nullable=True, doc="Skip fetching until this time (exponential backoff)")
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
     updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
