@@ -25,9 +25,10 @@ class SourceConfig:
 
     name: str
     url: str
-    rss_url: str
+    rss_url: str = ""
     feed_type: str = "rss"
     fetch_interval: int = 30
+    auth_type: str = ""
     departments: list[str] = field(default_factory=list)
 
 
@@ -168,9 +169,10 @@ def load_sources(config_path: str | Path = "config/sources.yaml") -> list[Source
         sources.append(SourceConfig(
             name=src["name"],
             url=src.get("url", ""),
-            rss_url=src["rss_url"],
+            rss_url=src.get("rss_url", ""),
             feed_type=src.get("feed_type", "rss"),
             fetch_interval=src.get("fetch_interval", 30),
+            auth_type=src.get("auth_type", ""),
             departments=src.get("departments", []),
         ))
 

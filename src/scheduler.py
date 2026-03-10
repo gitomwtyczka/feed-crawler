@@ -53,7 +53,8 @@ def sync_config_to_db(db: Session, sources_path: str = "config/sources.yaml", de
     # Sync sources
     source_configs = load_sources(sources_path)
     for src_cfg in source_configs:
-        existing = db.query(Feed).filter(Feed.rss_url == src_cfg.rss_url).first()
+        # Match by name (rss_url may be empty for scrapers)
+        existing = db.query(Feed).filter(Feed.name == src_cfg.name).first()
         if not existing:
             feed = Feed(
                 name=src_cfg.name,
@@ -151,17 +152,18 @@ async def run_fetch_cycle(sources_path: str = "config/sources.yaml", departments
 
         logger.info("Starting fetch cycle: %d active feeds", len(active_feeds))
 
-        # Prepare batch
-        feed_dicts = [{"rss_url": f.rss_url, "name": f.name} for f in active_feeds]
+        # Filter RSS/Atom feeds only (scrapers handled separately)
+        rss_feeds = [f for f in active_feeds if f.rss_url]
+        feed_dicts = [{"rss_url": f.rss_url, "name": f.name} for f in rss_feeds]
 
-        # Fetch all feeds
+        # Fetch all RSS feeds
         results = await fetch_batch(feed_dicts)
 
         # Process results
         total_new = 0
         total_errors = 0
 
-        for feed_obj, result in zip(active_feeds, results):
+        for feed_obj, result in zip(rss_feeds, results):
             # Create fetch log
             fetch_log = FetchLog(
                 feed_id=feed_obj.id,
