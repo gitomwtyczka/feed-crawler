@@ -182,3 +182,32 @@ def notify_new_department_sources(department: str, sources_count: int):
         "timestamp": datetime.utcnow().isoformat(),
         "footer": {"text": APP_NAME},
     }])
+
+
+# ── Generic send (used by scheduler) ──
+
+LEVEL_COLORS = {
+    "info": 0x5865F2,
+    "warning": 0xFEE75C,
+    "error": 0xED4245,
+    "success": 0x00D166,
+}
+
+
+def send_discord(title: str, description: str = "", level: str = "info"):
+    """Send a generic Discord notification with title + description.
+
+    Args:
+        title: Embed title (with emoji)
+        description: Embed description (markdown supported)
+        level: info, warning, error, success → determines embed color
+    """
+    color = LEVEL_COLORS.get(level, 0x5865F2)
+    _send(embeds=[{
+        "title": title,
+        "description": description,
+        "color": color,
+        "timestamp": datetime.utcnow().isoformat(),
+        "footer": {"text": APP_NAME},
+    }])
+

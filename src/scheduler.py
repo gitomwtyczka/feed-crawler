@@ -186,6 +186,27 @@ async def run_fetch_cycle(sources_path: str = "config/sources.yaml", departments
 
         db.commit()
 
+        # Deliver new articles to SaaS via webhook (if configured)
+        from .webhook import (
+            article_to_webhook_payload,
+            get_unsent_articles,
+            is_webhook_enabled,
+            mark_as_sent,
+            send_article,
+        )
+
+        if is_webhook_enabled() and total_new > 0:
+            unsent = get_unsent_articles(db, limit=50)
+            delivered = 0
+            for article in unsent:
+                payload = article_to_webhook_payload(article)
+                success = await send_article(payload)
+                if success:
+                    mark_as_sent(db, article)
+                    delivered += 1
+            if delivered:
+                logger.info("Webhook: delivered %d/%d articles to SaaS", delivered, len(unsent))
+
         summary = {
             "feeds": len(active_feeds),
             "articles_new": total_new,

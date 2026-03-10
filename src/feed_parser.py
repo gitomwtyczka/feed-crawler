@@ -25,7 +25,29 @@ logger = logging.getLogger(__name__)
 # ── Configuration ──
 FETCH_TIMEOUT = int(os.getenv("FETCH_TIMEOUT_SECONDS", "30"))
 FETCH_CONCURRENCY = int(os.getenv("FETCH_CONCURRENCY", "20"))
-USER_AGENT = os.getenv("USER_AGENT", "FeedCrawler/1.0")
+
+# User-Agent rotation pool — realistic browser strings to help with 403 feeds
+_USER_AGENTS = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_7_2) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.2 Safari/605.1.15",
+    "Mozilla/5.0 (X11; Linux x86_64; rv:133.0) Gecko/20100101 Firefox/133.0",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Edge/131.0.0.0",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 14.7; rv:133.0) Gecko/20100101 Firefox/133.0",
+]
+
+_ua_index = 0
+
+
+def _get_headers() -> dict[str, str]:
+    """Get request headers with rotated User-Agent."""
+    global _ua_index  # noqa: PLW0603
+    ua = _USER_AGENTS[_ua_index % len(_USER_AGENTS)]
+    _ua_index += 1
+    return {
+        "User-Agent": ua,
+        "Accept": "application/rss+xml, application/xml, text/xml, */*",
+        "Accept-Language": "pl-PL,pl;q=0.9,en-US;q=0.8,en;q=0.7",
+    }
 
 
 # ── Data classes ──
@@ -142,7 +164,7 @@ async def fetch_single_feed(
     start = time.monotonic()
 
     try:
-        response = await client.get(url, timeout=timeout)
+        response = await client.get(url, timeout=timeout, headers=_get_headers())
 
         if response.status_code != 200:
             elapsed = int((time.monotonic() - start) * 1000)
@@ -219,7 +241,6 @@ async def fetch_batch(
     limits = httpx.Limits(max_connections=concurrency, max_keepalive_connections=10)
     async with httpx.AsyncClient(
         limits=limits,
-        headers={"User-Agent": USER_AGENT},
         follow_redirects=True,
     ) as client:
         tasks = [_limited_fetch(client, feed) for feed in feeds]
