@@ -1,8 +1,47 @@
 # ── Sources — auto-generated from OPML: żródła wiedzy.opml ──
-# 47 feeds across 8 departments (6 knowledge + 2 competitor PL)
+# 50 feeds + 2 authenticated sources across 10 departments
 # Last updated: 2026-03-10
 
 sources:
+  # ══════════════════════════════════════════════════
+  # NEWSERIA — agencja informacyjna (RSS public)
+  # Subdomeny: biznes, lifestyle, innowacje
+  # Konto: redakcja@biznesciti.com (dla pobierania mediów)
+  # ══════════════════════════════════════════════════
+
+  - name: "Newseria Biznes"
+    url: "https://biznes.newseria.pl"
+    rss_url: "https://biznes.newseria.pl/rss.php"
+    feed_type: rss
+    fetch_interval: 10
+    departments: [konkurencja-biznes, economy-global-trade]
+
+  - name: "Newseria Lifestyle"
+    url: "https://lifestyle.newseria.pl"
+    rss_url: "https://lifestyle.newseria.pl/rss.php"
+    feed_type: rss
+    fetch_interval: 15
+    departments: [konkurencja-ogolne-lifestyle]
+
+  - name: "Newseria Innowacje"
+    url: "https://innowacje.newseria.pl"
+    rss_url: "https://innowacje.newseria.pl/rss.php"
+    feed_type: rss
+    fetch_interval: 15
+    departments: [science-high-tech, cyber-digital]
+
+  # ══════════════════════════════════════════════════
+  # ISBNews — agencja informacyjna (auth: HTTP Basic)
+  # portal.isbnews.pl — SPA, jQuery calendar, #list_div
+  # Dziesiątki depesz dziennie — monitorować agresywnie
+  # ══════════════════════════════════════════════════
+
+  - name: "ISBNews"
+    url: "http://portal.isbnews.pl"
+    feed_type: scraper
+    auth_type: basic
+    fetch_interval: 5
+    departments: [konkurencja-biznes, economy-global-trade]
   # ── DEFENCE & GEOPOLITICS ──
   - name: "ISW"
     url: "https://www.understandingwar.org"
