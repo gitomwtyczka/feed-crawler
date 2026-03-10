@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Settings — Feed Crawler{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>⚙️ Settings</h1>
+    <p>Konfiguracja źródeł, webhooków i integracji</p>
+</div>
+
+{% if saved %}
+<div style="background: rgba(87,242,135,0.15); border: 1px solid rgba(87,242,135,0.3); border-radius: 8px; padding: 0.8rem 1.2rem; margin-bottom: 1.5rem; color: #57f287; font-size: 0.9rem;">
+    ✅ Ustawienia zapisane pomyślnie
+</div>
+{% endif %}
+
+<form method="POST" action="/admin/settings" autocomplete="off">
+
+<!-- ISBNews Credentials -->
+<div class="card" style="margin-bottom: 1.5rem;">
+    <h3 style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">
+        🔑 ISBNews — Credentials</h3>
+    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 1rem;">HTTP Basic Auth do portal.isbnews.pl</p>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div>
+            <label style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">Username</label>
+            <input type="text" name="isbnews_username" value="{{ settings.isbnews_username }}"
+                placeholder="username"
+                style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 1rem; color: var(--text-primary); font-size: 0.9rem; outline: none;">
+        </div>
+        <div>
+            <label style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">Password</label>
+            <input type="password" name="isbnews_password"
+                placeholder="{% if settings.isbnews_password %}••••••••{% else %}password{% endif %}"
+                style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 1rem; color: var(--text-primary); font-size: 0.9rem; outline: none;">
+            {% if settings.isbnews_password %}
+            <span style="color: var(--text-muted); font-size: 0.7rem;">Wpisz nowe hasło lub zostaw puste aby zachować obecne</span>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Discord Webhook -->
+<div class="card" style="margin-bottom: 1.5rem;">
+    <h3 style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">
+        💬 Discord — Webhook</h3>
+    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 1rem;">Powiadomienia o błędach crawlera i nowych artykułach</p>
+    <div>
+        <label style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">Webhook URL</label>
+        <input type="url" name="discord_crawler_webhook_url" value="{{ settings.discord_crawler_webhook_url }}"
+            placeholder="https://discord.com/api/webhooks/..."
+            style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 1rem; color: var(--text-primary); font-size: 0.9rem; outline: none;">
+    </div>
+</div>
+
+<!-- SaaS Integration -->
+<div class="card" style="margin-bottom: 1.5rem;">
+    <h3 style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">
+        🔗 SaaS — Webhook (push artykułów)</h3>
+    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 1rem;">Automatyczne wysyłanie nowych artykułów do SaaS Editorial Assistant</p>
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
+        <div>
+            <label style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">Webhook URL</label>
+            <input type="url" name="saas_webhook_url" value="{{ settings.saas_webhook_url }}"
+                placeholder="https://press.impresjapr.pl/api/webhook/feed"
+                style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 1rem; color: var(--text-primary); font-size: 0.9rem; outline: none;">
+        </div>
+        <div>
+            <label style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">API Key</label>
+            <input type="password" name="saas_webhook_api_key"
+                placeholder="{% if settings.saas_webhook_api_key %}••••••••{% else %}api-key{% endif %}"
+                style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 1rem; color: var(--text-primary); font-size: 0.9rem; outline: none;">
+        </div>
+    </div>
+</div>
+
+<button type="submit" class="btn btn-primary" style="padding: 0.7rem 2rem; font-size: 1rem;">
+    💾 Zapisz ustawienia
+</button>
+
+</form>
+{% endblock %}

@@ -1,18 +1,23 @@
 # Feed Crawler — Docker Compose Stack
 #
 # Services:
-#   web      - FastAPI admin panel + reader (port 8000)
+#   web      - FastAPI admin panel + reader (port 8002 externally)
 #   crawler  - Continuous feed fetcher (daemon mode)
-#   db       - PostgreSQL 16
+#   db       - PostgreSQL 16 (port 5433 externally to avoid conflict with SaaS PG)
 #
 # Usage:
 #   docker compose up -d          # start all
 #   docker compose up web db      # web only (no crawler)
 #   docker compose logs -f crawler # follow crawler logs
+#
+# Deploy alongside SaaS (crimson-void):
+#   SaaS uses ports: 80/443 (nginx), 8001 (backend), 3000 (frontend), 5432 (PG)
+#   Crawler uses:    8002 (web), 5433 (PG) — no conflicts
 
 services:
   db:
     image: postgres:16-alpine
+    container_name: crawler-db
     restart: unless-stopped
     environment:
       POSTGRES_DB: feed_crawler
@@ -20,49 +25,53 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-crawler_secret}
     volumes:
       - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U crawler -d feed_crawler"]
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - crawler-net
 
   web:
     build: .
+    container_name: crawler-web
     restart: unless-stopped
     ports:
-      - "${WEB_PORT:-8000}:8000"
+      - "${WEB_PORT:-8002}:8000"
     environment:
       DATABASE_URL: postgresql://crawler:${POSTGRES_PASSWORD:-crawler_secret}@db:5432/feed_crawler
-      DISCORD_CRAWLER_WEBHOOK_URL: ${DISCORD_CRAWLER_WEBHOOK_URL:-}
-      SAAS_WEBHOOK_URL: ${SAAS_WEBHOOK_URL:-}
-      SAAS_WEBHOOK_API_KEY: ${SAAS_WEBHOOK_API_KEY:-}
       JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
-      SOURCE_ISBNEWS_USERNAME: ${SOURCE_ISBNEWS_USERNAME:-}
-      SOURCE_ISBNEWS_PASSWORD: ${SOURCE_ISBNEWS_PASSWORD:-}
     volumes:
       - crawl_data:/app/data
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - crawler-net
     command: ["uvicorn", "src.web:app", "--host", "0.0.0.0", "--port", "8000"]
 
   crawler:
     build: .
+    container_name: crawler-daemon
     restart: unless-stopped
     environment:
       DATABASE_URL: postgresql://crawler:${POSTGRES_PASSWORD:-crawler_secret}@db:5432/feed_crawler
-      DISCORD_CRAWLER_WEBHOOK_URL: ${DISCORD_CRAWLER_WEBHOOK_URL:-}
-      SAAS_WEBHOOK_URL: ${SAAS_WEBHOOK_URL:-}
-      SAAS_WEBHOOK_API_KEY: ${SAAS_WEBHOOK_API_KEY:-}
-      SOURCE_ISBNEWS_USERNAME: ${SOURCE_ISBNEWS_USERNAME:-}
-      SOURCE_ISBNEWS_PASSWORD: ${SOURCE_ISBNEWS_PASSWORD:-}
     volumes:
       - crawl_data:/app/data
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - crawler-net
     command: ["python", "-m", "src.scheduler", "--daemon", "--interval", "10"]
 
 volumes:
   pgdata:
   crawl_data:
+
+networks:
+  crawler-net:
+    driver: bridge

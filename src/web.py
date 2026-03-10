@@ -443,6 +443,45 @@ def admin_crawl_toggle(request: Request):
     return RedirectResponse(url="/admin/monitoring", status_code=303)
 
 
+@app.get("/admin/settings", response_class=HTMLResponse)
+def admin_settings_page(request: Request, saved: bool = False):
+    user = _get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/login", status_code=303)
+    from .admin_settings import get_settings
+
+    return templates.TemplateResponse("admin/settings.html", {
+        "request": request,
+        "user": user,
+        "settings": get_settings(),
+        "saved": saved,
+    })
+
+
+@app.post("/admin/settings")
+def admin_settings_save(
+    request: Request,
+    isbnews_username: str = Form(""),
+    isbnews_password: str = Form(""),
+    discord_crawler_webhook_url: str = Form(""),
+    saas_webhook_url: str = Form(""),
+    saas_webhook_api_key: str = Form(""),
+):
+    user = _get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/login", status_code=303)
+    from .admin_settings import update_settings
+
+    update_settings({
+        "isbnews_username": isbnews_username,
+        "isbnews_password": isbnews_password,
+        "discord_crawler_webhook_url": discord_crawler_webhook_url,
+        "saas_webhook_url": saas_webhook_url,
+        "saas_webhook_api_key": saas_webhook_api_key,
+    })
+    return RedirectResponse(url="/admin/settings?saved=true", status_code=303)
+
+
 @app.get("/admin/discover", response_class=HTMLResponse)
 def admin_discover_page(request: Request):
     user = _get_current_user(request)
