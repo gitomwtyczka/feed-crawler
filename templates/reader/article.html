@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}{{ article.title }}{% endblock %}
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto;">
+    <a href="/" class="btn" style="margin-bottom: 1.5rem;">← Back to articles</a>
+
+    <article class="card" style="padding: 2rem;">
+        <h1 style="font-size: 1.6rem; line-height: 1.3; margin-bottom: 1rem;">{{ article.title }}</h1>
+
+        <div class="article-meta"
+            style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border);">
+            {% if article.feed %}
+            <span>📡 <a href="/feed/{{ article.feed_id }}" style="color: var(--accent-light); text-decoration: none;">{{
+                    article.feed.name }}</a></span>
+            {% endif %}
+            {% if article.author %}<span>✍️ {{ article.author }}</span>{% endif %}
+            {% if article.published_at %}<span>📅 {{ article.published_at.strftime('%Y-%m-%d %H:%M') }}</span>{% endif
+            %}
+            <span>🕐 Fetched {{ article.fetched_at|timeago }}</span>
+        </div>
+
+        {% if article.summary %}
+        <div style="color: var(--text-secondary); line-height: 1.7; margin-bottom: 1.5rem;">
+            {{ article.summary }}
+        </div>
+        {% endif %}
+
+        {% if article.content %}
+        <div
+            style="color: var(--text-primary); line-height: 1.8; margin-bottom: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+            {{ article.content|safe }}
+        </div>
+        {% endif %}
+
+        <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+            <a href="{{ article.url }}" target="_blank" class="btn btn-primary">🔗 Read Original</a>
+        </div>
+    </article>
+</div>
+{% endblock %}

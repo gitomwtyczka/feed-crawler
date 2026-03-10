@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>⚙️ Dashboard</h1>
+    <p>Feed Crawler — system overview</p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-label">Total Feeds</div>
+        <div class="stat-value">{{ total_feeds }}</div>
+        <div class="stat-sub">{{ active_feeds }} active</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Total Articles</div>
+        <div class="stat-value">{{ "{:,}".format(total_articles) }}</div>
+        <div class="stat-sub">in database</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Last 24h</div>
+        <div class="stat-value">{{ "{:,}".format(articles_24h) }}</div>
+        <div class="stat-sub">new articles</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-label">Departments</div>
+        <div class="stat-value">{{ total_departments }}</div>
+        <div class="stat-sub">thematic categories</div>
+    </div>
+</div>
+
+<div class="grid-2">
+    <!-- Top Feeds -->
+    <div class="card">
+        <h3
+            style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">
+            📊 Top Feeds by Articles</h3>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Feed</th>
+                        <th>Articles</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for feed_id, name, count in top_feeds %}
+                    <tr>
+                        <td style="color: var(--text-muted)">{{ loop.index }}</td>
+                        <td><a href="/feed/{{ feed_id }}" style="color: var(--accent-light); text-decoration: none;">{{
+                                name[:40] }}</a></td>
+                        <td><span class="badge badge-info">{{ count }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Departments -->
+    <div class="card">
+        <h3
+            style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">
+            🏷️ Departments</h3>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+            {% for dept in dept_stats %}
+            <a href="/department/{{ dept.slug }}" class="dept-tag">
+                {{ dept.name }} <span style="opacity: 0.6">({{ dept.feeds }})</span>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Recent Articles -->
+<div class="card" style="margin-top: 1.5rem;">
+    <h3
+        style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">
+        🕐 Recent Articles</h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Feed</th>
+                    <th>Fetched</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for article in recent %}
+                <tr>
+                    <td><a href="/article/{{ article.id }}"
+                            style="color: var(--text-primary); text-decoration: none;">{{ article.title[:60] }}{% if
+                            article.title|length > 60 %}...{% endif %}</a></td>
+                    <td style="color: var(--text-secondary); font-size: 0.8rem;">{{ article.feed.name[:25] if
+                        article.feed else '?' }}</td>
+                    <td style="color: var(--text-muted); font-size: 0.8rem;">{{ article.fetched_at|timeago }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

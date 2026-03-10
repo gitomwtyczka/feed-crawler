@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Feeds Management{% endblock %}
+{% block content %}
+<div class="page-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+        <h1>📡 Feed Management</h1>
+        <p>{{ total }} feeds configured</p>
+    </div>
+</div>
+
+<div class="table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th>Status</th>
+                <th>Feed Name</th>
+                <th>Type</th>
+                <th>Articles</th>
+                <th>Last Fetched</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in feeds %}
+            <tr>
+                <td>
+                    {% if item.feed.is_active %}
+                    <span class="badge badge-success">● ACTIVE</span>
+                    {% else %}
+                    <span class="badge badge-danger">○ OFF</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="/feed/{{ item.feed.id }}"
+                        style="color: var(--text-primary); text-decoration: none; font-weight: 500;">{{
+                        item.feed.name[:50] }}</a>
+                    {% if item.feed.rss_url %}
+                    <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; word-break: break-all;">{{
+                        item.feed.rss_url[:60] }}{% if item.feed.rss_url|length > 60 %}...{% endif %}</div>
+                    {% endif %}
+                </td>
+                <td><span class="badge badge-info">{{ item.feed.feed_type }}</span></td>
+                <td style="font-weight: 600;">{{ item.article_count }}</td>
+                <td style="color: var(--text-secondary); font-size: 0.85rem;">{{ item.feed.last_fetched|timeago }}</td>
+                <td>
+                    <form method="post" action="/admin/feeds/{{ item.feed.id }}/toggle" style="display:inline;">
+                        <button type="submit" class="btn" style="font-size: 0.75rem; padding: 0.3rem 0.8rem;">
+                            {% if item.feed.is_active %}⏸ Disable{% else %}▶ Enable{% endif %}
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if total_pages > 1 %}
+<div class="pagination">
+    {% if page > 1 %}<a href="?page={{ page - 1 }}">← Prev</a>{% endif %}
+    {% for p in range(1, total_pages + 1) %}
+    {% if p == page %}
+    <span class="active">{{ p }}</span>
+    {% elif p <= 3 or p> total_pages - 2 or (p >= page - 1 and p <= page + 1) %} <a href="?page={{ p }}">{{ p }}</a>
+            {% elif p == 4 or p == total_pages - 2 %}
+            <span style="color: var(--text-muted)">…</span>
+            {% endif %}
+            {% endfor %}
+            {% if page < total_pages %}<a href="?page={{ page + 1 }}">Next →</a>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

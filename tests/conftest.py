@@ -30,8 +30,11 @@ TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=test_
 
 @pytest.fixture(scope="session", autouse=True)
 def setup_database():
-    """Create all tables before tests, drop after."""
+    """Create all tables on both test engine and database module engine."""
     Base.metadata.create_all(bind=test_engine)
+    # Also create on database.engine (used by web.py through db_module.SessionLocal)
+    from src.database import engine as db_engine
+    Base.metadata.create_all(bind=db_engine)
     yield
     Base.metadata.drop_all(bind=test_engine)
 
