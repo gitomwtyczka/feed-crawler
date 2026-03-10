@@ -1,27 +1,8 @@
+# Feed Crawler Sources — 518 feeds
+# Verified: 516 RSS + 2 scrapers
+# Removed: 101 dead feeds (403/404/timeout/error)
+
 sources:
-- name: Newseria Biznes
-  url: https://biznes.newseria.pl
-  rss_url: https://biznes.newseria.pl/rss.php
-  feed_type: rss
-  fetch_interval: 10
-  departments:
-  - konkurencja-biznes
-  - economy-global-trade
-- name: Newseria Lifestyle
-  url: https://lifestyle.newseria.pl
-  rss_url: https://lifestyle.newseria.pl/rss.php
-  feed_type: rss
-  fetch_interval: 15
-  departments:
-  - konkurencja-ogolne-lifestyle
-- name: Newseria Innowacje
-  url: https://innowacje.newseria.pl
-  rss_url: https://innowacje.newseria.pl/rss.php
-  feed_type: rss
-  fetch_interval: 15
-  departments:
-  - science-high-tech
-  - cyber-digital
 - name: ISBNews
   url: http://portal.isbnews.pl
   feed_type: scraper
@@ -30,195 +11,12 @@ sources:
   departments:
   - konkurencja-biznes
   - economy-global-trade
-- name: Policja.pl
-  url: https://policja.pl
-  rss_url: https://policja.pl/dokumenty/rss/1-rss-1.rss
-  feed_type: rss
-  fetch_interval: 10
-  departments:
-  - defence-geopolitics
-  - konkurencja-ogolne-lifestyle
 - name: KGPSP (Straż Pożarna)
   url: https://www.gov.pl/web/kgpsp
   feed_type: scraper
   fetch_interval: 60
   departments:
   - defence-geopolitics
-- name: ISW
-  url: https://www.understandingwar.org
-  rss_url: https://www.understandingwar.org/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - defence-geopolitics
-- name: Atlantic Council
-  url: https://www.atlanticcouncil.org
-  rss_url: https://www.atlanticcouncil.org/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - defence-geopolitics
-- name: CSIS
-  url: https://www.csis.org
-  rss_url: https://www.csis.org/news/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - defence-geopolitics
-- name: SIPRI
-  url: https://www.sipri.org
-  rss_url: https://www.sipri.org/rss
-  feed_type: rss
-  fetch_interval: 60
-  departments:
-  - defence-geopolitics
-- name: RUSI
-  url: https://www.rusi.org
-  rss_url: https://www.rusi.org/rusi-rss-feeds
-  feed_type: rss
-  fetch_interval: 60
-  departments:
-  - defence-geopolitics
-- name: IMF News
-  url: https://www.imf.org
-  rss_url: https://www.imf.org/en/News/RSS
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - economy-global-trade
-- name: ECB
-  url: https://www.ecb.europa.eu
-  rss_url: https://www.ecb.europa.eu/home/html/rss.en.html
-  feed_type: rss
-  fetch_interval: 60
-  departments:
-  - economy-global-trade
-- name: Bruegel
-  url: https://www.bruegel.org
-  rss_url: https://www.bruegel.org/rss.xml
-  feed_type: rss
-  fetch_interval: 60
-  departments:
-  - economy-global-trade
-- name: PIIE
-  url: https://www.piie.com
-  rss_url: https://www.piie.com/rss.xml
-  feed_type: rss
-  fetch_interval: 60
-  departments:
-  - economy-global-trade
-- name: OECD News
-  url: https://www.oecd.org
-  rss_url: https://www.oecd.org/newsroom/index.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - economy-global-trade
-- name: Nature
-  url: https://www.nature.com
-  rss_url: http://feeds.nature.com/nature/rss/current
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - science-high-tech
-- name: Science Magazine
-  url: https://www.science.org
-  rss_url: https://www.science.org/rss/news_current.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - science-high-tech
-- name: NASA
-  url: https://www.nasa.gov
-  rss_url: https://www.nasa.gov/rss/dyn/breaking_news.rss
-  feed_type: rss
-  fetch_interval: 15
-  departments:
-  - science-high-tech
-- name: MIT News
-  url: https://news.mit.edu
-  rss_url: https://news.mit.edu/rss/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - science-high-tech
-- name: Phys.org
-  url: https://phys.org
-  rss_url: https://phys.org/rss-feed/
-  feed_type: rss
-  fetch_interval: 15
-  departments:
-  - science-high-tech
-- name: CERN
-  url: https://home.cern
-  rss_url: https://home.cern/api/news/feed.rss
-  feed_type: rss
-  fetch_interval: 60
-  departments:
-  - science-high-tech
-- name: WHO
-  url: https://www.who.int
-  rss_url: https://www.who.int/rss-feeds/news-english.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - health-biotech
-- name: CDC
-  url: https://www.cdc.gov
-  rss_url: https://tools.cdc.gov/api/v2/resources/media/403333.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - health-biotech
-- name: STAT News
-  url: https://www.statnews.com
-  rss_url: https://www.statnews.com/feed/
-  feed_type: rss
-  fetch_interval: 15
-  departments:
-  - health-biotech
-- name: IRENA
-  url: https://www.irena.org
-  rss_url: https://www.irena.org/rssfeed
-  feed_type: rss
-  fetch_interval: 60
-  departments:
-  - energy-climate
-- name: The Conversation
-  url: https://theconversation.com
-  rss_url: https://theconversation.com/us/environment/articles.atom
-  feed_type: atom
-  fetch_interval: 30
-  departments:
-  - energy-climate
-- name: Check Point Research
-  url: https://research.checkpoint.com
-  rss_url: https://research.checkpoint.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - cyber-digital
-- name: Mandiant
-  url: https://www.mandiant.com
-  rss_url: https://www.mandiant.com/resources/blog/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - cyber-digital
-- name: OpenAI
-  url: https://openai.com
-  rss_url: https://openai.com/news/rss/
-  feed_type: rss
-  fetch_interval: 15
-  departments:
-  - cyber-digital
-- name: Business Insider PL
-  url: https://businessinsider.com.pl
-  rss_url: https://businessinsider.com.pl/.feed
-  feed_type: rss
-  fetch_interval: 10
-  departments:
-  - konkurencja-biznes
 - name: Money.pl
   url: https://www.money.pl
   rss_url: https://www.money.pl/rss/rss.xml
@@ -226,6 +24,13 @@ sources:
   fetch_interval: 10
   departments:
   - konkurencja-biznes
+- name: Economic Times
+  url: ''
+  rss_url: https://economictimes.indiatimes.com/rssfeedsdefault.cms
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-india
 - name: Bankier.pl
   url: https://www.bankier.pl
   rss_url: https://www.bankier.pl/rss/wiadomosci.xml
@@ -233,840 +38,6 @@ sources:
   fetch_interval: 10
   departments:
   - konkurencja-biznes
-- name: Rzeczpospolita
-  url: https://www.rp.pl
-  rss_url: https://www.rp.pl/rss_main
-  feed_type: rss
-  fetch_interval: 10
-  departments:
-  - konkurencja-biznes
-- name: Puls Biznesu
-  url: https://www.pb.pl
-  rss_url: https://www.pb.pl/rss
-  feed_type: rss
-  fetch_interval: 15
-  departments:
-  - konkurencja-biznes
-- name: Onet
-  url: https://www.onet.pl
-  rss_url: https://wiadomosci.onet.pl/.feed
-  feed_type: rss
-  fetch_interval: 10
-  departments:
-  - konkurencja-ogolne-lifestyle
-- name: WP
-  url: https://www.wp.pl
-  rss_url: https://wiadomosci.wp.pl/rss.xml
-  feed_type: rss
-  fetch_interval: 10
-  departments:
-  - konkurencja-ogolne-lifestyle
-- name: Interia
-  url: https://www.interia.pl
-  rss_url: https://fakty.interia.pl/feed
-  feed_type: rss
-  fetch_interval: 10
-  departments:
-  - konkurencja-ogolne-lifestyle
-- name: Gazeta.pl
-  url: https://www.gazeta.pl
-  rss_url: https://wiadomosci.gazeta.pl/pub/rss/wiadomosci.xml
-  feed_type: rss
-  fetch_interval: 10
-  departments:
-  - konkurencja-ogolne-lifestyle
-- name: TVN24
-  url: https://www.tvn24.pl
-  rss_url: https://tvn24.pl/najnowsze.xml
-  feed_type: rss
-  fetch_interval: 5
-  departments:
-  - konkurencja-ogolne-lifestyle
-- name: Polsat News
-  url: https://www.polsatnews.pl
-  rss_url: https://www.polsatnews.pl/rss
-  feed_type: rss
-  fetch_interval: 10
-  departments:
-  - konkurencja-ogolne-lifestyle
-- name: Fakt
-  url: https://www.fakt.pl
-  rss_url: https://www.fakt.pl/rss
-  feed_type: rss
-  fetch_interval: 10
-  departments:
-  - konkurencja-ogolne-lifestyle
-- name: NaTemat
-  url: https://natemat.pl
-  rss_url: https://natemat.pl/rss/wszystkie
-  feed_type: rss
-  fetch_interval: 10
-  departments:
-  - konkurencja-ogolne-lifestyle
-- name: Glamour PL
-  url: https://www.glamour.pl
-  rss_url: https://www.glamour.pl/feed/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - konkurencja-ogolne-lifestyle
-- name: BBC News - World
-  url: ''
-  rss_url: http://feeds.bbci.co.uk/news/world/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - news
-- name: CNN.com - RSS Channel - World
-  url: ''
-  rss_url: http://rss.cnn.com/rss/edition_world.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - news
-- name: 'International: Top News And Analysis'
-  url: ''
-  rss_url: https://www.cnbc.com/id/100727362/device/rss/rss.html
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - news
-- name: NDTV News - World-news
-  url: ''
-  rss_url: http://feeds.feedburner.com/ndtvnews-world-news
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - news
-- name: NYT > World News
-  url: ''
-  rss_url: https://rss.nytimes.com/services/xml/rss/nyt/World.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - news
-- name: Top stories - Google News
-  url: ''
-  rss_url: https://news.google.com/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - news
-- name: World
-  url: ''
-  rss_url: http://feeds.washingtonpost.com/rss/world
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - news
-- name: World News
-  url: ''
-  rss_url: https://www.reddit.com/r/worldnews/.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - news
-- name: World News Headlines, Latest International News, World Breaking News - Times
-    of India
-  url: ''
-  rss_url: https://timesofindia.indiatimes.com/rssfeeds/296589292.cms
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - news
-- name: World news | The Guardian
-  url: ''
-  rss_url: https://www.theguardian.com/world/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - news
-- name: Yahoo News - Latest News & Headlines
-  url: ''
-  rss_url: https://www.yahoo.com/news/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - news
-- name: '/r/space: news, articles and discussion'
-  url: ''
-  rss_url: https://www.reddit.com/r/space/.rss?format=xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - space
-- name: New Scientist - Space
-  url: ''
-  rss_url: https://www.newscientist.com/subject/space/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - space
-- name: Sky & Telescope
-  url: ''
-  rss_url: https://www.skyandtelescope.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - space
-- name: Space | The Guardian
-  url: ''
-  rss_url: https://www.theguardian.com/science/space/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - space
-- name: Space.com
-  url: ''
-  rss_url: https://www.space.com/feeds/all
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - space
-- name: SpaceX
-  url: ''
-  rss_url: https://www.youtube.com/feeds/videos.xml?user=spacexchannel
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - space
-- name: 'A List Apart: The Full Feed'
-  url: ''
-  rss_url: https://alistapart.com/main/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - web-development
-- name: CSS-Tricks
-  url: ''
-  rss_url: https://css-tricks.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - web-development
-- name: Code Wall
-  url: ''
-  rss_url: https://www.codewall.co.uk/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - web-development
-- name: David Walsh Blog
-  url: ''
-  rss_url: https://davidwalsh.name/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - web-development
-- name: Mozilla Hacks – the Web developer blog
-  url: ''
-  rss_url: https://hacks.mozilla.org/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - web-development
-- name: Sink In - Tech and Travel
-  url: ''
-  rss_url: https://gosink.in/rss/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - web-development
-- name: Updates
-  url: ''
-  rss_url: https://developers.google.com/web/updates/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - web-development
-- name: BBC Sport - Sport
-  url: ''
-  rss_url: http://feeds.bbci.co.uk/sport/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - sports
-- name: Reddit Sports
-  url: ''
-  rss_url: https://www.reddit.com/r/sports.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - sports
-- name: Sports News - Latest Sports and Football News | Sky News
-  url: ''
-  rss_url: http://feeds.skynews.com/feeds/rss/sports.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - sports
-- name: Sportskeeda
-  url: ''
-  rss_url: https://www.sportskeeda.com/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - sports
-- name: Yahoo! Sports - News, Scores, Standings, Rumors, Fantasy Games
-  url: ''
-  rss_url: https://sports.yahoo.com/rss/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - sports
-- name: www.espn.com - TOP
-  url: ''
-  rss_url: https://www.espn.com/espn/rss/news
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - sports
-- name: EFL Championship
-  url: ''
-  rss_url: https://www.reddit.com/r/Championship/.rss?format=xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - football
-- name: Football - The People's Sport
-  url: ''
-  rss_url: https://www.reddit.com/r/football/.rss?format=xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - football
-- name: Football News, Live Scores, Results & Transfers | Goal.com
-  url: ''
-  rss_url: https://www.goal.com/feeds/en/news
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - football
-- name: Football365
-  url: ''
-  rss_url: https://www.football365.com/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - football
-- name: Soccer News
-  url: ''
-  rss_url: https://www.soccernews.com/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - football
-- name: Fashion - ELLE
-  url: ''
-  rss_url: https://www.elle.com/rss/fashion.xml/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - fashion
-- name: Fashion | The Guardian
-  url: ''
-  rss_url: https://www.theguardian.com/fashion/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - fashion
-- name: Fashion – Indian Fashion Blog
-  url: ''
-  rss_url: https://www.fashionlady.in/category/fashion/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - fashion
-- name: FashionBeans Men's Fashion and Style Feed
-  url: ''
-  rss_url: https://www.fashionbeans.com/rss-feed/?category=fashion
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - fashion
-- name: Fashionista
-  url: ''
-  rss_url: https://fashionista.com/.rss/excerpt/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - fashion
-- name: NYT > Style
-  url: ''
-  rss_url: https://rss.nytimes.com/services/xml/rss/nyt/FashionandStyle.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - fashion
-- name: POPSUGAR Fashion
-  url: ''
-  rss_url: https://www.popsugar.com/fashion/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - fashion
-- name: Refinery29
-  url: ''
-  rss_url: https://www.refinery29.com/fashion/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - fashion
-- name: THE YESSTYLIST – Asian Fashion Blog – brought to you by YesStyle.com
-  url: ''
-  rss_url: https://www.yesstyle.com/blog/category/trend-and-style/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - fashion
-- name: Who What Wear
-  url: ''
-  rss_url: https://www.whowhatwear.com/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - fashion
-- name: 101 Cookbooks
-  url: ''
-  rss_url: https://www.101cookbooks.com/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - food
-- name: Babish Culinary Universe
-  url: ''
-  rss_url: https://www.youtube.com/feeds/videos.xml?user=bgfilms
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - food
-- name: Bon Appétit
-  url: ''
-  rss_url: https://www.youtube.com/feeds/videos.xml?user=BonAppetitDotCom
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - food
-- name: Chocolate & Zucchini
-  url: ''
-  rss_url: https://cnz.to/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - food
-- name: David Lebovitz
-  url: ''
-  rss_url: https://www.davidlebovitz.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - food
-- name: Food52
-  url: ''
-  rss_url: http://feeds.feedburner.com/food52-TheAandMBlog
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - food
-- name: Green Kitchen Stories
-  url: ''
-  rss_url: https://greenkitchenstories.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - food
-- name: How Sweet Eats
-  url: ''
-  rss_url: https://www.howsweeteats.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - food
-- name: Joy the Baker
-  url: ''
-  rss_url: http://joythebaker.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - food
-- name: Kitchn | Inspiring cooks, nourishing homes
-  url: ''
-  rss_url: https://www.thekitchn.com/main.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - food
-- name: Laura in the Kitchen
-  url: ''
-  rss_url: https://www.youtube.com/feeds/videos.xml?user=LauraVitalesKitchen
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - food
-- name: Love and Olive Oil
-  url: ''
-  rss_url: https://www.loveandoliveoil.com/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - food
-- name: NYT > Food
-  url: ''
-  rss_url: https://rss.nytimes.com/services/xml/rss/nyt/DiningandWine.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - food
-- name: Oh She Glows
-  url: ''
-  rss_url: https://ohsheglows.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - food
-- name: Serious Eats
-  url: ''
-  rss_url: https://www.youtube.com/feeds/videos.xml?user=SeriousEats
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - food
-- name: 'Serious Eats: Recipes'
-  url: ''
-  rss_url: http://feeds.feedburner.com/seriouseats/recipes
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - food
-- name: Shutterbean
-  url: ''
-  rss_url: http://www.shutterbean.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - food
-- name: Skinnytaste
-  url: ''
-  rss_url: https://www.skinnytaste.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - food
-- name: Sprouted Kitchen
-  url: ''
-  rss_url: https://www.sproutedkitchen.com/home?format=rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - food
-- name: Williams-Sonoma Taste
-  url: ''
-  rss_url: https://blog.williams-sonoma.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - food
-- name: smitten kitchen
-  url: ''
-  rss_url: http://feeds.feedburner.com/smittenkitchen
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - food
-- name: A year of reading the world
-  url: ''
-  rss_url: https://ayearofreadingtheworld.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - books
-- name: Aestas Book Blog
-  url: ''
-  rss_url: https://aestasbookblog.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - books
-- name: BOOK RIOT
-  url: ''
-  rss_url: https://bookriot.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - books
-- name: Kirkus Reviews
-  url: ''
-  rss_url: https://www.kirkusreviews.com/feeds/rss/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - books
-- name: Page Array – NewInBooks
-  url: ''
-  rss_url: https://www.newinbooks.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - books
-- name: So many books, so little time
-  url: ''
-  rss_url: https://reddit.com/r/books/.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - books
-- name: Wokeread
-  url: ''
-  rss_url: https://wokeread.home.blog/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - books
-- name: Autoblog
-  url: ''
-  rss_url: https://www.autoblog.com/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - cars
-- name: Autocar India - All Bike Reviews
-  url: ''
-  rss_url: https://www.autocarindia.com/RSS/rss.ashx?type=all_bikes
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - cars
-- name: Autocar India - All Car Reviews
-  url: ''
-  rss_url: https://www.autocarindia.com/RSS/rss.ashx?type=all_cars
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - cars
-- name: Autocar India - News
-  url: ''
-  rss_url: https://www.autocarindia.com/RSS/rss.ashx?type=News
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - cars
-- name: Autocar RSS Feed
-  url: ''
-  rss_url: https://www.autocar.co.uk/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - cars
-- name: BMW BLOG
-  url: ''
-  rss_url: https://feeds.feedburner.com/BmwBlog
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - cars
-- name: Bike EXIF
-  url: ''
-  rss_url: https://www.bikeexif.com/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - cars
-- name: Car Body Design
-  url: ''
-  rss_url: https://www.carbodydesign.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - cars
-- name: Carscoops
-  url: ''
-  rss_url: https://www.carscoops.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - cars
-- name: Formula 1
-  url: ''
-  rss_url: https://www.reddit.com/r/formula1/.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - cars
-- name: Jalopnik
-  url: ''
-  rss_url: https://jalopnik.com/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - cars
-- name: Latest Content - Car and Driver
-  url: ''
-  rss_url: https://www.caranddriver.com/rss/all.xml/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - cars
-- name: Petrolicious
-  url: ''
-  rss_url: https://petrolicious.com/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - cars
-- name: Section Page News - Automotive News
-  url: ''
-  rss_url: http://feeds.feedburner.com/autonews/AutomakerNews
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - cars
-- name: Section Page News - Automotive News
-  url: ''
-  rss_url: http://feeds.feedburner.com/autonews/EditorsPicks
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - cars
-- name: Speedhunters
-  url: ''
-  rss_url: http://feeds.feedburner.com/speedhunters
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - cars
-- name: The Truth About Cars
-  url: ''
-  rss_url: https://www.thetruthaboutcars.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - cars
-- name: The best vintage and classic cars for sale online | Bring a Trailer
-  url: ''
-  rss_url: https://bringatrailer.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - cars
-- name: 500px
-  url: ''
-  rss_url: https://iso.500px.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - photography
-- name: '500px:'
-  url: ''
-  rss_url: https://500px.com/editors.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - photography
-- name: Big Picture
-  url: ''
-  rss_url: https://www.bostonglobe.com/rss/bigpicture
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - photography
-- name: Canon Rumors – Your best source for Canon rumors, leaks and gossip
-  url: ''
-  rss_url: https://www.canonrumors.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - photography
-- name: Digital Photography School
-  url: ''
-  rss_url: https://feeds.feedburner.com/DigitalPhotographySchool
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - photography
-- name: Light Stalking
-  url: ''
-  rss_url: https://www.lightstalking.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - photography
-- name: Lightroom Killer Tips
-  url: ''
-  rss_url: https://lightroomkillertips.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - photography
-- name: One Big Photo
-  url: ''
-  rss_url: http://feeds.feedburner.com/OneBigPhoto
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - photography
-- name: PetaPixel
-  url: ''
-  rss_url: https://petapixel.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - photography
-- name: Strobist
-  url: ''
-  rss_url: http://feeds.feedburner.com/blogspot/WOBq
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - photography
-- name: Stuck in Customs
-  url: ''
-  rss_url: https://stuckincustoms.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - photography
-- name: The Sartorialist
-  url: ''
-  rss_url: https://feeds.feedburner.com/TheSartorialist
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - photography
-- name: Atlas Obscura - Latest Articles and Places
-  url: ''
-  rss_url: https://www.atlasobscura.com/feeds/latest
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - travel
-- name: Live Life Travel
-  url: ''
-  rss_url: https://www.livelifetravel.world/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - travel
-- name: Lonely Planet Travel News
-  url: ''
-  rss_url: https://www.lonelyplanet.com/news/feed/atom/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - travel
-- name: NYT > Travel
-  url: ''
-  rss_url: https://rss.nytimes.com/services/xml/rss/nyt/Travel.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - travel
-- name: Nomadic Matt's Travel Site
-  url: ''
-  rss_url: https://www.nomadicmatt.com/travel-blog/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - travel
 - name: Travel | The Guardian
   url: ''
   rss_url: https://www.theguardian.com/uk/travel/rss
@@ -1074,23 +45,178 @@ sources:
   fetch_interval: 30
   departments:
   - travel
-- name: Billboard
+- name: Reforma
   url: ''
-  rss_url: https://www.billboard.com/articles/rss.xml
+  rss_url: https://www.reforma.com/rss/portada.xml
   feed_type: rss
   fetch_interval: 30
   departments:
-  - music
-- name: Consequence
+  - country-mexico
+- name: BBC News - Science  Environment
   url: ''
-  rss_url: http://consequenceofsound.net/feed
+  rss_url: http://feeds.bbci.co.uk/news/science_and_environment/rss.xml
   feed_type: rss
   fetch_interval: 30
   departments:
-  - music
-- name: EDM.com - The Latest Electronic Dance Music News, Reviews & Artists
+  - science
+- name: Newseria Biznes
+  url: https://biznes.newseria.pl
+  rss_url: https://biznes.newseria.pl/rss.php
+  feed_type: rss
+  fetch_interval: 10
+  departments:
+  - konkurencja-biznes
+  - economy-global-trade
+- name: Moneycontrol Latest News
   url: ''
-  rss_url: https://edm.com/.rss/full/
+  rss_url: http://www.moneycontrol.com/rss/latestnews.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-india
+- name: Rzeczpospolita
+  url: https://www.rp.pl
+  rss_url: https://www.rp.pl/rss_main
+  feed_type: rss
+  fetch_interval: 10
+  departments:
+  - konkurencja-biznes
+- name: Meduza.io
+  url: ''
+  rss_url: https://meduza.io/rss/all
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-russia
+- name: Puls Biznesu
+  url: https://www.pb.pl
+  rss_url: https://www.pb.pl/rss
+  feed_type: rss
+  fetch_interval: 15
+  departments:
+  - konkurencja-biznes
+- name: Discovery
+  url: ''
+  rss_url: https://podcasts.files.bbci.co.uk/p002w557.rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - science
+- name: Russia Insider Daily Headlines
+  url: ''
+  rss_url: https://russia-insider.com/en/all-content/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-russia
+- name: FlowingData
+  url: ''
+  rss_url: https://flowingdata.com/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - science
+- name: RT - Daily news
+  url: ''
+  rss_url: https://www.rt.com/rss/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-russia
+- name: Nomadic Matt's Travel Site
+  url: ''
+  rss_url: https://www.nomadicmatt.com/travel-blog/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - travel
+- name: Onet
+  url: https://www.onet.pl
+  rss_url: https://wiadomosci.onet.pl/.feed
+  feed_type: rss
+  fetch_interval: 10
+  departments:
+  - konkurencja-ogolne-lifestyle
+- name: Portada, El Siglo de Torreón
+  url: ''
+  rss_url: https://www.elsiglodetorreon.com.mx/index.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-mexico
+- name: The Moscow Times - Independent News From Russia
+  url: ''
+  rss_url: https://www.themoscowtimes.com/rss/news
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-russia
+- name: TASS
+  url: ''
+  rss_url: http://tass.com/rss/v2.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-russia
+- name: Newseria Lifestyle
+  url: https://lifestyle.newseria.pl
+  rss_url: https://lifestyle.newseria.pl/rss.php
+  feed_type: rss
+  fetch_interval: 15
+  departments:
+  - konkurencja-ogolne-lifestyle
+- name: Scroll.in
+  url: ''
+  rss_url: http://feeds.feedburner.com/ScrollinArticles.rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-india
+- name: El Financiero
+  url: ''
+  rss_url: https://www.elfinanciero.com.mx/arc/outboundfeeds/rss/?outputType=xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-mexico
+- name: WP
+  url: https://www.wp.pl
+  rss_url: https://wiadomosci.wp.pl/rss.xml
+  feed_type: rss
+  fetch_interval: 10
+  departments:
+  - konkurencja-ogolne-lifestyle
+- name: Gizmodo
+  url: ''
+  rss_url: https://gizmodo.com/tag/science/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - science
+- name: Lo último en Vanguardia MX
+  url: ''
+  rss_url: https://vanguardia.com.mx/rss.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-mexico
+- name: Invisibilia
+  url: ''
+  rss_url: https://feeds.npr.org/510307/podcast.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - science
+- name: ElNorte
+  url: ''
+  rss_url: https://www.elnorte.com/rss/portada.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-mexico
+- name: Music Business Worldwide
+  url: ''
+  rss_url: https://www.musicbusinessworldwide.com/feed/
   feed_type: rss
   fetch_interval: 30
   departments:
@@ -1102,837 +228,16 @@ sources:
   fetch_interval: 30
   departments:
   - music
-- name: Music Business Worldwide
+- name: Hidden Brain
   url: ''
-  rss_url: https://www.musicbusinessworldwide.com/feed/
+  rss_url: https://feeds.npr.org/510308/podcast.xml
   feed_type: rss
   fetch_interval: 30
   departments:
-  - music
-- name: 'RSS: News'
+  - science
+- name: TechGenyz
   url: ''
-  rss_url: http://pitchfork.com/rss/news
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - music
-- name: Song Exploder
-  url: ''
-  rss_url: http://songexploder.net/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - music
-- name: Your EDM
-  url: ''
-  rss_url: https://www.youredm.com/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - music
-- name: /Film
-  url: ''
-  rss_url: https://feeds2.feedburner.com/slashfilm
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - movies
-- name: Ain't It Cool News Feed
-  url: ''
-  rss_url: https://www.aintitcool.com/node/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - movies
-- name: ComingSoon.net
-  url: ''
-  rss_url: https://www.comingsoon.net/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - movies
-- name: Deadline
-  url: ''
-  rss_url: https://deadline.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - movies
-- name: Film School Rejects
-  url: ''
-  rss_url: https://filmschoolrejects.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - movies
-- name: FirstShowing.net
-  url: ''
-  rss_url: https://www.firstshowing.net/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - movies
-- name: IndieWire
-  url: ''
-  rss_url: https://www.indiewire.com/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - movies
-- name: Movie News and Discussion
-  url: ''
-  rss_url: https://reddit.com/r/movies/.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - movies
-- name: Movies
-  url: ''
-  rss_url: https://www.bleedingcool.com/movies/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - movies
-- name: The A.V. Club
-  url: ''
-  rss_url: https://film.avclub.com/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - movies
-- name: Variety
-  url: ''
-  rss_url: https://variety.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - movies
-- name: TV
-  url: ''
-  rss_url: https://www.bleedingcool.com/tv/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - television
-- name: TV Fanatic
-  url: ''
-  rss_url: https://www.tvfanatic.com/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - television
-- name: TVLine
-  url: ''
-  rss_url: https://tvline.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - television
-- name: Television News and Discussion
-  url: ''
-  rss_url: https://reddit.com/r/television/.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - television
-- name: The A.V. Club
-  url: ''
-  rss_url: https://tv.avclub.com/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - television
-- name: the TV addict
-  url: ''
-  rss_url: http://feeds.feedburner.com/thetvaddict/AXob
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - television
-- name: Escapist Magazine
-  url: ''
-  rss_url: https://www.escapistmagazine.com/v2/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - gaming
-- name: Eurogamer.net
-  url: ''
-  rss_url: https://www.eurogamer.net/?format=rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - gaming
-- name: Gamasutra News
-  url: ''
-  rss_url: http://feeds.feedburner.com/GamasutraNews
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - gaming
-- name: GameSpot - All Content
-  url: ''
-  rss_url: https://www.gamespot.com/feeds/mashup/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - gaming
-- name: IGN All
-  url: ''
-  rss_url: http://feeds.ign.com/ign/all
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - gaming
-- name: Indie Games Plus
-  url: ''
-  rss_url: https://indiegamesplus.com/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - gaming
-- name: Kotaku
-  url: ''
-  rss_url: https://kotaku.com/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - gaming
-- name: Makeup and Beauty Blog | Makeup Reviews, Swatches and How-To Makeup
-  url: ''
-  rss_url: https://www.makeupandbeautyblog.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - gaming
-- name: PlayStation.Blog
-  url: ''
-  rss_url: http://feeds.feedburner.com/psblog
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - gaming
-- name: Polygon -  All
-  url: ''
-  rss_url: https://www.polygon.com/rss/index.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - gaming
-- name: Rock, Paper, Shotgun
-  url: ''
-  rss_url: http://feeds.feedburner.com/RockPaperShotgun
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - gaming
-- name: Steam RSS News Feed
-  url: ''
-  rss_url: https://store.steampowered.com/feeds/news.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - gaming
-- name: The Ancient Gaming Noob
-  url: ''
-  rss_url: http://feeds.feedburner.com/TheAncientGamingNoob
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - gaming
-- name: TouchArcade - iPhone, iPad, Android Games Forum
-  url: ''
-  rss_url: https://toucharcade.com/community/forums/-/index.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - gaming
-- name: Xbox's Major Nelson
-  url: ''
-  rss_url: https://majornelson.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - gaming
-- name: r/gaming
-  url: ''
-  rss_url: https://www.reddit.com/r/gaming.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - gaming
-- name: Latest News and News Headlines | Daily Telegraph
-  url: ''
-  rss_url: https://www.dailytelegraph.com.au/news/breaking-news/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-australia
-- name: Sydney Morning Herald - Latest News
-  url: ''
-  rss_url: https://www.smh.com.au/rss/feed.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-australia
-- name: Latest News and News Headlines | Herald Sun
-  url: ''
-  rss_url: https://www.heraldsun.com.au/news/breaking-news/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-australia
-- name: ABC News
-  url: ''
-  rss_url: https://www.abc.net.au/news/feed/1948/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-australia
-- name: The Age - Latest News
-  url: ''
-  rss_url: https://www.theage.com.au/rss/feed.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-australia
-- name: The Courier Mail
-  url: ''
-  rss_url: https://www.couriermail.com.au/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-australia
-- name: PerthNow
-  url: ''
-  rss_url: https://www.perthnow.com.au/news/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-australia
-- name: The Canberra Times - Local News
-  url: ''
-  rss_url: https://www.canberratimes.com.au/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-australia
-- name: Brisbane Times - Latest News
-  url: ''
-  rss_url: https://www.brisbanetimes.com.au/rss/feed.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-australia
-- name: Independent Australia
-  url: ''
-  rss_url: http://feeds.feedburner.com/IndependentAustralia
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-australia
-- name: Business News - Latest Headlines
-  url: ''
-  rss_url: https://www.businessnews.com.au/rssfeed/latest.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-australia
-- name: InDaily
-  url: ''
-  rss_url: https://indaily.com.au/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-australia
-- name: The Mercury
-  url: ''
-  rss_url: https://www.themercury.com.au/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-australia
-- name: Crikey
-  url: ''
-  rss_url: https://feeds.feedburner.com/com/rCTl
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-australia
-- name: KUSA - News
-  url: ''
-  rss_url: http://rssfeeds.9news.com/kusa/home&x=1
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-australia
-- name: Michael West
-  url: ''
-  rss_url: https://www.michaelwest.com.au/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-australia
-- name: The Daily Star
-  url: ''
-  rss_url: https://www.thedailystar.net/frontpage/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-bangladesh
-- name: BD24Live.com
-  url: ''
-  rss_url: https://www.bd24live.com/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-bangladesh
-- name: bdnews24.com - Home
-  url: ''
-  rss_url: https://bdnews24.com/?widgetName=rssfeed&widgetId=1150&getXmlFeed=true
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-bangladesh
-- name: Bangla News
-  url: ''
-  rss_url: https://www.banglanews24.com/rss/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-bangladesh
-- name: JUGANTOR
-  url: ''
-  rss_url: https://www.jugantor.com/feed/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-bangladesh
-- name: jagonews24.com | rss Feed
-  url: ''
-  rss_url: https://www.jagonews24.com/rss/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-bangladesh
-- name: kalerkantho Kantho
-  url: ''
-  rss_url: https://www.kalerkantho.com/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-bangladesh
-- name: প্রথম আলো
-  url: ''
-  rss_url: https://www.prothomalo.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-bangladesh
-- name: Folha de S.Paulo - Em cima da hora - Principal
-  url: ''
-  rss_url: https://feeds.folha.uol.com.br/emcimadahora/rss091.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-brazil
-- name: Portal EBC - RSS
-  url: ''
-  rss_url: http://www.ebc.com.br/rss/feed.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-brazil
-- name: R7 - Notícias
-  url: ''
-  rss_url: https://noticias.r7.com/feed.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-brazil
-- name: UOL
-  url: ''
-  rss_url: http://rss.home.uol.com.br/index.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-brazil
-- name: The Rio Times
-  url: ''
-  rss_url: https://riotimesonline.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-brazil
-- name: Brasil Wire
-  url: ''
-  rss_url: http://www.brasilwire.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-brazil
-- name: Jornal de Brasília
-  url: ''
-  rss_url: https://jornaldebrasilia.com.br/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-brazil
-- name: CBC | Top Stories News
-  url: ''
-  rss_url: https://www.cbc.ca/cmlink/rss-topstories
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-canada
-- name: CTVNews.ca - Top Stories - Public RSS
-  url: ''
-  rss_url: https://www.ctvnews.ca/rss/ctvnews-ca-top-stories-public-rss-1.822009
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-canada
-- name: ''
-  url: ''
-  rss_url: https://globalnews.ca/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-canada
-- name: Financial Post
-  url: ''
-  rss_url: https://business.financialpost.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-canada
-- name: National Post
-  url: ''
-  rss_url: https://nationalpost.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-canada
-- name: Ottawa Citizen
-  url: ''
-  rss_url: https://ottawacitizen.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-canada
-- name: The Province
-  url: ''
-  rss_url: https://theprovince.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-canada
-- name: LaPresse.ca - Actualités
-  url: ''
-  rss_url: https://www.lapresse.ca/actualites/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-canada
-- name: Toronto Star
-  url: ''
-  rss_url: https://www.thestar.com/content/thestar/feed.RSSManagerServlet.articles.topstories.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-canada
-- name: Toronto Sun - RSS Feed
-  url: ''
-  rss_url: https://torontosun.com/category/news/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-canada
-- name: france24.com
-  url: ''
-  rss_url: https://www.france24.com/en/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-france
-- name: Mediapart
-  url: ''
-  rss_url: https://www.mediapart.fr/articles/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-france
-- name: Paris Star
-  url: ''
-  rss_url: https://www.parisstaronline.com/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-france
-- name: Le Monde.fr - Actualités et Infos en France et dans le monde
-  url: ''
-  rss_url: https://www.lemonde.fr/rss/une.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-france
-- name: L'Obs - A la une
-  url: ''
-  rss_url: https://www.nouvelobs.com/a-la-une/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-france
-- name: Franceinfo - Les Titres
-  url: ''
-  rss_url: https://www.francetvinfo.fr/titres.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-france
-- name: Le Huffington Post
-  url: ''
-  rss_url: https://www.huffingtonpost.fr/feeds/index.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-france
-- name: 'La Dépêche du Midi : actualités et info en direct de la région Occitanie
-    et des environs - ladepeche.fr'
-  url: ''
-  rss_url: https://www.ladepeche.fr/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-france
-- name: Ministry for Europe and Foreign Affairs - Actualités
-  url: ''
-  rss_url: https://www.diplomatie.gouv.fr/spip.php?page=backend-fd&lang=en
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-france
-- name: L'essentiel
-  url: ''
-  rss_url: https://www.sudouest.fr/essentiel/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-france
-- name: Ouest-France - Actualité
-  url: ''
-  rss_url: https://www.ouest-france.fr/rss-en-continu.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-france
-- name: ZEIT ONLINE | Nachrichten, Hintergründe und Debatten
-  url: ''
-  rss_url: http://newsfeed.zeit.de/index
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-germany
-- name: FOCUS Online
-  url: ''
-  rss_url: https://rss.focus.de/fol/XML/rss_folnews.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-germany
-- name: Aktuell - FAZ.NET
-  url: ''
-  rss_url: https://www.faz.net/rss/aktuell/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-germany
-- name: tagesschau.de - Die Nachrichten der ARD
-  url: ''
-  rss_url: http://www.tagesschau.de/xml/rss2
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-germany
-- name: Deutsche Welle
-  url: ''
-  rss_url: https://rss.dw.com/rdf/rss-en-all
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-germany
-- name: Hong Kong Free Press HKFP
-  url: ''
-  rss_url: https://www.hongkongfp.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-hong-kong-sar-china
-- name: The Standard - Latest News
-  url: ''
-  rss_url: https://www.thestandard.com.hk/newsfeed/latest/news.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-hong-kong-sar-china
-- name: 頭條日報 Headline Daily - 頭條網
-  url: ''
-  rss_url: https://hd.stheadline.com/rss/news/daily/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-hong-kong-sar-china
-- name: 香港新聞RSS - 香港經濟日報 hket.com
-  url: ''
-  rss_url: https://www.hket.com/rss/hongkong
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-hong-kong-sar-china
-- name: hongkongnews.net latest rss headlines
-  url: ''
-  rss_url: http://feeds.hongkongnews.net/rss/b82693edf38ebff8
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-hong-kong-sar-china
-- name: BBC News - India
-  url: ''
-  rss_url: http://feeds.bbci.co.uk/news/world/asia/india/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: India | The Guardian
-  url: ''
-  rss_url: https://www.theguardian.com/world/india/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: SEBI RSS Feed
-  url: ''
-  rss_url: https://www.sebi.gov.in/sebirss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: Times of India
-  url: ''
-  rss_url: https://timesofindia.indiatimes.com/rssfeedstopstories.cms
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: The Hindu - Home
-  url: ''
-  rss_url: https://www.thehindu.com/feeder/default.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: NDTV News -   Topstories
-  url: ''
-  rss_url: https://feeds.feedburner.com/ndtvnews-top-stories
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: India Today | Latest Stories
-  url: ''
-  rss_url: https://www.indiatoday.in/rss/home
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: Front Page | The Indian Express
-  url: ''
-  rss_url: http://indianexpress.com/print/front-page/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: Top World News- News18.com
-  url: ''
-  rss_url: https://www.news18.com/rss/world.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: India News
-  url: ''
-  rss_url: https://www.dnaindia.com/feeds/india.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: Firstpost India Latest News
-  url: ''
-  rss_url: https://www.firstpost.com/rss/india.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: Home Page
-  url: ''
-  rss_url: https://www.business-standard.com/rss/home_page_top_stories.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: Outlook India
-  url: ''
-  rss_url: https://www.outlookindia.com/rss/main/magazine
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: Free Press Journal
-  url: ''
-  rss_url: https://www.freepressjournal.in/stories.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: Deccan Chronicle - Latest India news | Breaking news | Hyderabad News | World
-    news | Business news | Politics | Technology news
-  url: ''
-  rss_url: https://www.deccanchronicle.com/rss_feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: Moneycontrol Latest News
-  url: ''
-  rss_url: http://www.moneycontrol.com/rss/latestnews.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: Economic Times
-  url: ''
-  rss_url: https://economictimes.indiatimes.com/rssfeedsdefault.cms
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: News, Latest News, Today's News Headlines, Breaking News, LIVE News - Oneindia
-  url: ''
-  rss_url: https://www.oneindia.com/rss/news-fb.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: Scroll.in
-  url: ''
-  rss_url: http://feeds.feedburner.com/ScrollinArticles.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: The Financial Express
-  url: ''
-  rss_url: https://www.financialexpress.com/feed/
+  rss_url: http://feeds.feedburner.com/techgenyz
   feed_type: rss
   fetch_interval: 30
   departments:
@@ -1944,428 +249,20 @@ sources:
   fetch_interval: 30
   departments:
   - country-india
-- name: TechGenyz
+- name: Consequence
   url: ''
-  rss_url: http://feeds.feedburner.com/techgenyz
+  rss_url: http://consequenceofsound.net/feed
   feed_type: rss
   fetch_interval: 30
   departments:
-  - country-india
-- name: 'Top Stories News - Gujarat Samachar : World''s Leading Gujarati Newspaper'
-  url: ''
-  rss_url: https://www.gujaratsamachar.com/rss/top-stories
+  - music
+- name: Gazeta.pl
+  url: https://www.gazeta.pl
+  rss_url: https://wiadomosci.gazeta.pl/pub/rss/wiadomosci.xml
   feed_type: rss
-  fetch_interval: 30
+  fetch_interval: 10
   departments:
-  - country-india
-- name: 'Marathi News: मराठी बातम्या,  Latest News in Marathi, Breaking Marathi News,
-    Marathi News Paper | Maharashtra Times'
-  url: ''
-  rss_url: https://maharashtratimes.com/rssfeedsdefault.cms
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: Loksattaदेश-विदेश – Loksatta
-  url: ''
-  rss_url: https://www.loksatta.com/desh-videsh/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: Latest News program News18 Lokmat
-  url: ''
-  rss_url: https://lokmat.news18.com/rss/program.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: OpIndia
-  url: ''
-  rss_url: https://feeds.feedburner.com/opindia
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: ThePrint
-  url: ''
-  rss_url: https://theprint.in/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: Swarajya
-  url: ''
-  rss_url: https://prod-qt-images.s3.amazonaws.com/production/swarajya/feed.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: Latest And Breaking Hindi News Headlines, News In Hindi | अमर उजाला हिंदी
-    न्यूज़ | - Amar Ujala
-  url: ''
-  rss_url: https://www.amarujala.com/rss/breaking-news.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: Navbharat Times
-  url: ''
-  rss_url: https://navbharattimes.indiatimes.com/rssfeedsdefault.cms
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: 'Patrika : India''s Leading Hindi News Portal'
-  url: ''
-  rss_url: http://api.patrika.com/rss/india-news
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: JansattaJansatta
-  url: ''
-  rss_url: https://www.jansatta.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: Live Hindustan Rss feed
-  url: ''
-  rss_url: https://feed.livehindustan.com/rss/3127
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: देश | दैनिक भास्कर
-  url: ''
-  rss_url: https://www.bhaskar.com/rss-feed/1061/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: ઈન્ડિયા | દિવ્ય ભાસ્કર
-  url: ''
-  rss_url: https://www.divyabhaskar.co.in/rss-feed/1037/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-india
-- name: Republika Online RSS Feed
-  url: ''
-  rss_url: https://www.republika.co.id/rss/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-indonesia
-- name: Tribunnews.com
-  url: ''
-  rss_url: https://www.tribunnews.com/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-indonesia
-- name: Merdeka.com
-  url: ''
-  rss_url: https://www.merdeka.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-indonesia
-- name: Suara.com
-  url: ''
-  rss_url: https://www.suara.com/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-indonesia
-- name: خبرگزاری باشگاه خبرنگاران | آخرین اخبار ایران و جهان | YJC
-  url: ''
-  rss_url: https://www.yjc.ir/fa/rss/allnews
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-iran
-- name: تابناک | TABNAK
-  url: ''
-  rss_url: https://www.tabnak.ir/fa/rss/allnews
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-iran
-- name: خبرگزاری ایسنا | صفحه اصلی |  ISNA News Agency
-  url: ''
-  rss_url: https://www.isna.ir/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-iran
-- name: خبرگزاری مهر | اخبار ایران و جهان | Mehr News Agency
-  url: ''
-  rss_url: https://www.mehrnews.com/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-iran
-- name: خبرگزاری خبرآنلاین - آخرین اخبار ایران و جهان | Khabaronline
-  url: ''
-  rss_url: https://www.khabaronline.ir/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-iran
-- name: اخبار ایران و جهان
-  url: ''
-  rss_url: https://www.tasnimnews.com/fa/rss/feed/0/8/0/%D9%85%D9%87%D9%85%D8%AA%D8%B1%DB%8C%D9%86-%D8%A7%D8%AE%D8%A8%D8%A7%D8%B1-%D8%AA%D8%B3%D9%86%DB%8C%D9%85
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-iran
-- name: عصر ايران
-  url: ''
-  rss_url: https://www.asriran.com/fa/rss/allnews
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-iran
-- name: TheJournal.ie
-  url: ''
-  rss_url: https://www.thejournal.ie/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-ireland
-- name: 'All: BreakingNews.ie'
-  url: ''
-  rss_url: https://feeds.breakingnews.ie/bntopstories
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-ireland
-- name: The42
-  url: ''
-  rss_url: https://www.the42.ie/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-ireland
-- name: IrishExaminer.com
-  url: ''
-  rss_url: https://feeds.feedburner.com/ietopstories
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-ireland
-- name: IrishCentral.com - Top Stories
-  url: ''
-  rss_url: https://feeds.feedburner.com/IrishCentral
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-ireland
-- name: Irish Mirror - Home
-  url: ''
-  rss_url: https://www.irishmirror.ie/?service=rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-ireland
-- name: RSS di   - ANSA.it
-  url: ''
-  rss_url: https://www.ansa.it/sito/ansait_rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-italy
-- name: The Local
-  url: ''
-  rss_url: https://feeds.thelocal.com/rss/it
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-italy
-- name: RSS DiariodelWeb.it
-  url: ''
-  rss_url: https://www.diariodelweb.it/rss/home/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-italy
-- name: Fanpage
-  url: ''
-  rss_url: https://www.fanpage.it/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-italy
-- name: Libero Quotidiano
-  url: ''
-  rss_url: https://www.liberoquotidiano.it/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-italy
-- name: Il Mattino Web
-  url: ''
-  rss_url: https://www.ilmattino.it/?sez=XML&args&p=search&args[box]=Home&limit=20&layout=rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-italy
-- name: Adnkronos - ultimoratop
-  url: ''
-  rss_url: http://rss.adnkronos.com/RSS_PrimaPagina.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-italy
-- name: Milan News
-  url: ''
-  rss_url: https://www.milannews.it/rss/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-italy
-- name: Internazionale
-  url: ''
-  rss_url: https://www.internazionale.it/sitemaps/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-italy
-- name: Panorama
-  url: ''
-  rss_url: https://www.panorama.it/feeds/feed.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-italy
-- name: Italy | The Guardian
-  url: ''
-  rss_url: https://www.theguardian.com/world/italy/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-italy
-- name: Repubblica.it > Homepage
-  url: ''
-  rss_url: https://www.repubblica.it/rss/homepage/rss2.0.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-italy
-- name: Il Post
-  url: ''
-  rss_url: https://www.ilpost.it/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-italy
-- name: Japan Times latest articles
-  url: ''
-  rss_url: https://www.japantimes.co.jp/feed/topstories/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-japan
-- name: Japan Today
-  url: ''
-  rss_url: https://japantoday.com/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-japan
-- name: News On Japan
-  url: ''
-  rss_url: http://www.newsonjapan.com/rss/top.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-japan
-- name: All - Kyodo News+
-  url: ''
-  rss_url: https://english.kyodonews.net/rss/all.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-japan
-- name: BRIDGE（ブリッジ）テクノロジー＆スタートアップ情報
-  url: ''
-  rss_url: http://feeds.feedburner.com/SdJapan
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-japan
-- name: NYT > Japan
-  url: ''
-  rss_url: https://www.nytimes.com/svc/collections/v1/publish/http://www.nytimes.com/topic/destination/japan/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-japan
-- name: ライブドアニュース - 主要トピックス
-  url: ''
-  rss_url: https://news.livedoor.com/topics/rss/top.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-japan
-- name: 朝日新聞デジタル
-  url: ''
-  rss_url: http://rss.asahi.com/rss/asahi/newsheadlines.rdf
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-japan
-- name: Mexico | The Guardian
-  url: ''
-  rss_url: https://www.theguardian.com/world/mexico/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-mexico
-- name: Excélsior - RSS
-  url: ''
-  rss_url: https://www.excelsior.com.mx/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-mexico
-- name: Reforma
-  url: ''
-  rss_url: https://www.reforma.com/rss/portada.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-mexico
-- name: Lo último en Vanguardia MX
-  url: ''
-  rss_url: https://vanguardia.com.mx/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-mexico
-- name: Portada, El Siglo de Torreón
-  url: ''
-  rss_url: https://www.elsiglodetorreon.com.mx/index.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-mexico
-- name: El Financiero
-  url: ''
-  rss_url: https://www.elfinanciero.com.mx/arc/outboundfeeds/rss/?outputType=xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-mexico
-- name: ElNorte
-  url: ''
-  rss_url: https://www.elnorte.com/rss/portada.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-mexico
+  - konkurencja-ogolne-lifestyle
 - name: 'El Informador :: Noticias de Jalisco, México, Deportes & Entretenimiento'
   url: ''
   rss_url: https://www.informador.mx/rss/ultimas-noticias.xml
@@ -2373,846 +270,20 @@ sources:
   fetch_interval: 30
   departments:
   - country-mexico
-- name: 24 Horas
+- name: 'Top Stories News - Gujarat Samachar : World''s Leading Gujarati Newspaper'
   url: ''
-  rss_url: https://www.24-horas.mx/feed/
+  rss_url: https://www.gujaratsamachar.com/rss/top-stories
   feed_type: rss
   fetch_interval: 30
   departments:
-  - country-mexico
-- name: Tu Periódico Quequi
-  url: ''
-  rss_url: https://quequi.com.mx/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-mexico
-- name: DEBATE
-  url: ''
-  rss_url: https://www.debate.com.mx/rss/feed.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-mexico
-- name: Mexico News Daily
-  url: ''
-  rss_url: https://mexiconewsdaily.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-mexico
-- name: El Diario
-  url: ''
-  rss_url: https://diario.mx/jrz/media/sitemaps/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-mexico
-- name: 8 Columnas
-  url: ''
-  rss_url: https://8columnas.com.mx/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-mexico
-- name: ''
-  url: ''
-  rss_url: https://www.eluniversal.com.mx/seccion/1671/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-mexico
-- name: Myanmar Gazette News Media Forum Network
-  url: ''
-  rss_url: http://myanmargazette.net/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-myanmar-burma
-- name: DVB Multimedia Group
-  url: ''
-  rss_url: http://www.dvb.no/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-myanmar-burma
-- name: THIT HTOO LWIN (Daily News)
-  url: ''
-  rss_url: http://www.thithtoolwin.com/feeds/posts/default
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-myanmar-burma
-- name: All Content
-  url: ''
-  rss_url: http://saharareporters.com/feeds/latest/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-nigeria
-- name: Nigeria News Links | Today's Updates - Nigerian Bulletin
-  url: ''
-  rss_url: https://www.nigerianbulletin.com/forums/-/index.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-nigeria
-- name: Nigerian News. Latest Nigeria News. Your online Nigerian Newspaper.
-  url: ''
-  rss_url: http://feeds.feedburner.com/Nigerianeye
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-nigeria
-- name: Legit.ng
-  url: ''
-  rss_url: https://www.legit.ng/rss/all.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-nigeria
-- name: Latest Nigeria News, Nigerian Newspapers, Politics
-  url: ''
-  rss_url: https://thenationonlineng.net/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-nigeria
-- name: Daily Post Nigeria
-  url: ''
-  rss_url: https://dailypost.ng/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-nigeria
-- name: Premium Times Nigeria
-  url: ''
-  rss_url: https://www.premiumtimesng.com/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-nigeria
-- name: Information Nigeria
-  url: ''
-  rss_url: https://www.informationng.com/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-nigeria
-- name: The Guardian Nigeria News – Nigeria and World News
-  url: ''
-  rss_url: https://guardian.ng/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-nigeria
-- name: Tribune Online
-  url: ''
-  rss_url: http://tribuneonlineng.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-nigeria
-- name: The Express Tribune
-  url: ''
-  rss_url: https://tribune.com.pk/feed/home
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-pakistan
-- name: The Nation - Top Stories
-  url: ''
-  rss_url: https://nation.com.pk/rss/top-stories
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-pakistan
-- name: قومی خبریں
-  url: ''
-  rss_url: https://jang.com.pk/rss/1/1
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-pakistan
-- name: The News International - Pakistan
-  url: ''
-  rss_url: https://www.thenews.com.pk/rss/1/1
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-pakistan
-- name: News Blog
-  url: ''
-  rss_url: https://newsnblogs.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-pakistan
-- name: UrduPoint.com All Urdu News
-  url: ''
-  rss_url: https://www.urdupoint.com/rss/urdupoint.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-pakistan
-- name: ایکسپریس اردو
-  url: ''
-  rss_url: https://www.express.pk/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-pakistan
-- name: INQUIRER.net
-  url: ''
-  rss_url: https://www.inquirer.net/fullfeed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-philippines
-- name: Latest News | Philippine Information Agency
-  url: ''
-  rss_url: https://pia.gov.ph/news/feed.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-philippines
-- name: Interaksyon
-  url: ''
-  rss_url: https://www.interaksyon.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-philippines
-- name: '- The Manila Times'
-  url: ''
-  rss_url: https://www.manilatimes.net/rssfeed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-philippines
-- name: philstar.com - RSS Headlines
-  url: ''
-  rss_url: https://www.philstar.com/rss/headlines
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-philippines
-- name: BusinessWorld
-  url: ''
-  rss_url: https://www.bworldonline.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-philippines
-- name: https://www.sunstar.com.ph/
-  url: ''
-  rss_url: https://www.sunstar.com.ph/rssFeed/selected
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-philippines
-- name: PhilNews.XYZ
-  url: ''
-  rss_url: https://www.philnews.xyz/feeds/posts/default?alt=rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-philippines
-- name: Manila Standard
-  url: ''
-  rss_url: https://manilastandard.net/feed/all
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-philippines
-- name: GMA News Online / News
-  url: ''
-  rss_url: https://data.gmanews.tv/gno/rss/news/feed.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-philippines
-- name: Current PH
-  url: ''
-  rss_url: https://currentph.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-philippines
-- name: 'Top Gear: The Philippine authority on cars and the automotive industry'
-  url: ''
-  rss_url: https://www.topgear.com.ph/feed/rss1
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-philippines
-- name: Eagle News
-  url: ''
-  rss_url: https://www.eaglenews.ph/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-philippines
-- name: UNBOX PH
-  url: ''
-  rss_url: https://www.unbox.ph/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-philippines
-- name: Tempo – The Nation's Fastest Growing Newspaper
-  url: ''
-  rss_url: http://tempo.com.ph/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-philippines
-- name: Abante Tonite
-  url: ''
-  rss_url: https://tonite.abante.com.ph/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-philippines
-- name: BusinessMirror
-  url: ''
-  rss_url: https://businessmirror.com.ph/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-philippines
-- name: Latest News | Philippine News Agency
-  url: ''
-  rss_url: https://www.pna.gov.ph/latest.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-philippines
-- name: 'TechPinas : Philippines'' Technology News, Tips and Reviews Blog'
-  url: ''
-  rss_url: http://feeds.feedburner.com/Techpinas
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-philippines
-- name: BICOL STANDARD | Bicol News | Bicol Newspaper
-  url: ''
-  rss_url: http://www.bicolstandard.com/feeds/posts/default?alt=rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-philippines
-- name: Najnowsze
-  url: ''
-  rss_url: http://feeds.feedburner.com/wPolitycepl
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-poland
-- name: Newsweek Polska
-  url: ''
-  rss_url: https://www.newsweek.pl/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-poland
-- name: Dziennik.pl Dziennik - dziennik.pl
-  url: ''
-  rss_url: http://rss.dziennik.pl/Dziennik-PL/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-poland
-- name: www.wirtualnemedia.pl
-  url: ''
-  rss_url: https://www.wirtualnemedia.pl/rss/wirtualnemedia_rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-poland
-- name: GazetaPrawna.pl - biznes, podatki, prawo, finanse, wiadomości, praca
-  url: ''
-  rss_url: http://rss.gazetaprawna.pl/GazetaPrawna
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-poland
-- name: https://www.rp.pl
-  url: ''
-  rss_url: https://www.rp.pl/rss/1019
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-poland
-- name: Polska Agencja Prasowa SA
-  url: ''
-  rss_url: https://www.pap.pl/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-poland
-- name: RMF24.pl
-  url: ''
-  rss_url: https://www.rmf24.pl/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-poland
-- name: SowetanLIVE
-  url: ''
-  rss_url: https://www.sowetanlive.co.za/rss/?publication=sowetan-live
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-south-africa
-- name: TechCentral
-  url: ''
-  rss_url: https://techcentral.co.za/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-south-africa
-- name: News24 Top Stories
-  url: ''
-  rss_url: http://feeds.news24.com/articles/news24/TopStories/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-south-africa
-- name: Eyewitness News | Latest News
-  url: ''
-  rss_url: https://ewn.co.za/RSS%20Feeds/Latest%20News
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-south-africa
-- name: The Citizen
-  url: ''
-  rss_url: https://citizen.co.za/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-south-africa
-- name: Daily Maverick
-  url: ''
-  rss_url: https://www.dailymaverick.co.za/dmrss/
+  - country-india
+- name: Interia
+  url: https://www.interia.pl
+  rss_url: https://fakty.interia.pl/feed
   feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-south-africa
-- name: Moneyweb
-  url: ''
-  rss_url: https://www.moneyweb.co.za/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-south-africa
-- name: IOL section feed for News
-  url: ''
-  rss_url: http://rss.iol.io/iol/news
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-south-africa
-- name: TimesLIVE
-  url: ''
-  rss_url: https://www.timeslive.co.za/rss/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-south-africa
-- name: The South African
-  url: ''
-  rss_url: https://www.thesouthafrican.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-south-africa
-- name: Axios
-  url: ''
-  rss_url: https://api.axios.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-south-africa
-- name: The Local
-  url: ''
-  rss_url: https://feeds.thelocal.com/rss/es
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-spain
-- name: 'EL PAÍS: el periódico global'
-  url: ''
-  rss_url: https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/portada
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-spain
-- name: España
-  url: ''
-  rss_url: https://rss.elconfidencial.com/espana/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-spain
-- name: ElDiario.es - ElDiario.es
-  url: ''
-  rss_url: https://www.eldiario.es/rss/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-spain
-- name: Portada // expansion
-  url: ''
-  rss_url: https://e00-expansion.uecdn.es/rss/portada.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-spain
-- name: El Periódico - portada
-  url: ''
-  rss_url: https://www.elperiodico.com/es/rss/rss_portada.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-spain
-- name: huffingtonpost.es
-  url: ''
-  rss_url: https://www.huffingtonpost.es/feeds/index.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-spain
-- name: Euro Weekly News Spain
-  url: ''
-  rss_url: https://www.euroweeklynews.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-spain
-- name: Agencia EFE | www.efe.com | English edition
-  url: ''
-  rss_url: https://www.efe.com/efe/english/4/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-spain
-- name: News Agency UNIAN
-  url: ''
-  rss_url: https://rss.unian.net/site/news_eng.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-ukraine
-- name: ТЕЛЕГРАФ - последние новости Украины и мира
-  url: ''
-  rss_url: https://telegraf.com.ua/yandex-feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-ukraine
-- name: Последние новости на сайте korrespondent.net
-  url: ''
-  rss_url: http://k.img.com.ua/rss/ru/all_news2.0.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-ukraine
-- name: Цензор.НЕТ - Новости
-  url: ''
-  rss_url: https://censor.net.ua/includes/news_ru.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-ukraine
-- name: Новини на tsn.ua
-  url: ''
-  rss_url: https://tsn.ua/rss/full.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-ukraine
-- name: Українська правда
-  url: ''
-  rss_url: https://www.pravda.com.ua/rss/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-ukraine
-- name: Гордон - Самые популярные материалы
-  url: ''
-  rss_url: https://gordonua.com/xml/rss_category/top.html
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-ukraine
-- name: НВ
-  url: ''
-  rss_url: https://nv.ua/rss/all.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-ukraine
-- name: Информационное агентство УНИАН
-  url: ''
-  rss_url: https://rss.unian.net/site/news_rus.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-ukraine
-- name: Еспресо - український погляд на світ!
-  url: ''
-  rss_url: https://espreso.tv/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-ukraine
-- name: Gazeta.ua
-  url: ''
-  rss_url: https://gazeta.ua/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-ukraine
-- name: Вести.ua
-  url: ''
-  rss_url: https://vesti.ua/feeds/partners
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-ukraine
-- name: BBC News - Home
-  url: ''
-  rss_url: http://feeds.bbci.co.uk/news/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-united-kingdom
-- name: Home | Mail Online
-  url: ''
-  rss_url: https://www.dailymail.co.uk/home/index.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-united-kingdom
-- name: The Independent
-  url: ''
-  rss_url: http://www.independent.co.uk/news/uk/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-united-kingdom
-- name: 'Daily Express :: News Feed'
-  url: ''
-  rss_url: http://feeds.feedburner.com/daily-express-news-showbiz
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-united-kingdom
-- name: World News - Breaking News, Top Stories
-  url: ''
-  rss_url: https://www.huffpost.com/section/world-news/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-united-states
-- name: NYT > Top Stories
-  url: ''
-  rss_url: https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-united-states
-- name: FOX News
-  url: ''
-  rss_url: http://feeds.foxnews.com/foxnews/latest
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-united-states
-- name: 'WSJ.com: World News'
-  url: ''
-  rss_url: https://feeds.a.dj.com/rss/RSSWorldNews.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-united-states
-- name: World & Nation
-  url: ''
-  rss_url: https://www.latimes.com/world-nation/rss2.0.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-united-states
-- name: CNN.com - RSS Channel - App International Edition
-  url: ''
-  rss_url: http://rss.cnn.com/rss/edition.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-united-states
-- name: Yahoo News - Latest News & Headlines
-  url: ''
-  rss_url: https://news.yahoo.com/rss/mostviewed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-united-states
-- name: US Top News and Analysis
-  url: ''
-  rss_url: https://www.cnbc.com/id/100003114/device/rss/rss.html
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-united-states
-- name: Playbook
-  url: ''
-  rss_url: https://rss.politico.com/playbook.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-united-states
-- name: All News
-  url: ''
-  rss_url: https://www.investing.com/rss/news.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - business-economy
-- name: Bloomberg Quicktake
-  url: ''
-  rss_url: https://www.youtube.com/feeds/videos.xml?user=Bloomberg
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - business-economy
-- name: Breaking News on Seeking Alpha
-  url: ''
-  rss_url: https://seekingalpha.com/market_currents.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - business-economy
-- name: Business Insider
-  url: ''
-  rss_url: https://www.youtube.com/feeds/videos.xml?user=businessinsider
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - business-economy
-- name: Duct Tape Marketing
-  url: ''
-  rss_url: https://ducttape.libsyn.com/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - business-economy
-- name: Forbes - Business
-  url: ''
-  rss_url: https://www.forbes.com/business/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - business-economy
-- name: Fortune
-  url: ''
-  rss_url: https://fortune.com/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - business-economy
-- name: HBR IdeaCast
-  url: ''
-  rss_url: http://feeds.harvardbusiness.org/harvardbusiness/ideacast
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - business-economy
-- name: Startup Stories - Mixergy
-  url: ''
-  rss_url: https://feeds.feedburner.com/Mixergy-main-podcast
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - business-economy
-- name: The Blog of Author Tim Ferriss
-  url: ''
-  rss_url: https://tim.blog/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - business-economy
-- name: The Growth Show
-  url: ''
-  rss_url: http://thegrowthshow.hubspot.libsynpro.com/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - business-economy
-- name: Yahoo Finance
-  url: ''
-  rss_url: https://finance.yahoo.com/news/rssindex
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - business-economy
-- name: 60-Second Science
-  url: ''
-  rss_url: http://rss.sciam.com/sciam/60secsciencepodcast
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - science
-- name: BBC News - Science  Environment
-  url: ''
-  rss_url: http://feeds.bbci.co.uk/news/science_and_environment/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - science
-- name: Discovery
-  url: ''
-  rss_url: https://podcasts.files.bbci.co.uk/p002w557.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - science
-- name: FlowingData
-  url: ''
-  rss_url: https://flowingdata.com/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - science
-- name: Gizmodo
-  url: ''
-  rss_url: https://gizmodo.com/tag/science/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - science
-- name: Hidden Brain
-  url: ''
-  rss_url: https://feeds.npr.org/510308/podcast.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - science
-- name: Invisibilia
-  url: ''
-  rss_url: https://feeds.npr.org/510307/podcast.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - science
-- name: Latest Science News -- ScienceDaily
-  url: ''
-  rss_url: https://www.sciencedaily.com/rss/all.xml
-  feed_type: rss
-  fetch_interval: 30
+  fetch_interval: 10
   departments:
-  - science
+  - konkurencja-ogolne-lifestyle
 - name: NYT > Science
   url: ''
   rss_url: https://rss.nytimes.com/services/xml/rss/nyt/Science.xml
@@ -3220,6 +291,98 @@ sources:
   fetch_interval: 30
   departments:
   - science
+- name: TVN24
+  url: https://www.tvn24.pl
+  rss_url: https://tvn24.pl/najnowsze.xml
+  feed_type: rss
+  fetch_interval: 5
+  departments:
+  - konkurencja-ogolne-lifestyle
+- name: PravdaReport
+  url: ''
+  rss_url: https://www.pravdareport.com/export.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-russia
+- name: Al Jazeera English
+  url: ''
+  rss_url: https://www.aljazeera.com/xml/rss/all.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - news-world
+- name: 'RSS: News'
+  url: ''
+  rss_url: http://pitchfork.com/rss/news
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - music
+- name: Newseria Innowacje
+  url: https://innowacje.newseria.pl
+  rss_url: https://innowacje.newseria.pl/rss.php
+  feed_type: rss
+  fetch_interval: 15
+  departments:
+  - science-high-tech
+  - cyber-digital
+- name: Polsat News
+  url: https://www.polsatnews.pl
+  rss_url: https://www.polsatnews.pl/rss
+  feed_type: rss
+  fetch_interval: 10
+  departments:
+  - konkurencja-ogolne-lifestyle
+- name: Loksattaदेश-विदेश – Loksatta
+  url: ''
+  rss_url: https://www.loksatta.com/desh-videsh/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-india
+- name: DEBATE
+  url: ''
+  rss_url: https://www.debate.com.mx/rss/feed.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-mexico
+- name: NPR News
+  url: ''
+  rss_url: https://feeds.npr.org/1001/rss.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - news-world
+- name: Fakt
+  url: https://www.fakt.pl
+  rss_url: https://www.fakt.pl/rss
+  feed_type: rss
+  fetch_interval: 10
+  departments:
+  - konkurencja-ogolne-lifestyle
+- name: Tu Periódico Quequi
+  url: ''
+  rss_url: https://quequi.com.mx/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-mexico
+- name: Latest Science News -- ScienceDaily
+  url: ''
+  rss_url: https://www.sciencedaily.com/rss/all.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - science
+- name: Song Exploder
+  url: ''
+  rss_url: http://songexploder.net/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - music
 - name: Probably Science
   url: ''
   rss_url: https://probablyscience.libsyn.com/rss
@@ -3227,6 +390,63 @@ sources:
   fetch_interval: 30
   departments:
   - science
+- name: Policja.pl
+  url: https://policja.pl
+  rss_url: https://policja.pl/dokumenty/rss/1-rss-1.rss
+  feed_type: rss
+  fetch_interval: 10
+  departments:
+  - defence-geopolitics
+  - konkurencja-ogolne-lifestyle
+- name: /Film
+  url: ''
+  rss_url: https://feeds2.feedburner.com/slashfilm
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - movies
+- name: Mexico News Daily
+  url: ''
+  rss_url: https://mexiconewsdaily.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-mexico
+- name: Ain't It Cool News Feed
+  url: ''
+  rss_url: https://www.aintitcool.com/node/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - movies
+- name: NaTemat
+  url: https://natemat.pl
+  rss_url: https://natemat.pl/rss/wszystkie
+  feed_type: rss
+  fetch_interval: 10
+  departments:
+  - konkurencja-ogolne-lifestyle
+- name: 'Sawbones: A Marital Tour of Misguided Medicine'
+  url: ''
+  rss_url: https://feeds.simplecast.com/y1LF_sn2
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - science
+- name: OpIndia
+  url: ''
+  rss_url: https://feeds.feedburner.com/opindia
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-india
+- name: ProPublica
+  url: ''
+  rss_url: https://feeds.propublica.org/propublica/main
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - news-world
 - name: Radiolab
   url: ''
   rss_url: http://feeds.wnyc.org/radiolab
@@ -3241,13 +461,6 @@ sources:
   fetch_interval: 30
   departments:
   - science
-- name: 'Sawbones: A Marital Tour of Misguided Medicine'
-  url: ''
-  rss_url: https://feeds.simplecast.com/y1LF_sn2
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - science
 - name: Science Latest
   url: ''
   rss_url: https://www.wired.com/feed/category/science/latest/rss
@@ -3255,16 +468,115 @@ sources:
   fetch_interval: 30
   departments:
   - science
-- name: Science Vs
+- name: Glamour PL
+  url: https://www.glamour.pl
+  rss_url: https://www.glamour.pl/feed/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - konkurencja-ogolne-lifestyle
+- name: The Economist
   url: ''
-  rss_url: http://feeds.gimletmedia.com/ScienceVs
+  rss_url: https://www.economist.com/international/rss.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - news-world
+- name: BBC News - World
+  url: ''
+  rss_url: http://feeds.bbci.co.uk/news/world/rss.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - news
+- name: ComingSoon.net
+  url: ''
+  rss_url: https://www.comingsoon.net/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - movies
+- name: ThePrint
+  url: ''
+  rss_url: https://theprint.in/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-india
+- name: Science Magazine
+  url: ''
+  rss_url: https://www.science.org/action/showFeed?type=etoc&feed=rss&jc=science
   feed_type: rss
   fetch_interval: 30
   departments:
   - science
+- name: 8 Columnas
+  url: ''
+  rss_url: https://8columnas.com.mx/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-mexico
+- name: Latest And Breaking Hindi News Headlines, News In Hindi | अमर उजाला हिंदी
+    न्यूज़ | - Amar Ujala
+  url: ''
+  rss_url: https://www.amarujala.com/rss/breaking-news.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-india
+- name: CNN.com - RSS Channel - World
+  url: ''
+  rss_url: http://rss.cnn.com/rss/edition_world.rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - news
+- name: El Diario
+  url: ''
+  rss_url: https://diario.mx/jrz/media/sitemaps/rss.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-mexico
+- name: Swarajya
+  url: ''
+  rss_url: https://prod-qt-images.s3.amazonaws.com/production/swarajya/feed.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-india
 - name: Science-Based Medicine
   url: ''
   rss_url: https://sciencebasedmedicine.org/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - science
+- name: Nature News
+  url: ''
+  rss_url: https://www.nature.com/nature.rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - science
+- name: 'International: Top News And Analysis'
+  url: ''
+  rss_url: https://www.cnbc.com/id/100727362/device/rss/rss.html
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - news
+- name: Ars Technica
+  url: ''
+  rss_url: https://feeds.arstechnica.com/arstechnica/index
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - tech
+- name: ArXiv CS
+  url: ''
+  rss_url: https://rss.arxiv.org/rss/cs
   feed_type: rss
   fetch_interval: 30
   departments:
@@ -3276,16 +588,86 @@ sources:
   fetch_interval: 30
   departments:
   - science
-- name: Shirtloads of Science
+- name: FirstShowing.net
   url: ''
-  rss_url: https://shirtloadsofscience.libsyn.com/rss
+  rss_url: https://www.firstshowing.net/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - movies
+- name: NDTV News - World-news
+  url: ''
+  rss_url: http://feeds.feedburner.com/ndtvnews-world-news
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - news
+- name: Myanmar Gazette News Media Forum Network
+  url: ''
+  rss_url: http://myanmargazette.net/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-myanmar-burma
+- name: Deadline
+  url: ''
+  rss_url: https://deadline.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - movies
+- name: NYT > World News
+  url: ''
+  rss_url: https://rss.nytimes.com/services/xml/rss/nyt/World.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - news
+- name: TechCrunch
+  url: ''
+  rss_url: https://techcrunch.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - tech
+- name: Wired
+  url: ''
+  rss_url: https://www.wired.com/feed/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - tech
+- name: Top stories - Google News
+  url: ''
+  rss_url: https://news.google.com/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - news
+- name: JansattaJansatta
+  url: ''
+  rss_url: https://www.jansatta.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-india
+- name: TED Talks Daily (SD video)
+  url: ''
+  rss_url: https://pa.tedcdn.com/feeds/talks.rss
   feed_type: rss
   fetch_interval: 30
   departments:
   - science
-- name: TED Talks Daily (SD video)
+- name: Movie News and Discussion
   url: ''
-  rss_url: https://pa.tedcdn.com/feeds/talks.rss
+  rss_url: https://reddit.com/r/movies/.rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - movies
+- name: Shirtloads of Science
+  url: ''
+  rss_url: https://shirtloadsofscience.libsyn.com/rss
   feed_type: rss
   fetch_interval: 30
   departments:
@@ -3297,6 +679,112 @@ sources:
   fetch_interval: 30
   departments:
   - science
+- name: Nigeria News Links | Today's Updates - Nigerian Bulletin
+  url: ''
+  rss_url: https://www.nigerianbulletin.com/forums/-/index.rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-nigeria
+- name: Foreign Affairs
+  url: ''
+  rss_url: https://www.foreignaffairs.com/rss.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - defence-geopolitics
+- name: IndieWire
+  url: ''
+  rss_url: https://www.indiewire.com/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - movies
+- name: देश | दैनिक भास्कर
+  url: ''
+  rss_url: https://www.bhaskar.com/rss-feed/1061/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-india
+- name: Variety
+  url: ''
+  rss_url: https://variety.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - movies
+- name: ઈન્ડિયા | દિવ્ય ભાસ્કર
+  url: ''
+  rss_url: https://www.divyabhaskar.co.in/rss-feed/1037/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-india
+- name: Nigerian News. Latest Nigeria News. Your online Nigerian Newspaper.
+  url: ''
+  rss_url: http://feeds.feedburner.com/Nigerianeye
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-nigeria
+- name: Legit.ng
+  url: ''
+  rss_url: https://www.legit.ng/rss/all.rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-nigeria
+- name: Movies
+  url: ''
+  rss_url: https://www.bleedingcool.com/movies/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - movies
+- name: World News Headlines, Latest International News, World Breaking News - Times
+    of India
+  url: ''
+  rss_url: https://timesofindia.indiatimes.com/rssfeeds/296589292.cms
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - news
+- name: War on the Rocks
+  url: ''
+  rss_url: https://warontherocks.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - defence-geopolitics
+- name: Latest Nigeria News, Nigerian Newspapers, Politics
+  url: ''
+  rss_url: https://thenationonlineng.net/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-nigeria
+- name: World News
+  url: ''
+  rss_url: https://www.reddit.com/r/worldnews/.rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - news
+- name: Republika Online RSS Feed
+  url: ''
+  rss_url: https://www.republika.co.id/rss/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-indonesia
+- name: Analog(ue)
+  url: ''
+  rss_url: https://www.relay.fm/analogue/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - tech
 - name: This Week in Science – The Kickass Science Podcast
   url: ''
   rss_url: http://www.twis.org/feed/
@@ -3304,16 +792,16 @@ sources:
   fetch_interval: 30
   departments:
   - science
-- name: Accidental Tech Podcast
+- name: TV
   url: ''
-  rss_url: https://atp.fm/rss
+  rss_url: https://www.bleedingcool.com/tv/feed/
   feed_type: rss
   fetch_interval: 30
   departments:
-  - tech
-- name: Analog(ue)
+  - television
+- name: Accidental Tech Podcast
   url: ''
-  rss_url: https://www.relay.fm/analogue/feed
+  rss_url: https://atp.fm/rss
   feed_type: rss
   fetch_interval: 30
   departments:
@@ -3332,6 +820,48 @@ sources:
   fetch_interval: 30
   departments:
   - tech
+- name: World news | The Guardian
+  url: ''
+  rss_url: https://www.theguardian.com/world/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - news
+- name: Premium Times Nigeria
+  url: ''
+  rss_url: https://www.premiumtimesng.com/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-nigeria
+- name: Daily Post Nigeria
+  url: ''
+  rss_url: https://dailypost.ng/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-nigeria
+- name: TVLine
+  url: ''
+  rss_url: https://tvline.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - television
+- name: Tribunnews.com
+  url: ''
+  rss_url: https://www.tribunnews.com/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-indonesia
+- name: Bloomberg
+  url: ''
+  rss_url: https://feeds.bloomberg.com/markets/news.rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - business
 - name: CNET News
   url: ''
   rss_url: https://www.cnet.com/rss/news/
@@ -3339,6 +869,69 @@ sources:
   fetch_interval: 30
   departments:
   - tech
+- name: New Scientist - Space
+  url: ''
+  rss_url: https://www.newscientist.com/subject/space/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - space
+- name: Financial Times
+  url: ''
+  rss_url: https://www.ft.com/?format=rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - business
+- name: Information Nigeria
+  url: ''
+  rss_url: https://www.informationng.com/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-nigeria
+- name: the TV addict
+  url: ''
+  rss_url: http://feeds.feedburner.com/thetvaddict/AXob
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - television
+- name: MarketWatch
+  url: ''
+  rss_url: https://feeds.marketwatch.com/marketwatch/topstories/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - business
+- name: Television News and Discussion
+  url: ''
+  rss_url: https://reddit.com/r/television/.rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - television
+- name: Euronews
+  url: ''
+  rss_url: https://www.euronews.com/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - news-europe
+- name: '/r/space: news, articles and discussion'
+  url: ''
+  rss_url: https://www.reddit.com/r/space/.rss?format=xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - space
+- name: Space | The Guardian
+  url: ''
+  rss_url: https://www.theguardian.com/science/space/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - space
 - name: Clockwise
   url: ''
   rss_url: https://www.relay.fm/clockwise/feed
@@ -3353,13 +946,27 @@ sources:
   fetch_interval: 30
   departments:
   - tech
-- name: Hacker News
+- name: Sky & Telescope
   url: ''
-  rss_url: https://news.ycombinator.com/rss
+  rss_url: https://www.skyandtelescope.com/feed/
   feed_type: rss
   fetch_interval: 30
   departments:
-  - tech
+  - space
+- name: Escapist Magazine
+  url: ''
+  rss_url: https://www.escapistmagazine.com/v2/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - gaming
+- name: خبرگزاری ایسنا | صفحه اصلی |  ISNA News Agency
+  url: ''
+  rss_url: https://www.isna.ir/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-iran
 - name: Lifehacker
   url: ''
   rss_url: https://lifehacker.com/rss
@@ -3367,9 +974,86 @@ sources:
   fetch_interval: 30
   departments:
   - tech
+- name: خبرگزاری مهر | اخبار ایران و جهان | Mehr News Agency
+  url: ''
+  rss_url: https://www.mehrnews.com/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-iran
+- name: تابناک | TABNAK
+  url: ''
+  rss_url: https://www.tabnak.ir/fa/rss/allnews
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-iran
+- name: SpaceX
+  url: ''
+  rss_url: https://www.youtube.com/feeds/videos.xml?user=spacexchannel
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - space
+- name: The Express Tribune
+  url: ''
+  rss_url: https://tribune.com.pk/feed/home
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-pakistan
+- name: Politico EU
+  url: ''
+  rss_url: https://www.politico.eu/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - news-europe
+- name: Space.com
+  url: ''
+  rss_url: https://www.space.com/feeds/all
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - space
+- name: Eurogamer.net
+  url: ''
+  rss_url: https://www.eurogamer.net/?format=rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - gaming
 - name: Linus Tech Tips
   url: ''
   rss_url: https://www.youtube.com/feeds/videos.xml?user=LinusTechTips
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - tech
+- name: Gamasutra News
+  url: ''
+  rss_url: http://feeds.feedburner.com/GamasutraNews
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - gaming
+- name: The Nation - Top Stories
+  url: ''
+  rss_url: https://nation.com.pk/rss/top-stories
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-pakistan
+- name: GameSpot - All Content
+  url: ''
+  rss_url: https://www.gamespot.com/feeds/mashup/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - gaming
+- name: Hacker News
+  url: ''
+  rss_url: https://news.ycombinator.com/rss
   feed_type: rss
   fetch_interval: 30
   departments:
@@ -3381,6 +1065,41 @@ sources:
   fetch_interval: 30
   departments:
   - tech
+- name: 'A List Apart: The Full Feed'
+  url: ''
+  rss_url: https://alistapart.com/main/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - web-development
+- name: قومی خبریں
+  url: ''
+  rss_url: https://jang.com.pk/rss/1/1
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-pakistan
+- name: Polsat News
+  url: ''
+  rss_url: https://www.polsatnews.pl/rss/polska.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-poland
+- name: خبرگزاری خبرآنلاین - آخرین اخبار ایران و جهان | Khabaronline
+  url: ''
+  rss_url: https://www.khabaronline.ir/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-iran
+- name: The News International - Pakistan
+  url: ''
+  rss_url: https://www.thenews.com.pk/rss/1/1
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-pakistan
 - name: Mashable
   url: ''
   rss_url: http://feeds.mashable.com/Mashable
@@ -3388,9 +1107,100 @@ sources:
   fetch_interval: 30
   departments:
   - tech
+- name: عصر ايران
+  url: ''
+  rss_url: https://www.asriran.com/fa/rss/allnews
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-iran
+- name: TheJournal.ie
+  url: ''
+  rss_url: https://www.thejournal.ie/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-ireland
+- name: Indie Games Plus
+  url: ''
+  rss_url: https://indiegamesplus.com/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - gaming
+- name: IGN All
+  url: ''
+  rss_url: http://feeds.ign.com/ign/all
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - gaming
+- name: News Blog
+  url: ''
+  rss_url: https://newsnblogs.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-pakistan
 - name: ReadWrite
   url: ''
   rss_url: https://readwrite.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - tech
+- name: CSS-Tricks
+  url: ''
+  rss_url: https://css-tricks.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - web-development
+- name: Code Wall
+  url: ''
+  rss_url: https://www.codewall.co.uk/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - web-development
+- name: UrduPoint.com All Urdu News
+  url: ''
+  rss_url: https://www.urdupoint.com/rss/urdupoint.rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-pakistan
+- name: Do Rzeczy
+  url: ''
+  rss_url: https://dorzeczy.pl/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-poland
+- name: ایکسپریس اردو
+  url: ''
+  rss_url: https://www.express.pk/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-pakistan
+- name: 'All: BreakingNews.ie'
+  url: ''
+  rss_url: https://feeds.breakingnews.ie/bntopstories
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-ireland
+- name: Kotaku
+  url: ''
+  rss_url: https://kotaku.com/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - gaming
+- name: Slashdot
+  url: ''
+  rss_url: http://rss.slashdot.org/Slashdot/slashdotMain
   feed_type: rss
   fetch_interval: 30
   departments:
@@ -3402,13 +1212,69 @@ sources:
   fetch_interval: 30
   departments:
   - tech
-- name: Slashdot
+- name: The42
   url: ''
-  rss_url: http://rss.slashdot.org/Slashdot/slashdotMain
+  rss_url: https://www.the42.ie/feed/
   feed_type: rss
   fetch_interval: 30
   departments:
-  - tech
+  - country-ireland
+- name: Mozilla Hacks – the Web developer blog
+  url: ''
+  rss_url: https://hacks.mozilla.org/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - web-development
+- name: Krytyka Polityczna
+  url: ''
+  rss_url: https://krytykapolityczna.pl/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-poland
+- name: David Walsh Blog
+  url: ''
+  rss_url: https://davidwalsh.name/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - web-development
+- name: Sink In - Tech and Travel
+  url: ''
+  rss_url: https://gosink.in/rss/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - web-development
+- name: IrishExaminer.com
+  url: ''
+  rss_url: https://feeds.feedburner.com/ietopstories
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-ireland
+- name: PlayStation.Blog
+  url: ''
+  rss_url: http://feeds.feedburner.com/psblog
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - gaming
+- name: Hospodářské noviny (CZ)
+  url: ''
+  rss_url: https://hn.cz/?p=rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-czech
+- name: IrishCentral.com - Top Stories
+  url: ''
+  rss_url: https://feeds.feedburner.com/IrishCentral
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-ireland
 - name: Stratechery by Ben Thompson
   url: ''
   rss_url: http://stratechery.com/feed/
@@ -3416,6 +1282,41 @@ sources:
   fetch_interval: 30
   departments:
   - tech
+- name: Denník N (SK)
+  url: ''
+  rss_url: https://dennikn.sk/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-slovakia
+- name: Irish Mirror - Home
+  url: ''
+  rss_url: https://www.irishmirror.ie/?service=rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-ireland
+- name: BBC Sport - Sport
+  url: ''
+  rss_url: http://feeds.bbci.co.uk/sport/rss.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - sports
+- name: Rock, Paper, Shotgun
+  url: ''
+  rss_url: http://feeds.feedburner.com/RockPaperShotgun
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - gaming
+- name: HVG (HU)
+  url: ''
+  rss_url: https://hvg.hu/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-hungary
 - name: TechCrunch
   url: ''
   rss_url: http://feeds.feedburner.com/TechCrunch
@@ -3423,6 +1324,48 @@ sources:
   fetch_interval: 30
   departments:
   - tech
+- name: Makeup and Beauty Blog | Makeup Reviews, Swatches and How-To Makeup
+  url: ''
+  rss_url: https://www.makeupandbeautyblog.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - gaming
+- name: Polygon -  All
+  url: ''
+  rss_url: https://www.polygon.com/rss/index.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - gaming
+- name: RSS di   - ANSA.it
+  url: ''
+  rss_url: https://www.ansa.it/sito/ansait_rss.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-italy
+- name: Steam RSS News Feed
+  url: ''
+  rss_url: https://store.steampowered.com/feeds/news.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - gaming
+- name: Updates
+  url: ''
+  rss_url: https://developers.google.com/web/updates/rss.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - web-development
+- name: RUSI
+  url: https://www.rusi.org
+  rss_url: https://www.rusi.org/rusi-rss-feeds
+  feed_type: rss
+  fetch_interval: 60
+  departments:
+  - defence-geopolitics
 - name: The Keyword
   url: ''
   rss_url: https://www.blog.google/rss/
@@ -3430,6 +1373,13 @@ sources:
   fetch_interval: 30
   departments:
   - tech
+- name: Telex.hu (HU)
+  url: ''
+  rss_url: https://telex.hu/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-hungary
 - name: The Next Web
   url: ''
   rss_url: https://thenextweb.com/feed/
@@ -3437,6 +1387,20 @@ sources:
   fetch_interval: 30
   departments:
   - tech
+- name: Sports News - Latest Sports and Football News | Sky News
+  url: ''
+  rss_url: http://feeds.skynews.com/feeds/rss/sports.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - sports
+- name: The Local
+  url: ''
+  rss_url: https://feeds.thelocal.com/rss/it
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-italy
 - name: The Verge
   url: ''
   rss_url: https://www.youtube.com/feeds/videos.xml?user=TheVerge
@@ -3444,6 +1408,27 @@ sources:
   fetch_interval: 30
   departments:
   - tech
+- name: philstar.com - RSS Headlines
+  url: ''
+  rss_url: https://www.philstar.com/rss/headlines
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-philippines
+- name: The Ancient Gaming Noob
+  url: ''
+  rss_url: http://feeds.feedburner.com/TheAncientGamingNoob
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - gaming
+- name: Reddit Sports
+  url: ''
+  rss_url: https://www.reddit.com/r/sports.rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - sports
 - name: The Verge -  All Posts
   url: ''
   rss_url: https://www.theverge.com/rss/index.xml
@@ -3451,6 +1436,55 @@ sources:
   fetch_interval: 30
   departments:
   - tech
+- name: Sportskeeda
+  url: ''
+  rss_url: https://www.sportskeeda.com/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - sports
+- name: Novinky.cz (CZ)
+  url: ''
+  rss_url: https://www.novinky.cz/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-czech
+- name: RSS DiariodelWeb.it
+  url: ''
+  rss_url: https://www.diariodelweb.it/rss/home/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-italy
+- name: ECB
+  url: https://www.ecb.europa.eu
+  rss_url: https://www.ecb.europa.eu/home/html/rss.en.html
+  feed_type: rss
+  fetch_interval: 60
+  departments:
+  - economy-global-trade
+- name: BusinessWorld
+  url: ''
+  rss_url: https://www.bworldonline.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-philippines
+- name: Digi24.ro (RO)
+  url: ''
+  rss_url: https://www.digi24.ro/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-romania
+- name: Interaksyon
+  url: ''
+  rss_url: https://www.interaksyon.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-philippines
 - name: The Vergecast
   url: ''
   rss_url: https://feeds.megaphone.fm/vergecast
@@ -3458,6 +1492,55 @@ sources:
   fetch_interval: 30
   departments:
   - tech
+- name: Bruegel
+  url: https://www.bruegel.org
+  rss_url: https://www.bruegel.org/rss.xml
+  feed_type: rss
+  fetch_interval: 60
+  departments:
+  - economy-global-trade
+- name: www.espn.com - TOP
+  url: ''
+  rss_url: https://www.espn.com/espn/rss/news
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - sports
+- name: r/gaming
+  url: ''
+  rss_url: https://www.reddit.com/r/gaming.rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - gaming
+- name: SIPRI
+  url: https://www.sipri.org
+  rss_url: https://www.sipri.org/rss
+  feed_type: rss
+  fetch_interval: 60
+  departments:
+  - defence-geopolitics
+- name: Xbox's Major Nelson
+  url: ''
+  rss_url: https://majornelson.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - gaming
+- name: PhilNews.XYZ
+  url: ''
+  rss_url: https://www.philnews.xyz/feeds/posts/default?alt=rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-philippines
+- name: Yahoo! Sports - News, Scores, Standings, Rumors, Fantasy Games
+  url: ''
+  rss_url: https://sports.yahoo.com/rss/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - sports
 - name: This Week in Tech (Audio)
   url: ''
   rss_url: https://feeds.twit.tv/twit.xml
@@ -3465,6 +1548,20 @@ sources:
   fetch_interval: 30
   departments:
   - tech
+- name: Nikkei Asia
+  url: ''
+  rss_url: https://asia.nikkei.com/rss/feed/nar
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-japan
+- name: Il Mattino Web
+  url: ''
+  rss_url: https://www.ilmattino.it/?sez=XML&args&p=search&args[box]=Home&limit=20&layout=rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-italy
 - name: Unbox Therapy
   url: ''
   rss_url: https://www.youtube.com/feeds/videos.xml?user=unboxtherapy
@@ -3472,6 +1569,62 @@ sources:
   fetch_interval: 30
   departments:
   - tech
+- name: Channel NewsAsia
+  url: ''
+  rss_url: https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - news-asia
+- name: Libero Quotidiano
+  url: ''
+  rss_url: https://www.liberoquotidiano.it/rss.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-italy
+- name: South China Morning Post
+  url: ''
+  rss_url: https://www.scmp.com/rss/91/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-china
+- name: The Times of Israel
+  url: ''
+  rss_url: https://www.timesofisrael.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - news-mideast
+- name: Current PH
+  url: ''
+  rss_url: https://currentph.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-philippines
+- name: Sydney Morning Herald - Latest News
+  url: ''
+  rss_url: https://www.smh.com.au/rss/feed.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-australia
+- name: GMA News Online / News
+  url: ''
+  rss_url: https://data.gmanews.tv/gno/rss/news/feed.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-philippines
+- name: Milan News
+  url: ''
+  rss_url: https://www.milannews.it/rss/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-italy
 - name: https://www.engadget.com/
   url: ''
   rss_url: https://www.engadget.com/rss.xml
@@ -3479,6 +1632,69 @@ sources:
   fetch_interval: 30
   departments:
   - tech
+- name: Adnkronos - ultimoratop
+  url: ''
+  rss_url: http://rss.adnkronos.com/RSS_PrimaPagina.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-italy
+- name: EFL Championship
+  url: ''
+  rss_url: https://www.reddit.com/r/Championship/.rss?format=xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - football
+- name: Nature
+  url: https://www.nature.com
+  rss_url: http://feeds.nature.com/nature/rss/current
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - science-high-tech
+- name: Football - The People's Sport
+  url: ''
+  rss_url: https://www.reddit.com/r/football/.rss?format=xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - football
+- name: Latest News and News Headlines | Daily Telegraph
+  url: ''
+  rss_url: https://www.dailytelegraph.com.au/news/breaking-news/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-australia
+- name: Science Magazine
+  url: https://www.science.org
+  rss_url: https://www.science.org/rss/news_current.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - science-high-tech
+- name: 'Top Gear: The Philippine authority on cars and the automotive industry'
+  url: ''
+  rss_url: https://www.topgear.com.ph/feed/rss1
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-philippines
+- name: Middle East Eye
+  url: ''
+  rss_url: https://www.middleeasteye.net/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - news-mideast
+- name: Internazionale
+  url: ''
+  rss_url: https://www.internazionale.it/sitemaps/rss.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-italy
 - name: Better Programming - Medium
   url: ''
   rss_url: https://medium.com/feed/better-programming
@@ -3486,6 +1702,48 @@ sources:
   fetch_interval: 30
   departments:
   - programming
+- name: ABC News
+  url: ''
+  rss_url: https://www.abc.net.au/news/feed/1948/rss.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-australia
+- name: Latest News and News Headlines | Herald Sun
+  url: ''
+  rss_url: https://www.heraldsun.com.au/news/breaking-news/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-australia
+- name: NASA
+  url: https://www.nasa.gov
+  rss_url: https://www.nasa.gov/rss/dyn/breaking_news.rss
+  feed_type: rss
+  fetch_interval: 15
+  departments:
+  - science-high-tech
+- name: Buenos Aires Times (AR)
+  url: ''
+  rss_url: https://www.batimes.com.ar/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-argentina
+- name: Fashion - ELLE
+  url: ''
+  rss_url: https://www.elle.com/rss/fashion.xml/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - fashion
+- name: The Age - Latest News
+  url: ''
+  rss_url: https://www.theage.com.au/rss/feed.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-australia
 - name: Code as Craft
   url: ''
   rss_url: https://codeascraft.com/feed/atom/
@@ -3493,13 +1751,27 @@ sources:
   fetch_interval: 30
   departments:
   - programming
-- name: CodeNewbie
+- name: Panorama
   url: ''
-  rss_url: http://feeds.codenewbie.org/cnpodcast.xml
+  rss_url: https://www.panorama.it/feeds/feed.rss
   feed_type: rss
   fetch_interval: 30
   departments:
-  - programming
+  - country-italy
+- name: Italy | The Guardian
+  url: ''
+  rss_url: https://www.theguardian.com/world/italy/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-italy
+- name: Fashion | The Guardian
+  url: ''
+  rss_url: https://www.theguardian.com/fashion/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - fashion
 - name: Coding Horror
   url: ''
   rss_url: https://feeds.feedburner.com/codinghorror
@@ -3507,9 +1779,44 @@ sources:
   fetch_interval: 30
   departments:
   - programming
-- name: Complete Developer Podcast
+- name: Phys.org
+  url: https://phys.org
+  rss_url: https://phys.org/rss-feed/
+  feed_type: rss
+  fetch_interval: 15
+  departments:
+  - science-high-tech
+- name: Soccer News
   url: ''
-  rss_url: https://completedeveloperpodcast.com/feed/podcast/
+  rss_url: https://www.soccernews.com/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - football
+- name: The Courier Mail
+  url: ''
+  rss_url: https://www.couriermail.com.au/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-australia
+- name: Repubblica.it > Homepage
+  url: ''
+  rss_url: https://www.repubblica.it/rss/homepage/rss2.0.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-italy
+- name: Abante Tonite
+  url: ''
+  rss_url: https://tonite.abante.com.ph/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-philippines
+- name: CodeNewbie
+  url: ''
+  rss_url: http://feeds.codenewbie.org/cnpodcast.xml
   feed_type: rss
   fetch_interval: 30
   departments:
@@ -3521,6 +1828,20 @@ sources:
   fetch_interval: 30
   departments:
   - programming
+- name: WHO
+  url: https://www.who.int
+  rss_url: https://www.who.int/rss-feeds/news-english.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - health-biotech
+- name: CERN
+  url: https://home.cern
+  rss_url: https://home.cern/api/news/feed.rss
+  feed_type: rss
+  fetch_interval: 60
+  departments:
+  - science-high-tech
 - name: Developer Tea
   url: ''
   rss_url: https://feeds.simplecast.com/dLRotFGk
@@ -3528,13 +1849,76 @@ sources:
   fetch_interval: 30
   departments:
   - programming
-- name: English (US)
-  url: ''
-  rss_url: https://blog.twitter.com/engineering/en_us/blog.rss
+- name: CDC
+  url: https://www.cdc.gov
+  rss_url: https://tools.cdc.gov/api/v2/resources/media/403333.rss
   feed_type: rss
   fetch_interval: 30
   departments:
-  - programming
+  - health-biotech
+- name: PerthNow
+  url: ''
+  rss_url: https://www.perthnow.com.au/news/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-australia
+- name: Brisbane Times - Latest News
+  url: ''
+  rss_url: https://www.brisbanetimes.com.au/rss/feed.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-australia
+- name: The Canberra Times - Local News
+  url: ''
+  rss_url: https://www.canberratimes.com.au/rss.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-australia
+- name: Japan Times latest articles
+  url: ''
+  rss_url: https://www.japantimes.co.jp/feed/topstories/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-japan
+- name: Eagle News
+  url: ''
+  rss_url: https://www.eaglenews.ph/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-philippines
+- name: Fashionista
+  url: ''
+  rss_url: https://fashionista.com/.rss/excerpt/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - fashion
+- name: NYT > Style
+  url: ''
+  rss_url: https://rss.nytimes.com/services/xml/rss/nyt/FashionandStyle.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - fashion
+- name: STAT News
+  url: https://www.statnews.com
+  rss_url: https://www.statnews.com/feed/
+  feed_type: rss
+  fetch_interval: 15
+  departments:
+  - health-biotech
+- name: Independent Australia
+  url: ''
+  rss_url: http://feeds.feedburner.com/IndependentAustralia
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-australia
 - name: FLOSS Weekly (Audio)
   url: ''
   rss_url: https://feeds.twit.tv/floss.xml
@@ -3542,6 +1926,34 @@ sources:
   fetch_interval: 30
   departments:
   - programming
+- name: 'TechPinas : Philippines'' Technology News, Tips and Reviews Blog'
+  url: ''
+  rss_url: http://feeds.feedburner.com/Techpinas
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-philippines
+- name: FashionBeans Men's Fashion and Style Feed
+  url: ''
+  rss_url: https://www.fashionbeans.com/rss-feed/?category=fashion
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - fashion
+- name: POPSUGAR Fashion
+  url: ''
+  rss_url: https://www.popsugar.com/fashion/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - fashion
+- name: IRENA
+  url: https://www.irena.org
+  rss_url: https://www.irena.org/rssfeed
+  feed_type: rss
+  fetch_interval: 60
+  departments:
+  - energy-climate
 - name: Facebook Engineering
   url: ''
   rss_url: https://engineering.fb.com/feed/
@@ -3549,6 +1961,62 @@ sources:
   fetch_interval: 30
   departments:
   - programming
+- name: Refinery29
+  url: ''
+  rss_url: https://www.refinery29.com/fashion/rss.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - fashion
+- name: The Conversation
+  url: https://theconversation.com
+  rss_url: https://theconversation.com/us/environment/articles.atom
+  feed_type: atom
+  fetch_interval: 30
+  departments:
+  - energy-climate
+- name: BICOL STANDARD | Bicol News | Bicol Newspaper
+  url: ''
+  rss_url: http://www.bicolstandard.com/feeds/posts/default?alt=rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-philippines
+- name: BRIDGE（ブリッジ）テクノロジー＆スタートアップ情報
+  url: ''
+  rss_url: http://feeds.feedburner.com/SdJapan
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-japan
+- name: Najnowsze
+  url: ''
+  rss_url: http://feeds.feedburner.com/wPolitycepl
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-poland
+- name: Japan Today
+  url: ''
+  rss_url: https://japantoday.com/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-japan
+- name: Check Point Research
+  url: https://research.checkpoint.com
+  rss_url: https://research.checkpoint.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - cyber-digital
+- name: Newsweek Polska
+  url: ''
+  rss_url: https://www.newsweek.pl/rss.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-poland
 - name: GitLab
   url: ''
   rss_url: https://about.gitlab.com/atom.xml
@@ -3556,13 +2024,27 @@ sources:
   fetch_interval: 30
   departments:
   - programming
-- name: Google Developers Blog
+- name: The Mercury
   url: ''
-  rss_url: http://feeds.feedburner.com/GDBcode
+  rss_url: https://www.themercury.com.au/rss
   feed_type: rss
   fetch_interval: 30
   departments:
-  - programming
+  - country-australia
+- name: Crikey
+  url: ''
+  rss_url: https://feeds.feedburner.com/com/rCTl
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-australia
+- name: NYT > Japan
+  url: ''
+  rss_url: https://www.nytimes.com/svc/collections/v1/publish/http://www.nytimes.com/topic/destination/japan/rss.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-japan
 - name: Google TechTalks
   url: ''
   rss_url: https://www.youtube.com/feeds/videos.xml?user=GoogleTechTalks
@@ -3570,13 +2052,55 @@ sources:
   fetch_interval: 30
   departments:
   - programming
-- name: HackerNoon.com - Medium
+- name: www.wirtualnemedia.pl
   url: ''
-  rss_url: https://medium.com/feed/hackernoon
+  rss_url: https://www.wirtualnemedia.pl/rss/wirtualnemedia_rss.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-poland
+- name: Google Developers Blog
+  url: ''
+  rss_url: http://feeds.feedburner.com/GDBcode
   feed_type: rss
   fetch_interval: 30
   departments:
   - programming
+- name: Dziennik.pl Dziennik - dziennik.pl
+  url: ''
+  rss_url: http://rss.dziennik.pl/Dziennik-PL/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-poland
+- name: 101 Cookbooks
+  url: ''
+  rss_url: https://www.101cookbooks.com/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - food
+- name: Who What Wear
+  url: ''
+  rss_url: https://www.whowhatwear.com/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - fashion
+- name: Babish Culinary Universe
+  url: ''
+  rss_url: https://www.youtube.com/feeds/videos.xml?user=bgfilms
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - food
+- name: Business Insider PL
+  url: https://businessinsider.com.pl
+  rss_url: https://businessinsider.com.pl/.feed
+  feed_type: rss
+  fetch_interval: 10
+  departments:
+  - konkurencja-biznes
 - name: Hanselminutes with Scott Hanselman
   url: ''
   rss_url: https://feeds.simplecast.com/gvtxUiIf
@@ -3584,20 +2108,76 @@ sources:
   fetch_interval: 30
   departments:
   - programming
-- name: InfoQ
+- name: 朝日新聞デジタル
   url: ''
-  rss_url: https://feed.infoq.com
+  rss_url: http://rss.asahi.com/rss/asahi/newsheadlines.rdf
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-japan
+- name: Bon Appétit
+  url: ''
+  rss_url: https://www.youtube.com/feeds/videos.xml?user=BonAppetitDotCom
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - food
+- name: HackerNoon.com - Medium
+  url: ''
+  rss_url: https://medium.com/feed/hackernoon
   feed_type: rss
   fetch_interval: 30
   departments:
   - programming
-- name: Instagram Engineering - Medium
+- name: Mexico | The Guardian
   url: ''
-  rss_url: https://instagram-engineering.com/feed/
+  rss_url: https://www.theguardian.com/world/mexico/rss
   feed_type: rss
   fetch_interval: 30
   departments:
-  - programming
+  - country-mexico
+- name: GazetaPrawna.pl - biznes, podatki, prawo, finanse, wiadomości, praca
+  url: ''
+  rss_url: http://rss.gazetaprawna.pl/GazetaPrawna
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-poland
+- name: https://www.rp.pl
+  url: ''
+  rss_url: https://www.rp.pl/rss/1019
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-poland
+- name: RMF24.pl
+  url: ''
+  rss_url: https://www.rmf24.pl/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-poland
+- name: David Lebovitz
+  url: ''
+  rss_url: https://www.davidlebovitz.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - food
+- name: Polska Agencja Prasowa SA
+  url: ''
+  rss_url: https://www.pap.pl/rss.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-poland
+- name: BD24Live.com
+  url: ''
+  rss_url: https://www.bd24live.com/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-bangladesh
 - name: Java, SQL and jOOQ.
   url: ''
   rss_url: https://blog.jooq.org/feed
@@ -3612,6 +2192,34 @@ sources:
   fetch_interval: 30
   departments:
   - programming
+- name: Food52
+  url: ''
+  rss_url: http://feeds.feedburner.com/food52-TheAandMBlog
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - food
+- name: Green Kitchen Stories
+  url: ''
+  rss_url: https://greenkitchenstories.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - food
+- name: The Daily Star
+  url: ''
+  rss_url: https://www.thedailystar.net/frontpage/rss.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-bangladesh
+- name: InfoQ
+  url: ''
+  rss_url: https://feed.infoq.com
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - programming
 - name: Joel on Software
   url: ''
   rss_url: https://www.joelonsoftware.com/feed/
@@ -3619,6 +2227,55 @@ sources:
   fetch_interval: 30
   departments:
   - programming
+- name: News24 Top Stories
+  url: ''
+  rss_url: http://feeds.news24.com/articles/news24/TopStories/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-south-africa
+- name: How Sweet Eats
+  url: ''
+  rss_url: https://www.howsweeteats.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - food
+- name: jagonews24.com | rss Feed
+  url: ''
+  rss_url: https://www.jagonews24.com/rss/rss.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-bangladesh
+- name: Chocolate & Zucchini
+  url: ''
+  rss_url: https://cnz.to/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - food
+- name: JUGANTOR
+  url: ''
+  rss_url: https://www.jugantor.com/feed/rss.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-bangladesh
+- name: Joy the Baker
+  url: ''
+  rss_url: http://joythebaker.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - food
+- name: প্রথম আলো
+  url: ''
+  rss_url: https://www.prothomalo.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-bangladesh
 - name: LinkedIn Engineering
   url: ''
   rss_url: https://engineering.linkedin.com/blog.rss.html
@@ -3626,20 +2283,41 @@ sources:
   fetch_interval: 30
   departments:
   - programming
-- name: Martin Fowler
+- name: kalerkantho Kantho
   url: ''
-  rss_url: https://martinfowler.com/feed.atom
+  rss_url: https://www.kalerkantho.com/rss.xml
   feed_type: rss
   fetch_interval: 30
   departments:
-  - programming
-- name: Netflix TechBlog - Medium
+  - country-bangladesh
+- name: Daily Maverick
   url: ''
-  rss_url: https://netflixtechblog.com/feed
+  rss_url: https://www.dailymaverick.co.za/dmrss/
   feed_type: rss
   fetch_interval: 30
   departments:
-  - programming
+  - country-south-africa
+- name: Kitchn | Inspiring cooks, nourishing homes
+  url: ''
+  rss_url: https://www.thekitchn.com/main.rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - food
+- name: Michael West
+  url: ''
+  rss_url: https://www.michaelwest.com.au/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-australia
+- name: Laura in the Kitchen
+  url: ''
+  rss_url: https://www.youtube.com/feeds/videos.xml?user=LauraVitalesKitchen
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - food
 - name: Overflow - Buffer Resources
   url: ''
   rss_url: https://buffer.com/resources/overflow/rss/
@@ -3647,6 +2325,41 @@ sources:
   fetch_interval: 30
   departments:
   - programming
+- name: TechCentral
+  url: ''
+  rss_url: https://techcentral.co.za/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-south-africa
+- name: Moneyweb
+  url: ''
+  rss_url: https://www.moneyweb.co.za/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-south-africa
+- name: NYT > Food
+  url: ''
+  rss_url: https://rss.nytimes.com/services/xml/rss/nyt/DiningandWine.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - food
+- name: Martin Fowler
+  url: ''
+  rss_url: https://martinfowler.com/feed.atom
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - programming
+- name: Love and Olive Oil
+  url: ''
+  rss_url: https://www.loveandoliveoil.com/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - food
 - name: Podcast – Software Engineering Daily
   url: ''
   rss_url: https://softwareengineeringdaily.com/category/podcast/feed
@@ -3654,20 +2367,69 @@ sources:
   fetch_interval: 30
   departments:
   - programming
-- name: Posts on > /dev/null
+- name: Folha de S.Paulo - Em cima da hora - Principal
   url: ''
-  rss_url: https://www.thirtythreeforty.net/posts/index.xml
+  rss_url: https://feeds.folha.uol.com.br/emcimadahora/rss091.xml
   feed_type: rss
   fetch_interval: 30
   departments:
-  - programming
-- name: Prezi Engineering - Medium
+  - country-brazil
+- name: Serious Eats
   url: ''
-  rss_url: https://engineering.prezi.com/feed
+  rss_url: https://www.youtube.com/feeds/videos.xml?user=SeriousEats
   feed_type: rss
   fetch_interval: 30
   departments:
-  - programming
+  - food
+- name: The Citizen
+  url: ''
+  rss_url: https://citizen.co.za/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-south-africa
+- name: Oh She Glows
+  url: ''
+  rss_url: https://ohsheglows.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - food
+- name: Axios
+  url: ''
+  rss_url: https://api.axios.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-south-africa
+- name: The South African
+  url: ''
+  rss_url: https://www.thesouthafrican.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-south-africa
+- name: 'Serious Eats: Recipes'
+  url: ''
+  rss_url: http://feeds.feedburner.com/seriouseats/recipes
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - food
+- name: UOL
+  url: ''
+  rss_url: http://rss.home.uol.com.br/index.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-brazil
+- name: Jornal de Brasília
+  url: ''
+  rss_url: https://jornaldebrasilia.com.br/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-brazil
 - name: Programming Throwdown
   url: ''
   rss_url: http://feeds.feedburner.com/ProgrammingThrowdown
@@ -3675,13 +2437,69 @@ sources:
   fetch_interval: 30
   departments:
   - programming
-- name: Programming – The Crazy Programmer
+- name: Brasil Wire
   url: ''
-  rss_url: https://www.thecrazyprogrammer.com/category/programming/feed
+  rss_url: http://www.brasilwire.com/feed/
   feed_type: rss
   fetch_interval: 30
   departments:
-  - programming
+  - country-brazil
+- name: The Local
+  url: ''
+  rss_url: https://feeds.thelocal.com/rss/es
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-spain
+- name: CBC | Top Stories News
+  url: ''
+  rss_url: https://www.cbc.ca/cmlink/rss-topstories
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-canada
+- name: España
+  url: ''
+  rss_url: https://rss.elconfidencial.com/espana/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-spain
+- name: 'EL PAÍS: el periódico global'
+  url: ''
+  rss_url: https://feeds.elpais.com/mrss-s/pages/ep/site/elpais.com/portada
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-spain
+- name: IOL section feed for News
+  url: ''
+  rss_url: http://rss.iol.io/iol/news
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-south-africa
+- name: Skinnytaste
+  url: ''
+  rss_url: https://www.skinnytaste.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - food
+- name: The Rio Times
+  url: ''
+  rss_url: https://riotimesonline.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-brazil
+- name: ''
+  url: ''
+  rss_url: https://globalnews.ca/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-canada
 - name: Robert Heaton | Blog
   url: ''
   rss_url: https://robertheaton.com/feed.xml
@@ -3689,16 +2507,51 @@ sources:
   fetch_interval: 30
   departments:
   - programming
-- name: Scott Hanselman's Blog
+- name: Portada // expansion
   url: ''
-  rss_url: http://feeds.hanselman.com/ScottHanselman
+  rss_url: https://e00-expansion.uecdn.es/rss/portada.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-spain
+- name: Scripting News
+  url: ''
+  rss_url: http://scripting.com/rss.xml
   feed_type: rss
   fetch_interval: 30
   departments:
   - programming
-- name: Scripting News
+- name: ElDiario.es - ElDiario.es
   url: ''
-  rss_url: http://scripting.com/rss.xml
+  rss_url: https://www.eldiario.es/rss/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-spain
+- name: Programming – The Crazy Programmer
+  url: ''
+  rss_url: https://www.thecrazyprogrammer.com/category/programming/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - programming
+- name: smitten kitchen
+  url: ''
+  rss_url: http://feeds.feedburner.com/smittenkitchen
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - food
+- name: Sprouted Kitchen
+  url: ''
+  rss_url: https://www.sproutedkitchen.com/home?format=rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - food
+- name: Scott Hanselman's Blog
+  url: ''
+  rss_url: http://feeds.hanselman.com/ScottHanselman
   feed_type: rss
   fetch_interval: 30
   departments:
@@ -3710,6 +2563,27 @@ sources:
   fetch_interval: 30
   departments:
   - programming
+- name: El Periódico - portada
+  url: ''
+  rss_url: https://www.elperiodico.com/es/rss/rss_portada.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-spain
+- name: A year of reading the world
+  url: ''
+  rss_url: https://ayearofreadingtheworld.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - books
+- name: huffingtonpost.es
+  url: ''
+  rss_url: https://www.huffingtonpost.es/feeds/index.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-spain
 - name: Software Defined Talk
   url: ''
   rss_url: https://feeds.fireside.fm/sdt/rss
@@ -3717,6 +2591,34 @@ sources:
   fetch_interval: 30
   departments:
   - programming
+- name: Ottawa Citizen
+  url: ''
+  rss_url: https://ottawacitizen.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-canada
+- name: Aestas Book Blog
+  url: ''
+  rss_url: https://aestasbookblog.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - books
+- name: National Post
+  url: ''
+  rss_url: https://nationalpost.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-canada
+- name: Financial Post
+  url: ''
+  rss_url: https://business.financialpost.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-canada
 - name: Software Engineering Radio - The Podcast for Professional Software Developers
   url: ''
   rss_url: http://feeds.feedburner.com/se-radio
@@ -3724,6 +2626,20 @@ sources:
   fetch_interval: 30
   departments:
   - programming
+- name: The Province
+  url: ''
+  rss_url: https://theprovince.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-canada
+- name: Euro Weekly News Spain
+  url: ''
+  rss_url: https://www.euroweeklynews.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-spain
 - name: SoundCloud Backstage Blog
   url: ''
   rss_url: https://developers.soundcloud.com/blog/blog.rss
@@ -3731,20 +2647,41 @@ sources:
   fetch_interval: 30
   departments:
   - programming
-- name: Spotify Engineering
+- name: News Agency UNIAN
   url: ''
-  rss_url: https://labs.spotify.com/feed/
+  rss_url: https://rss.unian.net/site/news_eng.rss
   feed_type: rss
   fetch_interval: 30
   departments:
-  - programming
-- name: Stack Abuse
+  - country-ukraine
+- name: LaPresse.ca - Actualités
   url: ''
-  rss_url: https://stackabuse.com/rss/
+  rss_url: https://www.lapresse.ca/actualites/rss
   feed_type: rss
   fetch_interval: 30
   departments:
-  - programming
+  - country-canada
+- name: Agencia EFE | www.efe.com | English edition
+  url: ''
+  rss_url: https://www.efe.com/efe/english/4/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-spain
+- name: BOOK RIOT
+  url: ''
+  rss_url: https://bookriot.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - books
+- name: Page Array – NewInBooks
+  url: ''
+  rss_url: https://www.newinbooks.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - books
 - name: Stack Overflow Blog
   url: ''
   rss_url: https://stackoverflow.blog/feed/
@@ -3752,13 +2689,83 @@ sources:
   fetch_interval: 30
   departments:
   - programming
-- name: The 6 Figure Developer
+- name: Kirkus Reviews
   url: ''
-  rss_url: http://6figuredev.com/feed/rss/
+  rss_url: https://www.kirkusreviews.com/feeds/rss/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - books
+- name: france24.com
+  url: ''
+  rss_url: https://www.france24.com/en/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-france
+- name: Последние новости на сайте korrespondent.net
+  url: ''
+  rss_url: http://k.img.com.ua/rss/ru/all_news2.0.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-ukraine
+- name: Toronto Sun - RSS Feed
+  url: ''
+  rss_url: https://torontosun.com/category/news/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-canada
+- name: Цензор.НЕТ - Новости
+  url: ''
+  rss_url: https://censor.net.ua/includes/news_ru.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-ukraine
+- name: Spotify Engineering
+  url: ''
+  rss_url: https://labs.spotify.com/feed/
   feed_type: rss
   fetch_interval: 30
   departments:
   - programming
+- name: Wokeread
+  url: ''
+  rss_url: https://wokeread.home.blog/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - books
+- name: Новини на tsn.ua
+  url: ''
+  rss_url: https://tsn.ua/rss/full.rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-ukraine
+- name: Toronto Star
+  url: ''
+  rss_url: https://www.thestar.com/content/thestar/feed.RSSManagerServlet.articles.topstories.rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-canada
+- name: Paris Star
+  url: ''
+  rss_url: https://www.parisstaronline.com/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-france
+- name: Українська правда
+  url: ''
+  rss_url: https://www.pravda.com.ua/rss/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-ukraine
 - name: The Airbnb Tech Blog - Medium
   url: ''
   rss_url: https://medium.com/feed/airbnb-engineering
@@ -3766,9 +2773,58 @@ sources:
   fetch_interval: 30
   departments:
   - programming
+- name: Le Monde.fr - Actualités et Infos en France et dans le monde
+  url: ''
+  rss_url: https://www.lemonde.fr/rss/une.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-france
 - name: The Cynical Developer
   url: ''
   rss_url: https://cynicaldeveloper.com/feed/podcast
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - programming
+- name: Shutterbean
+  url: ''
+  rss_url: http://www.shutterbean.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - food
+- name: So many books, so little time
+  url: ''
+  rss_url: https://reddit.com/r/books/.rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - books
+- name: Mediapart
+  url: ''
+  rss_url: https://www.mediapart.fr/articles/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-france
+- name: Stack Abuse
+  url: ''
+  rss_url: https://stackabuse.com/rss/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - programming
+- name: Autocar India - All Bike Reviews
+  url: ''
+  rss_url: https://www.autocarindia.com/RSS/rss.ashx?type=all_bikes
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - cars
+- name: 'The PIT Show: Reflections and Interviews in the Tech World'
+  url: ''
+  rss_url: https://feeds.transistor.fm/productivity-in-tech-podcast
   feed_type: rss
   fetch_interval: 30
   departments:
@@ -3780,37 +2836,129 @@ sources:
   fetch_interval: 30
   departments:
   - programming
-- name: 'The PIT Show: Reflections and Interviews in the Tech World'
+- name: Гордон - Самые популярные материалы
   url: ''
-  rss_url: https://feeds.transistor.fm/productivity-in-tech-podcast
+  rss_url: https://gordonua.com/xml/rss_category/top.html
   feed_type: rss
   fetch_interval: 30
   departments:
-  - programming
-- name: 'The Rabbit Hole: The Definitive Developer''s Podcast'
+  - country-ukraine
+- name: НВ
   url: ''
-  rss_url: http://therabbithole.libsyn.com/rss
+  rss_url: https://nv.ua/rss/all.xml
   feed_type: rss
   fetch_interval: 30
   departments:
-  - programming
-- name: The Stack Overflow Podcast
+  - country-ukraine
+- name: L'Obs - A la une
   url: ''
-  rss_url: https://feeds.simplecast.com/XA_851k3
+  rss_url: https://www.nouvelobs.com/a-la-une/rss.xml
   feed_type: rss
   fetch_interval: 30
   departments:
-  - programming
-- name: The Standup
+  - country-france
+- name: Autocar RSS Feed
   url: ''
-  rss_url: https://feeds.fireside.fm/standup/rss
+  rss_url: https://www.autocar.co.uk/rss
   feed_type: rss
   fetch_interval: 30
   departments:
-  - programming
+  - cars
+- name: Franceinfo - Les Titres
+  url: ''
+  rss_url: https://www.francetvinfo.fr/titres.rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-france
+- name: Еспресо - український погляд на світ!
+  url: ''
+  rss_url: https://espreso.tv/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-ukraine
+- name: Autocar India - News
+  url: ''
+  rss_url: https://www.autocarindia.com/RSS/rss.ashx?type=News
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - cars
+- name: Информационное агентство УНИАН
+  url: ''
+  rss_url: https://rss.unian.net/site/news_rus.rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-ukraine
+- name: 'La Dépêche du Midi : actualités et info en direct de la région Occitanie
+    et des environs - ladepeche.fr'
+  url: ''
+  rss_url: https://www.ladepeche.fr/rss.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-france
+- name: Le Huffington Post
+  url: ''
+  rss_url: https://www.huffingtonpost.fr/feeds/index.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-france
+- name: BMW BLOG
+  url: ''
+  rss_url: https://feeds.feedburner.com/BmwBlog
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - cars
+- name: Autocar India - All Car Reviews
+  url: ''
+  rss_url: https://www.autocarindia.com/RSS/rss.ashx?type=all_cars
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - cars
 - name: 'The Women in Tech Show: A Technical Podcast'
   url: ''
   rss_url: https://thewomenintechshow.com/category/podcast/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - programming
+- name: L'essentiel
+  url: ''
+  rss_url: https://www.sudouest.fr/essentiel/rss.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-france
+- name: Ministry for Europe and Foreign Affairs - Actualités
+  url: ''
+  rss_url: https://www.diplomatie.gouv.fr/spip.php?page=backend-fd&lang=en
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-france
+- name: Bike EXIF
+  url: ''
+  rss_url: https://www.bikeexif.com/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - cars
+- name: BBC News - Home
+  url: ''
+  rss_url: http://feeds.bbci.co.uk/news/rss.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-united-kingdom
+- name: The 6 Figure Developer
+  url: ''
+  rss_url: http://6figuredev.com/feed/rss/
   feed_type: rss
   fetch_interval: 30
   departments:
@@ -3822,20 +2970,76 @@ sources:
   fetch_interval: 30
   departments:
   - programming
-- name: AVC
+- name: Carscoops
   url: ''
-  rss_url: https://avc.com/feed/
+  rss_url: https://www.carscoops.com/feed/
   feed_type: rss
   fetch_interval: 30
   departments:
-  - startups
-- name: Both Sides of the Table - Medium
+  - cars
+- name: Gazeta.ua
   url: ''
-  rss_url: https://bothsidesofthetable.com/feed
+  rss_url: https://gazeta.ua/rss
   feed_type: rss
   fetch_interval: 30
   departments:
-  - startups
+  - country-ukraine
+- name: ZEIT ONLINE | Nachrichten, Hintergründe und Debatten
+  url: ''
+  rss_url: http://newsfeed.zeit.de/index
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-germany
+- name: Ouest-France - Actualité
+  url: ''
+  rss_url: https://www.ouest-france.fr/rss-en-continu.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-france
+- name: Formula 1
+  url: ''
+  rss_url: https://www.reddit.com/r/formula1/.rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - cars
+- name: The Independent
+  url: ''
+  rss_url: http://www.independent.co.uk/news/uk/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-united-kingdom
+- name: Latest Content - Car and Driver
+  url: ''
+  rss_url: https://www.caranddriver.com/rss/all.xml/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - cars
+- name: Car Body Design
+  url: ''
+  rss_url: https://www.carbodydesign.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - cars
+- name: Jalopnik
+  url: ''
+  rss_url: https://jalopnik.com/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - cars
+- name: Aktuell - FAZ.NET
+  url: ''
+  rss_url: https://www.faz.net/rss/aktuell/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-germany
 - name: Entrepreneur
   url: ''
   rss_url: http://feeds.feedburner.com/entrepreneur/latest
@@ -3843,6 +3047,13 @@ sources:
   fetch_interval: 30
   departments:
   - startups
+- name: tagesschau.de - Die Nachrichten der ARD
+  url: ''
+  rss_url: http://www.tagesschau.de/xml/rss2
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-germany
 - name: Feld Thoughts
   url: ''
   rss_url: https://feld.com/feed
@@ -3850,13 +3061,55 @@ sources:
   fetch_interval: 30
   departments:
   - startups
-- name: Forbes - Entrepreneurs
+- name: 'Daily Express :: News Feed'
   url: ''
-  rss_url: https://www.forbes.com/entrepreneurs/feed/
+  rss_url: http://feeds.feedburner.com/daily-express-news-showbiz
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-united-kingdom
+- name: The Stack Overflow Podcast
+  url: ''
+  rss_url: https://feeds.simplecast.com/XA_851k3
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - programming
+- name: Section Page News - Automotive News
+  url: ''
+  rss_url: http://feeds.feedburner.com/autonews/AutomakerNews
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - cars
+- name: Petrolicious
+  url: ''
+  rss_url: https://petrolicious.com/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - cars
+- name: Home | Mail Online
+  url: ''
+  rss_url: https://www.dailymail.co.uk/home/index.rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-united-kingdom
+- name: AVC
+  url: ''
+  rss_url: https://avc.com/feed/
   feed_type: rss
   fetch_interval: 30
   departments:
   - startups
+- name: Deutsche Welle
+  url: ''
+  rss_url: https://rss.dw.com/rdf/rss-en-all
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-germany
 - name: GaryVee
   url: ''
   rss_url: https://www.youtube.com/feeds/videos.xml?user=GaryVaynerchuk
@@ -3864,16 +3117,163 @@ sources:
   fetch_interval: 30
   departments:
   - startups
-- name: 'Hacker News: Front Page'
+- name: World News - Breaking News, Top Stories
   url: ''
-  rss_url: https://hnrss.org/frontpage
+  rss_url: https://www.huffpost.com/section/world-news/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-united-states
+- name: NYT > Top Stories
+  url: ''
+  rss_url: https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-united-states
+- name: Section Page News - Automotive News
+  url: ''
+  rss_url: http://feeds.feedburner.com/autonews/EditorsPicks
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - cars
+- name: 'WSJ.com: World News'
+  url: ''
+  rss_url: https://feeds.a.dj.com/rss/RSSWorldNews.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-united-states
+- name: Speedhunters
+  url: ''
+  rss_url: http://feeds.feedburner.com/speedhunters
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - cars
+- name: Inc.com
+  url: ''
+  rss_url: https://www.inc.com/rss/
   feed_type: rss
   fetch_interval: 30
   departments:
   - startups
-- name: Inc.com
+- name: 頭條日報 Headline Daily - 頭條網
   url: ''
-  rss_url: https://www.inc.com/rss/
+  rss_url: https://hd.stheadline.com/rss/news/daily/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-hong-kong-sar-china
+- name: World & Nation
+  url: ''
+  rss_url: https://www.latimes.com/world-nation/rss2.0.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-united-states
+- name: The Standard - Latest News
+  url: ''
+  rss_url: https://www.thestandard.com.hk/newsfeed/latest/news.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-hong-kong-sar-china
+- name: FOX News
+  url: ''
+  rss_url: http://feeds.foxnews.com/foxnews/latest
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-united-states
+- name: The best vintage and classic cars for sale online | Bring a Trailer
+  url: ''
+  rss_url: https://bringatrailer.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - cars
+- name: Hong Kong Free Press HKFP
+  url: ''
+  rss_url: https://www.hongkongfp.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-hong-kong-sar-china
+- name: Marie Forleo
+  url: ''
+  rss_url: https://www.youtube.com/feeds/videos.xml?user=marieforleo
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - startups
+- name: CNN.com - RSS Channel - App International Edition
+  url: ''
+  rss_url: http://rss.cnn.com/rss/edition.rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-united-states
+- name: 500px
+  url: ''
+  rss_url: https://iso.500px.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - photography
+- name: 香港新聞RSS - 香港經濟日報 hket.com
+  url: ''
+  rss_url: https://www.hket.com/rss/hongkong
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-hong-kong-sar-china
+- name: hongkongnews.net latest rss headlines
+  url: ''
+  rss_url: http://feeds.hongkongnews.net/rss/b82693edf38ebff8
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-hong-kong-sar-china
+- name: Product Hunt — The best new products, every day
+  url: ''
+  rss_url: https://www.producthunt.com/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - startups
+- name: India | The Guardian
+  url: ''
+  rss_url: https://www.theguardian.com/world/india/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-india
+- name: Playbook
+  url: ''
+  rss_url: https://rss.politico.com/playbook.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-united-states
+- name: Yahoo News - Latest News & Headlines
+  url: ''
+  rss_url: https://news.yahoo.com/rss/mostviewed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-united-states
+- name: BBC News - India
+  url: ''
+  rss_url: http://feeds.bbci.co.uk/news/world/asia/india/rss.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-india
+- name: 'Paul Graham: Essays'
+  url: ''
+  rss_url: http://www.aaronsw.com/2002/feeds/pgessays.rss
   feed_type: rss
   fetch_interval: 30
   departments:
@@ -3885,34 +3285,34 @@ sources:
   fetch_interval: 30
   departments:
   - startups
-- name: Marie Forleo
+- name: US Top News and Analysis
   url: ''
-  rss_url: https://www.youtube.com/feeds/videos.xml?user=marieforleo
+  rss_url: https://www.cnbc.com/id/100003114/device/rss/rss.html
   feed_type: rss
   fetch_interval: 30
   departments:
-  - startups
-- name: 'Paul Graham: Essays'
+  - country-united-states
+- name: All News
   url: ''
-  rss_url: http://www.aaronsw.com/2002/feeds/pgessays.rss
+  rss_url: https://www.investing.com/rss/news.rss
   feed_type: rss
   fetch_interval: 30
   departments:
-  - startups
-- name: Product Hunt — The best new products, every day
+  - business-economy
+- name: Times of India
   url: ''
-  rss_url: https://www.producthunt.com/feed
+  rss_url: https://timesofindia.indiatimes.com/rssfeedstopstories.cms
   feed_type: rss
   fetch_interval: 30
   departments:
-  - startups
-- name: Quick Sprout
+  - country-india
+- name: Bloomberg Quicktake
   url: ''
-  rss_url: https://www.quicksprout.com/rss
+  rss_url: https://www.youtube.com/feeds/videos.xml?user=Bloomberg
   feed_type: rss
   fetch_interval: 30
   departments:
-  - startups
+  - business-economy
 - name: Smart Passive Income
   url: ''
   rss_url: http://feeds.feedburner.com/smartpassiveincome
@@ -3920,9 +3320,30 @@ sources:
   fetch_interval: 30
   departments:
   - startups
-- name: Springwise
+- name: Digital Photography School
   url: ''
-  rss_url: https://www.springwise.com/feed
+  rss_url: https://feeds.feedburner.com/DigitalPhotographySchool
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - photography
+- name: The Hindu - Home
+  url: ''
+  rss_url: https://www.thehindu.com/feeder/default.rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-india
+- name: Breaking News on Seeking Alpha
+  url: ''
+  rss_url: https://seekingalpha.com/market_currents.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - business-economy
+- name: 'Hacker News: Front Page'
+  url: ''
+  rss_url: https://hnrss.org/frontpage
   feed_type: rss
   fetch_interval: 30
   departments:
@@ -3934,13 +3355,48 @@ sources:
   fetch_interval: 30
   departments:
   - startups
-- name: The Startup Junkies Podcast
+- name: NDTV News -   Topstories
   url: ''
-  rss_url: https://startupjunkie.libsyn.com/rss
+  rss_url: https://feeds.feedburner.com/ndtvnews-top-stories
   feed_type: rss
   fetch_interval: 30
   departments:
-  - startups
+  - country-india
+- name: Business Insider
+  url: ''
+  rss_url: https://www.youtube.com/feeds/videos.xml?user=businessinsider
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - business-economy
+- name: Light Stalking
+  url: ''
+  rss_url: https://www.lightstalking.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - photography
+- name: One Big Photo
+  url: ''
+  rss_url: http://feeds.feedburner.com/OneBigPhoto
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - photography
+- name: Canon Rumors – Your best source for Canon rumors, leaks and gossip
+  url: ''
+  rss_url: https://www.canonrumors.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - photography
+- name: Lightroom Killer Tips
+  url: ''
+  rss_url: https://lightroomkillertips.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - photography
 - name: This Week in Startups - Video
   url: ''
   rss_url: http://feeds.feedburner.com/twistvid
@@ -3948,6 +3404,76 @@ sources:
   fetch_interval: 30
   departments:
   - startups
+- name: Front Page | The Indian Express
+  url: ''
+  rss_url: http://indianexpress.com/print/front-page/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-india
+- name: SEBI RSS Feed
+  url: ''
+  rss_url: https://www.sebi.gov.in/sebirss.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-india
+- name: The Startup Junkies Podcast
+  url: ''
+  rss_url: https://startupjunkie.libsyn.com/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - startups
+- name: Forbes - Business
+  url: ''
+  rss_url: https://www.forbes.com/business/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - business-economy
+- name: Strobist
+  url: ''
+  rss_url: http://feeds.feedburner.com/blogspot/WOBq
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - photography
+- name: PetaPixel
+  url: ''
+  rss_url: https://petapixel.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - photography
+- name: India Today | Latest Stories
+  url: ''
+  rss_url: https://www.indiatoday.in/rss/home
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-india
+- name: Big Picture
+  url: ''
+  rss_url: https://www.bostonglobe.com/rss/bigpicture
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - photography
+- name: Duct Tape Marketing
+  url: ''
+  rss_url: https://ducttape.libsyn.com/rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - business-economy
+- name: Fortune
+  url: ''
+  rss_url: https://fortune.com/feed
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - business-economy
 - name: VentureBeat
   url: ''
   rss_url: https://feeds.feedburner.com/venturebeat/SZYF
@@ -3955,6 +3481,34 @@ sources:
   fetch_interval: 30
   departments:
   - startups
+- name: Stuck in Customs
+  url: ''
+  rss_url: https://stuckincustoms.com/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - photography
+- name: HBR IdeaCast
+  url: ''
+  rss_url: http://feeds.harvardbusiness.org/harvardbusiness/ideacast
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - business-economy
+- name: Startup Stories - Mixergy
+  url: ''
+  rss_url: https://feeds.feedburner.com/Mixergy-main-podcast
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - business-economy
+- name: Top World News- News18.com
+  url: ''
+  rss_url: https://www.news18.com/rss/world.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-india
 - name: blog – Feld Thoughts
   url: ''
   rss_url: https://feld.com/archives/tag/blog/feed
@@ -3962,16 +3516,37 @@ sources:
   fetch_interval: 30
   departments:
   - startups
-- name: 'Lenta.ru : Новости'
+- name: The Sartorialist
   url: ''
-  rss_url: https://lenta.ru/rss
+  rss_url: https://feeds.feedburner.com/TheSartorialist
   feed_type: rss
   fetch_interval: 30
   departments:
-  - country-russia
-- name: Вести.Ru
+  - photography
+- name: The Blog of Author Tim Ferriss
   url: ''
-  rss_url: https://www.vesti.ru/vesti.rss
+  rss_url: https://tim.blog/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - business-economy
+- name: Home Page
+  url: ''
+  rss_url: https://www.business-standard.com/rss/home_page_top_stories.rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-india
+- name: Firstpost India Latest News
+  url: ''
+  rss_url: https://www.firstpost.com/rss/india.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-india
+- name: 'Lenta.ru : Новости'
+  url: ''
+  rss_url: https://lenta.ru/rss
   feed_type: rss
   fetch_interval: 30
   departments:
@@ -3983,6 +3558,27 @@ sources:
   fetch_interval: 30
   departments:
   - country-russia
+- name: Yahoo Finance
+  url: ''
+  rss_url: https://finance.yahoo.com/news/rssindex
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - business-economy
+- name: NYT > Travel
+  url: ''
+  rss_url: https://rss.nytimes.com/services/xml/rss/nyt/Travel.xml
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - travel
+- name: Free Press Journal
+  url: ''
+  rss_url: https://www.freepressjournal.in/stories.rss
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-india
 - name: Все материалы - Московский Комсомолец
   url: ''
   rss_url: https://www.mk.ru/rss/index.xml
@@ -3990,6 +3586,21 @@ sources:
   fetch_interval: 30
   departments:
   - country-russia
+- name: Atlas Obscura - Latest Articles and Places
+  url: ''
+  rss_url: https://www.atlasobscura.com/feeds/latest
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - travel
+- name: Deccan Chronicle - Latest India news | Breaking news | Hyderabad News | World
+    news | Business news | Politics | Technology news
+  url: ''
+  rss_url: https://www.deccanchronicle.com/rss_feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - country-india
 - name: Российская Газета
   url: ''
   rss_url: https://rg.ru/xml/index.xml
@@ -3997,6 +3608,20 @@ sources:
   fetch_interval: 30
   departments:
   - country-russia
+- name: Live Life Travel
+  url: ''
+  rss_url: https://www.livelifetravel.world/feed/
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - travel
+- name: 60-Second Science
+  url: ''
+  rss_url: http://rss.sciam.com/sciam/60secsciencepodcast
+  feed_type: rss
+  fetch_interval: 30
+  departments:
+  - science
 - name: 'NEWSru.com :: Главные новости'
   url: ''
   rss_url: https://rss.newsru.com/top/big/
@@ -4004,339 +3629,10 @@ sources:
   fetch_interval: 30
   departments:
   - country-russia
-- name: RT - Daily news
+- name: The Growth Show
   url: ''
-  rss_url: https://www.rt.com/rss/
+  rss_url: http://thegrowthshow.hubspot.libsynpro.com/
   feed_type: rss
   fetch_interval: 30
   departments:
-  - country-russia
-- name: Meduza.io
-  url: ''
-  rss_url: https://meduza.io/rss/all
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-russia
-- name: Russia Insider Daily Headlines
-  url: ''
-  rss_url: https://russia-insider.com/en/all-content/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-russia
-- name: TASS
-  url: ''
-  rss_url: http://tass.com/rss/v2.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-russia
-- name: The Moscow Times - Independent News From Russia
-  url: ''
-  rss_url: https://www.themoscowtimes.com/rss/news
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-russia
-- name: PravdaReport
-  url: ''
-  rss_url: https://www.pravdareport.com/export.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-russia
-- name: Reuters World
-  url: ''
-  rss_url: https://www.reutersagency.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - news-world
-- name: Associated Press
-  url: ''
-  rss_url: https://rsshub.app/apnews/topics/apf-topnews
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - news-world
-- name: Al Jazeera English
-  url: ''
-  rss_url: https://www.aljazeera.com/xml/rss/all.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - news-world
-- name: NPR News
-  url: ''
-  rss_url: https://feeds.npr.org/1001/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - news-world
-- name: ProPublica
-  url: ''
-  rss_url: https://feeds.propublica.org/propublica/main
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - news-world
-- name: The Economist
-  url: ''
-  rss_url: https://www.economist.com/international/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - news-world
-- name: Nature News
-  url: ''
-  rss_url: https://www.nature.com/nature.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - science
-- name: Science Magazine
-  url: ''
-  rss_url: https://www.science.org/action/showFeed?type=etoc&feed=rss&jc=science
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - science
-- name: ArXiv CS
-  url: ''
-  rss_url: https://rss.arxiv.org/rss/cs
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - science
-- name: Ars Technica
-  url: ''
-  rss_url: https://feeds.arstechnica.com/arstechnica/index
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - tech
-- name: TechCrunch
-  url: ''
-  rss_url: https://techcrunch.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - tech
-- name: Wired
-  url: ''
-  rss_url: https://www.wired.com/feed/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - tech
-- name: Foreign Affairs
-  url: ''
-  rss_url: https://www.foreignaffairs.com/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - defence-geopolitics
-- name: SIPRI
-  url: ''
-  rss_url: https://www.sipri.org/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - defence-geopolitics
-- name: War on the Rocks
-  url: ''
-  rss_url: https://warontherocks.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - defence-geopolitics
-- name: Jane's Defence
-  url: ''
-  rss_url: https://www.janes.com/feeds/news
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - defence-geopolitics
-- name: Defense One
-  url: ''
-  rss_url: https://www.defenseone.com/rss/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - defence-geopolitics
-- name: Bloomberg
-  url: ''
-  rss_url: https://feeds.bloomberg.com/markets/news.rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - business
-- name: Financial Times
-  url: ''
-  rss_url: https://www.ft.com/?format=rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - business
-- name: MarketWatch
-  url: ''
-  rss_url: https://feeds.marketwatch.com/marketwatch/topstories/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - business
-- name: Euronews
-  url: ''
-  rss_url: https://www.euronews.com/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - news-europe
-- name: EUobserver
-  url: ''
-  rss_url: https://euobserver.com/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - news-europe
-- name: Politico EU
-  url: ''
-  rss_url: https://www.politico.eu/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - news-europe
-- name: TOK FM
-  url: ''
-  rss_url: https://www.tokfm.pl/pub/rss/tokfm_news.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-poland
-- name: Polsat News
-  url: ''
-  rss_url: https://www.polsatnews.pl/rss/polska.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-poland
-- name: Radio ZET
-  url: ''
-  rss_url: https://wiadomosci.radiozet.pl/rss.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-poland
-- name: Niezależna.pl
-  url: ''
-  rss_url: https://niezalezna.pl/rss/niezalezna.xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-poland
-- name: Do Rzeczy
-  url: ''
-  rss_url: https://dorzeczy.pl/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-poland
-- name: Krytyka Polityczna
-  url: ''
-  rss_url: https://krytykapolityczna.pl/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-poland
-- name: Hospodářské noviny (CZ)
-  url: ''
-  rss_url: https://hn.cz/?p=rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-czech
-- name: Denník N (SK)
-  url: ''
-  rss_url: https://dennikn.sk/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-slovakia
-- name: HVG (HU)
-  url: ''
-  rss_url: https://hvg.hu/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-hungary
-- name: Telex.hu (HU)
-  url: ''
-  rss_url: https://telex.hu/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-hungary
-- name: Novinky.cz (CZ)
-  url: ''
-  rss_url: https://www.novinky.cz/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-czech
-- name: Digi24.ro (RO)
-  url: ''
-  rss_url: https://www.digi24.ro/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-romania
-- name: South China Morning Post
-  url: ''
-  rss_url: https://www.scmp.com/rss/91/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-china
-- name: Nikkei Asia
-  url: ''
-  rss_url: https://asia.nikkei.com/rss/feed/nar
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-japan
-- name: Channel NewsAsia
-  url: ''
-  rss_url: https://www.channelnewsasia.com/api/v1/rss-outbound-feed?_format=xml
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - news-asia
-- name: The Times of Israel
-  url: ''
-  rss_url: https://www.timesofisrael.com/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - news-mideast
-- name: Middle East Eye
-  url: ''
-  rss_url: https://www.middleeasteye.net/rss
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - news-mideast
-- name: Daily Maverick (ZA)
-  url: ''
-  rss_url: https://www.dailymaverick.co.za/feed/
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-south-africa
-- name: Buenos Aires Times (AR)
-  url: ''
-  rss_url: https://www.batimes.com.ar/feed
-  feed_type: rss
-  fetch_interval: 30
-  departments:
-  - country-argentina
+  - business-economy
