@@ -443,6 +443,101 @@ def admin_crawl_toggle(request: Request):
     return RedirectResponse(url="/admin/monitoring", status_code=303)
 
 
+@app.get("/admin/discover", response_class=HTMLResponse)
+def admin_discover_page(request: Request):
+    user = _get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/login", status_code=303)
+    return templates.TemplateResponse("admin/discover.html", {
+        "request": request,
+        "user": user,
+        "results": None,
+        "url": "",
+    })
+
+
+@app.post("/admin/discover", response_class=HTMLResponse)
+async def admin_discover_run(request: Request, url: str = Form("")):
+    user = _get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/login", status_code=303)
+
+    results = []
+    if url.strip():
+
+        from .feed_evaluator import evaluate_feed
+        from .feed_scout import discover_feeds
+
+        # Get existing feed URLs for uniqueness check
+        db = db_module.SessionLocal()
+        try:
+            existing = {f.rss_url for f in db.query(Feed.rss_url).all() if f.rss_url}
+        finally:
+            db.close()
+
+        # Discover feeds from URL
+        discovered = await discover_feeds(url.strip())
+
+        # Evaluate each discovered feed
+        for feed in discovered:
+            score = await evaluate_feed(feed.url, existing)
+            results.append({
+                "url": feed.url,
+                "title": score.title or feed.title,
+                "score": score.overall_score,
+                "activity": score.activity_score,
+                "quality": score.quality_score,
+                "reliability": score.reliability_score,
+                "uniqueness": score.uniqueness_score,
+                "recommendation": score.recommendation,
+                "articles_count": score.articles_count,
+                "articles_per_day": score.articles_per_day,
+                "sample_titles": score.sample_titles or feed.sample_titles,
+                "discovery_method": feed.discovery_method,
+                "already_exists": feed.url in existing,
+            })
+
+        # Sort by score desc
+        results.sort(key=lambda r: r["score"], reverse=True)
+
+    return templates.TemplateResponse("admin/discover.html", {
+        "request": request,
+        "user": user,
+        "results": results,
+        "url": url,
+    })
+
+
+@app.post("/admin/discover/add")
+def admin_discover_add(request: Request, feed_url: str = Form(...), feed_name: str = Form("")):
+    """Add a discovered feed directly to the database."""
+    user = _get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/login", status_code=303)
+
+    db = db_module.SessionLocal()
+    try:
+        # Check if already exists
+        existing = db.query(Feed).filter(Feed.rss_url == feed_url).first()
+        if existing:
+            return RedirectResponse(url="/admin/discover", status_code=303)
+
+        name = feed_name or feed_url.split("/")[2]  # use domain as fallback
+        feed = Feed(
+            name=name,
+            rss_url=feed_url,
+            website_url=f"https://{feed_url.split('/')[2]}",
+            is_active=True,
+            fetch_interval=30,
+        )
+        db.add(feed)
+        db.commit()
+    finally:
+        db.close()
+
+    return RedirectResponse(url="/admin/feeds", status_code=303)
+
+
 @app.get("/admin/feeds", response_class=HTMLResponse)
 def admin_feeds(request: Request, page: int = Query(1, ge=1)):
     user = _get_current_user(request)

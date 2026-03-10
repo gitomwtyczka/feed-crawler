@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block title %}Source Discovery — Feed Crawler{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>🔍 Source Discovery</h1>
+    <p>Znajdź i oceń nowe źródła RSS/Atom — buduj bazę feedów</p>
+</div>
+
+<!-- Discovery Form -->
+<div class="card" style="margin-bottom: 1.5rem;">
+    <h3 style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">
+        🌐 Skanuj stronę</h3>
+    <form method="POST" action="/admin/discover" style="display: flex; gap: 0.75rem; align-items: flex-end; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 300px;">
+            <label style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">URL strony do przeskanowania</label>
+            <input type="text" name="url" value="{{ url }}" placeholder="https://www.bankier.pl" 
+                style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 1rem; color: var(--text-primary); font-size: 0.9rem; outline: none; transition: border-color 0.2s;"
+                onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+        </div>
+        <button type="submit" class="btn btn-primary" style="padding: 0.6rem 1.5rem; white-space: nowrap;">
+            🔎 Skanuj feedy
+        </button>
+    </form>
+    <p style="color: var(--text-muted); font-size: 0.75rem; margin-top: 0.5rem;">
+        Sprawdza: HTML &lt;link&gt; tags, typowe ścieżki (/feed, /rss, /atom.xml, itp.)
+    </p>
+</div>
+
+{% if results is not none %}
+<!-- Results -->
+<div class="card">
+    <h3 style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">
+        📊 Znalezione feedy ({{ results|length }})</h3>
+    
+    {% if results %}
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Feed</th>
+                    <th>Score</th>
+                    <th style="font-size: 0.65rem;">ACT</th>
+                    <th style="font-size: 0.65rem;">QAL</th>
+                    <th style="font-size: 0.65rem;">REL</th>
+                    <th style="font-size: 0.65rem;">UNQ</th>
+                    <th>Articles</th>
+                    <th>Freq</th>
+                    <th>Method</th>
+                    <th>Akcja</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in results %}
+                <tr>
+                    <td>
+                        <div style="font-weight: 500; margin-bottom: 0.2rem;">{{ r.title[:40] }}{% if r.title|length > 40 %}...{% endif %}</div>
+                        <div style="color: var(--text-muted); font-size: 0.7rem; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ r.url }}</div>
+                        {% if r.sample_titles %}
+                        <details style="margin-top: 0.3rem;">
+                            <summary style="color: var(--accent-light); font-size: 0.7rem; cursor: pointer;">Przykładowe artykuły</summary>
+                            <ul style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 0.3rem; padding-left: 1rem;">
+                                {% for t in r.sample_titles[:3] %}
+                                <li>{{ t }}</li>
+                                {% endfor %}
+                            </ul>
+                        </details>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="badge" style="font-size: 0.85rem; padding: 0.3rem 0.7rem; background: {% if r.score >= 70 %}rgba(87,242,135,0.2); color: #57f287{% elif r.score >= 40 %}rgba(254,231,92,0.2); color: #fee75c{% else %}rgba(237,66,69,0.2); color: #ed4245{% endif %}">
+                            {{ r.score }}
+                        </span>
+                    </td>
+                    <td style="text-align: center; font-size: 0.8rem; color: var(--text-secondary)">{{ r.activity }}/25</td>
+                    <td style="text-align: center; font-size: 0.8rem; color: var(--text-secondary)">{{ r.quality }}/25</td>
+                    <td style="text-align: center; font-size: 0.8rem; color: var(--text-secondary)">{{ r.reliability }}/25</td>
+                    <td style="text-align: center; font-size: 0.8rem; color: var(--text-secondary)">{{ r.uniqueness }}/25</td>
+                    <td style="text-align: center;">{{ r.articles_count }}</td>
+                    <td style="color: var(--text-secondary); font-size: 0.8rem;">{{ r.articles_per_day }}/d</td>
+                    <td><span class="badge badge-info" style="font-size: 0.65rem;">{{ r.discovery_method }}</span></td>
+                    <td>
+                        {% if r.already_exists %}
+                        <span style="color: var(--text-muted); font-size: 0.8rem;">✅ Mamy</span>
+                        {% elif r.recommendation == 'add' %}
+                        <form method="POST" action="/admin/discover/add" style="display: inline;">
+                            <input type="hidden" name="feed_url" value="{{ r.url }}">
+                            <input type="hidden" name="feed_name" value="{{ r.title }}">
+                            <button type="submit" style="background: rgba(87,242,135,0.15); color: #57f287; border: 1px solid rgba(87,242,135,0.3); padding: 4px 12px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 600;">
+                                ➕ Dodaj
+                            </button>
+                        </form>
+                        {% elif r.recommendation == 'maybe' %}
+                        <form method="POST" action="/admin/discover/add" style="display: inline;">
+                            <input type="hidden" name="feed_url" value="{{ r.url }}">
+                            <input type="hidden" name="feed_name" value="{{ r.title }}">
+                            <button type="submit" style="background: rgba(254,231,92,0.1); color: #fee75c; border: 1px solid rgba(254,231,92,0.2); padding: 4px 12px; border-radius: 6px; cursor: pointer; font-size: 0.75rem;">
+                                🤔 Dodaj
+                            </button>
+                        </form>
+                        {% else %}
+                        <span style="color: var(--text-muted); font-size: 0.75rem;">⛔ Skip</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p style="color: var(--text-muted); text-align: center; padding: 2rem;">
+        Nie znaleziono feedów RSS/Atom na podanym adresie.
+    </p>
+    {% endif %}
+</div>
+{% endif %}
+
+<!-- Quick Scout: predefined domains -->
+<div class="card" style="margin-top: 1.5rem;">
+    <h3 style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">
+        🚀 Quick Scout — popularne domeny</h3>
+    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 1rem;">Kliknij domenę aby przeskanować:</p>
+    <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
+        {% set domains = [
+            ("🇵🇱", "bankier.pl"), ("🇵🇱", "money.pl"), ("🇵🇱", "pap.pl"), ("🇵🇱", "tvn24.pl"),
+            ("🇵🇱", "rp.pl"), ("🇵🇱", "gazetaprawna.pl"), ("🇵🇱", "wprost.pl"), ("🇵🇱", "onet.pl"),
+            ("🇵🇱", "forsal.pl"), ("🇵🇱", "parkiet.com"), ("🇵🇱", "obserwatorfinansowy.pl"),
+            ("🌍", "reuters.com"), ("🌍", "bbc.com"), ("🌍", "aljazeera.com"),
+            ("🌍", "theguardian.com"), ("🌍", "politico.eu"), ("🌍", "ft.com"),
+            ("💻", "techcrunch.com"), ("💻", "arstechnica.com"), ("💻", "theverge.com"),
+            ("💻", "wired.com"), ("🏦", "ecb.europa.eu"), ("🏦", "bis.org"),
+        ] %}
+        {% for emoji, domain in domains %}
+        <form method="POST" action="/admin/discover" style="display: inline;">
+            <input type="hidden" name="url" value="https://www.{{ domain }}">
+            <button type="submit" class="dept-tag" style="cursor: pointer; border: none; font-size: 0.75rem;">
+                {{ emoji }} {{ domain }}
+            </button>
+        </form>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
