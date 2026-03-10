@@ -526,7 +526,7 @@ def admin_discover_add(request: Request, feed_url: str = Form(...), feed_name: s
         feed = Feed(
             name=name,
             rss_url=feed_url,
-            website_url=f"https://{feed_url.split('/')[2]}",
+            url=f"https://{feed_url.split('/')[2]}",
             is_active=True,
             fetch_interval=30,
         )
