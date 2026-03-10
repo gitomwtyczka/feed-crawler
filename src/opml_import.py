@@ -23,6 +23,7 @@ Usage:
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import logging
 from pathlib import Path
 from xml.etree import ElementTree
@@ -73,45 +74,85 @@ def _awesome_opml_url(name: str, kind: str = "recommended") -> str:
 def parse_opml_content(xml_content: str) -> list[dict]:
     """Parse OPML XML content into list of feed dicts.
 
+    Uses lxml with recover=True for broken XML (common in OPML files).
+    Falls back to regex extraction if XML parsing completely fails.
+
     Returns:
         [{"name": "...", "url": "...", "rss_url": "...", "category": "..."}]
     """
-    feeds = []
-    # Fix common XML issues: unescaped & in attribute values
     import re
-    xml_content = re.sub(r'&(?!amp;|lt;|gt;|apos;|quot;|#)', '&amp;', xml_content)
+
+    feeds = []
+
+    # Try lxml first (lenient, handles broken XML)
+    root = None
     try:
-        root = ElementTree.fromstring(xml_content)  # noqa: S314
-    except ElementTree.ParseError as e:
-        logger.warning("Invalid OPML: %s", e)
-        return []
+        from lxml import etree  # noqa: I001
 
-    body = root.find("body")
-    if body is None:
-        return []
+        parser = etree.XMLParser(recover=True, encoding="utf-8")
+        root = etree.fromstring(xml_content.encode("utf-8"), parser)  # noqa: S320
+    except ImportError:
+        # Fallback to stdlib — fix common issues first
+        fixed = re.sub(r'&(?!amp;|lt;|gt;|apos;|quot;|#)', '&amp;', xml_content)
+        with contextlib.suppress(ElementTree.ParseError):
+            root = ElementTree.fromstring(fixed)  # noqa: S314
+    except Exception:
+        logger.debug("OPML parse error, will try regex fallback")
 
-    for outline in body.iter("outline"):
-        xml_url = outline.get("xmlUrl", "")
-        if not xml_url:
-            continue
+    if root is not None:
+        body = root.find("body")
+        if body is not None:
+            for outline in body.iter("outline"):
+                xml_url = outline.get("xmlUrl", "")
+                if not xml_url:
+                    continue
+                name = outline.get("title", outline.get("text", "Unknown"))
+                html_url = outline.get("htmlUrl", "")
+                feed_type = outline.get("type", "rss")
+                feeds.append({
+                    "name": name,
+                    "url": html_url,
+                    "rss_url": xml_url,
+                    "feed_type": feed_type,
+                    "category": "",
+                })
 
-        name = outline.get("title", outline.get("text", "Unknown"))
-        html_url = outline.get("htmlUrl", "")
-        feed_type = outline.get("type", "rss")
+    # Regex fallback: extract xmlUrl from broken XML (last resort)
+    if not feeds:
+        pattern = re.compile(
+            r'<outline\s[^>]*?xmlUrl="([^"]+)"[^>]*?(?:title="([^"]*?)"|text="([^"]*?)")',
+            re.IGNORECASE,
+        )
+        for match in pattern.finditer(xml_content):
+            xml_url = match.group(1)
+            name = match.group(2) or match.group(3) or "Unknown"
+            feeds.append({
+                "name": name,
+                "url": "",
+                "rss_url": xml_url,
+                "feed_type": "rss",
+                "category": "",
+            })
 
-        # Try to find parent category
-        category = ""
-        parent = outline.find("..")
-        if parent is not None and parent.get("text"):
-            category = parent.get("text", "")
+        # Also try reversed order (text= before xmlUrl=)
+        if not feeds:
+            pattern2 = re.compile(
+                r'(?:title="([^"]*?)"|text="([^"]*?)")[^>]*?xmlUrl="([^"]+)"',
+                re.IGNORECASE,
+            )
+            for match in pattern2.finditer(xml_content):
+                xml_url = match.group(3)
+                name = match.group(1) or match.group(2) or "Unknown"
+                feeds.append({
+                    "name": name,
+                    "url": "",
+                    "rss_url": xml_url,
+                    "feed_type": "rss",
+                    "category": "",
+                })
 
-        feeds.append({
-            "name": name,
-            "url": html_url,
-            "rss_url": xml_url,
-            "feed_type": feed_type,
-            "category": category,
-        })
+        if feeds:
+            logger.info("Regex fallback: extracted %d feeds from broken OPML", len(feeds))
 
     return feeds
 
