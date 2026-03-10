@@ -1,0 +1,346 @@
+# ── Sources — auto-generated from OPML: żródła wiedzy.opml ──
+# 47 feeds across 8 departments (6 knowledge + 2 competitor PL)
+# Last updated: 2026-03-10
+
+sources:
+  # ── DEFENCE & GEOPOLITICS ──
+  - name: "ISW"
+    url: "https://www.understandingwar.org"
+    rss_url: "https://www.understandingwar.org/rss.xml"
+    feed_type: rss
+    fetch_interval: 30
+    departments: [defence-geopolitics]
+
+  - name: "Atlantic Council"
+    url: "https://www.atlanticcouncil.org"
+    rss_url: "https://www.atlanticcouncil.org/feed/"
+    feed_type: rss
+    fetch_interval: 30
+    departments: [defence-geopolitics]
+
+  - name: "CSIS"
+    url: "https://www.csis.org"
+    rss_url: "https://www.csis.org/news/rss"
+    feed_type: rss
+    fetch_interval: 30
+    departments: [defence-geopolitics]
+
+  - name: "SIPRI"
+    url: "https://www.sipri.org"
+    rss_url: "https://www.sipri.org/rss"
+    feed_type: rss
+    fetch_interval: 60
+    departments: [defence-geopolitics]
+
+  - name: "RUSI"
+    url: "https://www.rusi.org"
+    rss_url: "https://www.rusi.org/rusi-rss-feeds"
+    feed_type: rss
+    fetch_interval: 60
+    departments: [defence-geopolitics]
+
+  # ── ECONOMY & GLOBAL TRADE ──
+  - name: "IMF News"
+    url: "https://www.imf.org"
+    rss_url: "https://www.imf.org/en/News/RSS"
+    feed_type: rss
+    fetch_interval: 30
+    departments: [economy-global-trade]
+
+  - name: "ECB"
+    url: "https://www.ecb.europa.eu"
+    rss_url: "https://www.ecb.europa.eu/home/html/rss.en.html"
+    feed_type: rss
+    fetch_interval: 60
+    departments: [economy-global-trade]
+
+  - name: "Bruegel"
+    url: "https://www.bruegel.org"
+    rss_url: "https://www.bruegel.org/rss.xml"
+    feed_type: rss
+    fetch_interval: 60
+    departments: [economy-global-trade]
+
+  - name: "PIIE"
+    url: "https://www.piie.com"
+    rss_url: "https://www.piie.com/rss.xml"
+    feed_type: rss
+    fetch_interval: 60
+    departments: [economy-global-trade]
+
+  - name: "OECD News"
+    url: "https://www.oecd.org"
+    rss_url: "https://www.oecd.org/newsroom/index.xml"
+    feed_type: rss
+    fetch_interval: 30
+    departments: [economy-global-trade]
+
+  # ── SCIENCE & HIGH-TECH ──
+  - name: "Nature"
+    url: "https://www.nature.com"
+    rss_url: "http://feeds.nature.com/nature/rss/current"
+    feed_type: rss
+    fetch_interval: 30
+    departments: [science-high-tech]
+
+  - name: "Science Magazine"
+    url: "https://www.science.org"
+    rss_url: "https://www.science.org/rss/news_current.xml"
+    feed_type: rss
+    fetch_interval: 30
+    departments: [science-high-tech]
+
+  - name: "NASA"
+    url: "https://www.nasa.gov"
+    rss_url: "https://www.nasa.gov/rss/dyn/breaking_news.rss"
+    feed_type: rss
+    fetch_interval: 15
+    departments: [science-high-tech]
+
+  - name: "MIT News"
+    url: "https://news.mit.edu"
+    rss_url: "https://news.mit.edu/rss/feed"
+    feed_type: rss
+    fetch_interval: 30
+    departments: [science-high-tech]
+
+  - name: "Phys.org"
+    url: "https://phys.org"
+    rss_url: "https://phys.org/rss-feeds/"
+    feed_type: rss
+    fetch_interval: 15
+    departments: [science-high-tech]
+
+  - name: "CERN"
+    url: "https://home.cern"
+    rss_url: "https://home.cern/news/series/news/rss.xml"
+    feed_type: rss
+    fetch_interval: 60
+    departments: [science-high-tech]
+
+  - name: "Max Planck"
+    url: "https://www.mpg.de"
+    rss_url: "https://www.mpg.de/en/rss-feeds"
+    feed_type: rss
+    fetch_interval: 60
+    departments: [science-high-tech]
+
+  # ── HEALTH & BIOTECH ──
+  - name: "WHO"
+    url: "https://www.who.int"
+    rss_url: "https://www.who.int/rss-feeds/news-english.xml"
+    feed_type: rss
+    fetch_interval: 30
+    departments: [health-biotech]
+
+  - name: "CDC"
+    url: "https://www.cdc.gov"
+    rss_url: "https://tools.cdc.gov/api/v2/resources/media/403333.rss"
+    feed_type: rss
+    fetch_interval: 30
+    departments: [health-biotech]
+
+  - name: "EMA"
+    url: "https://www.ema.europa.eu"
+    rss_url: "https://www.ema.europa.eu/en/whats-new/rss.xml"
+    feed_type: rss
+    fetch_interval: 60
+    departments: [health-biotech]
+
+  - name: "STAT News"
+    url: "https://www.statnews.com"
+    rss_url: "https://www.statnews.com/feed/"
+    feed_type: rss
+    fetch_interval: 15
+    departments: [health-biotech]
+
+  # ── ENERGY & CLIMATE ──
+  - name: "IEA"
+    url: "https://www.iea.org"
+    rss_url: "https://www.iea.org/news/rss"
+    feed_type: rss
+    fetch_interval: 60
+    departments: [energy-climate]
+
+  - name: "IRENA"
+    url: "https://www.irena.org"
+    rss_url: "https://www.irena.org/rssfeed"
+    feed_type: rss
+    fetch_interval: 60
+    departments: [energy-climate]
+
+  - name: "The Conversation"
+    url: "https://theconversation.com"
+    rss_url: "https://theconversation.com/us/environment/articles.atom"
+    feed_type: atom
+    fetch_interval: 30
+    departments: [energy-climate]
+
+  # ── CYBER & DIGITAL ──
+  - name: "Check Point Research"
+    url: "https://research.checkpoint.com"
+    rss_url: "https://research.checkpoint.com/feed/"
+    feed_type: rss
+    fetch_interval: 30
+    departments: [cyber-digital]
+
+  - name: "Mandiant"
+    url: "https://www.mandiant.com"
+    rss_url: "https://www.mandiant.com/resources/blog/rss.xml"
+    feed_type: rss
+    fetch_interval: 30
+    departments: [cyber-digital]
+
+  - name: "OpenAI"
+    url: "https://openai.com"
+    rss_url: "https://openai.com/news/rss/"
+    feed_type: rss
+    fetch_interval: 15
+    departments: [cyber-digital]
+
+  # ══════════════════════════════════════════════════
+  # KONKURENCJA — polskie portale do monitorowania
+  # (biznesciti.com / kurier365.pl competitors)
+  # ══════════════════════════════════════════════════
+
+  # ── KONKURENCJA BIZNES ──
+  - name: "Business Insider PL"
+    url: "https://businessinsider.com.pl"
+    rss_url: "https://businessinsider.com.pl/.feed"
+    feed_type: rss
+    fetch_interval: 10
+    departments: [konkurencja-biznes]
+
+  - name: "Money.pl"
+    url: "https://www.money.pl"
+    rss_url: "https://www.money.pl/rss/rss.xml"
+    feed_type: rss
+    fetch_interval: 10
+    departments: [konkurencja-biznes]
+
+  - name: "Bankier.pl"
+    url: "https://www.bankier.pl"
+    rss_url: "https://www.bankier.pl/rss/wiadomosci.xml"
+    feed_type: rss
+    fetch_interval: 10
+    departments: [konkurencja-biznes]
+
+  - name: "Rzeczpospolita"
+    url: "https://www.rp.pl"
+    rss_url: "https://www.rp.pl/rss_main"
+    feed_type: rss
+    fetch_interval: 10
+    departments: [konkurencja-biznes]
+
+  - name: "Dziennik Gazeta Prawna"
+    url: "https://www.gazetaprawna.pl"
+    rss_url: "https://www.gazetaprawna.pl/rss.xml"
+    feed_type: rss
+    fetch_interval: 15
+    departments: [konkurencja-biznes]
+
+  - name: "Puls Biznesu"
+    url: "https://www.pb.pl"
+    rss_url: "https://www.pb.pl/rss"
+    feed_type: rss
+    fetch_interval: 15
+    departments: [konkurencja-biznes]
+
+  - name: "Forsal"
+    url: "https://forsal.pl"
+    rss_url: "https://forsal.pl/rss.xml"
+    feed_type: rss
+    fetch_interval: 15
+    departments: [konkurencja-biznes]
+
+  - name: "Wyborcza (Biznes)"
+    url: "https://wyborcza.pl"
+    rss_url: "https://wyborcza.pl/0,171498.xml"
+    feed_type: rss
+    fetch_interval: 10
+    departments: [konkurencja-biznes]
+
+  # ── KONKURENCJA OGÓLNOTEMATYCZNE / LIFESTYLE ──
+  - name: "Onet"
+    url: "https://www.onet.pl"
+    rss_url: "https://wiadomosci.onet.pl/.feed"
+    feed_type: rss
+    fetch_interval: 10
+    departments: [konkurencja-ogolne-lifestyle]
+
+  - name: "WP"
+    url: "https://www.wp.pl"
+    rss_url: "https://wiadomosci.wp.pl/rss.xml"
+    feed_type: rss
+    fetch_interval: 10
+    departments: [konkurencja-ogolne-lifestyle]
+
+  - name: "Interia"
+    url: "https://www.interia.pl"
+    rss_url: "https://fakty.interia.pl/feed"
+    feed_type: rss
+    fetch_interval: 10
+    departments: [konkurencja-ogolne-lifestyle]
+
+  - name: "Gazeta.pl"
+    url: "https://www.gazeta.pl"
+    rss_url: "https://wiadomosci.gazeta.pl/pub/rss/wiadomosci.xml"
+    feed_type: rss
+    fetch_interval: 10
+    departments: [konkurencja-ogolne-lifestyle]
+
+  - name: "TVN24"
+    url: "https://www.tvn24.pl"
+    rss_url: "https://tvn24.pl/najnowsze.xml"
+    feed_type: rss
+    fetch_interval: 5
+    departments: [konkurencja-ogolne-lifestyle]
+
+  - name: "TVP Info"
+    url: "https://www.tvp.info"
+    rss_url: "https://www.tvp.info/informacje/rss"
+    feed_type: rss
+    fetch_interval: 10
+    departments: [konkurencja-ogolne-lifestyle]
+
+  - name: "Polsat News"
+    url: "https://www.polsatnews.pl"
+    rss_url: "https://www.polsatnews.pl/rss"
+    feed_type: rss
+    fetch_interval: 10
+    departments: [konkurencja-ogolne-lifestyle]
+
+  - name: "Fakt"
+    url: "https://www.fakt.pl"
+    rss_url: "https://www.fakt.pl/rss"
+    feed_type: rss
+    fetch_interval: 10
+    departments: [konkurencja-ogolne-lifestyle]
+
+  - name: "Super Express"
+    url: "https://www.se.pl"
+    rss_url: "https://www.se.pl/rss"
+    feed_type: rss
+    fetch_interval: 10
+    departments: [konkurencja-ogolne-lifestyle]
+
+  - name: "NaTemat"
+    url: "https://natemat.pl"
+    rss_url: "https://natemat.pl/rss/wszystkie"
+    feed_type: rss
+    fetch_interval: 10
+    departments: [konkurencja-ogolne-lifestyle]
+
+  - name: "Glamour PL"
+    url: "https://www.glamour.pl"
+    rss_url: "https://www.glamour.pl/feed/rss"
+    feed_type: rss
+    fetch_interval: 30
+    departments: [konkurencja-ogolne-lifestyle]
+
+  - name: "Vogue PL"
+    url: "https://www.vogue.pl"
+    rss_url: "https://www.vogue.pl/feed/rss"
+    feed_type: rss
+    fetch_interval: 30
+    departments: [konkurencja-ogolne-lifestyle]

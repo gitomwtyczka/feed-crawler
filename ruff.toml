@@ -1,0 +1,27 @@
+# Ruff — Python linter + formatter
+# Identical rules to SaaS backend (crimson-void/backend/ruff.toml)
+
+[lint]
+select = [
+    "E",       # pycodestyle errors
+    "W",       # pycodestyle warnings
+    "F",       # pyflakes
+    "B",       # flake8-bugbear (common pitfalls)
+    "S",       # flake8-bandit (security)
+    "C4",      # flake8-comprehensions
+    "SIM",     # flake8-simplify
+    "TCH",     # flake8-type-checking
+    "UP",      # pyupgrade
+    "I",       # isort
+]
+ignore = [
+    "E501",    # line too long — handled by formatter
+    "S101",    # assert — ok in tests
+    "S603",    # subprocess — not used
+    "S607",    # partial path — not relevant
+    "B905",    # zip strict — Python 3.10+
+    "SIM108",  # ternary — readability preference
+]
+
+[lint.per-file-ignores]
+"tests/*" = ["S101", "S106"]  # allow asserts and hardcoded passwords in tests

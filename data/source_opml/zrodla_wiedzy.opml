@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="2.0">
+  <head>
+    <title>Profesjonalne Źródła Informacji - Portal Wielotematyczny</title>
+  </head>
+  <body>
+    <outline title="DEFENCE &amp; GEOPOLITICS" text="DEFENCE &amp; GEOPOLITICS">
+      <outline type="rss" text="ISW - Institute for the Study of War" title="ISW" xmlUrl="https://www.understandingwar.org/rss.xml" htmlUrl="https://www.understandingwar.org"/>
+      <outline type="rss" text="Atlantic Council" title="Atlantic Council" xmlUrl="https://www.atlanticcouncil.org/feed/" htmlUrl="https://www.atlanticcouncil.org"/>
+      <outline type="rss" text="CSIS - Strategic &amp; International Studies" title="CSIS" xmlUrl="https://www.csis.org/news/rss" htmlUrl="https://www.csis.org"/>
+      <outline type="rss" text="SIPRI - Arms &amp; Conflict" title="SIPRI" xmlUrl="https://www.sipri.org/rss" htmlUrl="https://www.sipri.org"/>
+      <outline type="rss" text="RUSI - Defence &amp; Security" title="RUSI" xmlUrl="https://www.rusi.org/rusi-rss-feeds" htmlUrl="https://www.rusi.org"/>
+    </outline>
+
+    <outline title="ECONOMY &amp; GLOBAL TRADE" text="ECONOMY &amp; GLOBAL TRADE">
+      <outline type="rss" text="IMF News" title="IMF News" xmlUrl="https://www.imf.org/en/News/RSS" htmlUrl="https://www.imf.org"/>
+      <outline type="rss" text="ECB - European Central Bank" title="ECB" xmlUrl="https://www.ecb.europa.eu/home/html/rss.en.html" htmlUrl="https://www.ecb.europa.eu"/>
+      <outline type="rss" text="Bruegel Think-Tank" title="Bruegel" xmlUrl="https://www.bruegel.org/rss.xml" htmlUrl="https://www.bruegel.org"/>
+      <outline type="rss" text="Peterson Institute (PIIE)" title="PIIE" xmlUrl="https://www.piie.com/rss.xml" htmlUrl="https://www.piie.com"/>
+      <outline type="rss" text="OECD News" title="OECD News" xmlUrl="https://www.oecd.org/newsroom/index.xml" htmlUrl="https://www.oecd.org"/>
+    </outline>
+
+    <outline title="SCIENCE &amp; HIGH-TECH" text="SCIENCE &amp; HIGH-TECH">
+      <outline type="rss" text="Nature - Current Issue" title="Nature" xmlUrl="http://feeds.nature.com/nature/rss/current" htmlUrl="https://www.nature.com"/>
+      <outline type="rss" text="Science Magazine - News" title="Science" xmlUrl="https://www.science.org/rss/news_current.xml" htmlUrl="https://www.science.org"/>
+      <outline type="rss" text="NASA Breaking News" title="NASA" xmlUrl="https://www.nasa.gov/rss/dyn/breaking_news.rss" htmlUrl="https://www.nasa.gov"/>
+      <outline type="rss" text="MIT News" title="MIT News" xmlUrl="https://news.mit.edu/rss/feed" htmlUrl="https://news.mit.edu"/>
+      <outline type="rss" text="Phys.org - All News" title="Phys.org" xmlUrl="https://phys.org/rss-feeds/" htmlUrl="https://phys.org"/>
+      <outline type="rss" text="CERN News" title="CERN" xmlUrl="https://home.cern/news/series/news/rss.xml" htmlUrl="https://home.cern"/>
+      <outline type="rss" text="Max Planck Society" title="Max Planck" xmlUrl="https://www.mpg.de/en/rss-feeds" htmlUrl="https://www.mpg.de"/>
+    </outline>
+
+    <outline title="HEALTH &amp; BIOTECH" text="HEALTH &amp; BIOTECH">
+      <outline type="rss" text="WHO News" title="WHO" xmlUrl="https://www.who.int/rss-feeds/news-english.xml" htmlUrl="https://www.who.int"/>
+      <outline type="rss" text="CDC Online Newsroom" title="CDC" xmlUrl="https://tools.cdc.gov/api/v2/resources/media/403333.rss" htmlUrl="https://www.cdc.gov"/>
+      <outline type="rss" text="EMA - What's New" title="EMA" xmlUrl="https://www.ema.europa.eu/en/whats-new/rss.xml" htmlUrl="https://www.ema.europa.eu"/>
+      <outline type="rss" text="STAT News" title="STAT" xmlUrl="https://www.statnews.com/feed/" htmlUrl="https://www.statnews.com"/>
+    </outline>
+
+    <outline title="ENERGY &amp; CLIMATE" text="ENERGY &amp; CLIMATE">
+      <outline type="rss" text="IEA News" title="IEA" xmlUrl="https://www.iea.org/news/rss" htmlUrl="https://www.iea.org"/>
+      <outline type="rss" text="IRENA - Renewables" title="IRENA" xmlUrl="https://www.irena.org/rssfeed" htmlUrl="https://www.irena.org"/>
+      <outline type="rss" text="The Conversation - Environment" title="The Conversation" xmlUrl="https://theconversation.com/us/environment/articles.atom" htmlUrl="https://theconversation.com"/>
+    </outline>
+
+    <outline title="CYBER &amp; DIGITAL" text="CYBER &amp; DIGITAL">
+      <outline type="rss" text="Check Point Research" title="Check Point" xmlUrl="https://research.checkpoint.com/feed/" htmlUrl="https://research.checkpoint.com"/>
+      <outline type="rss" text="Mandiant Blog" title="Mandiant" xmlUrl="https://www.mandiant.com/resources/blog/rss.xml" htmlUrl="https://www.mandiant.com"/>
+      <outline type="rss" text="OpenAI News" title="OpenAI" xmlUrl="https://openai.com/news/rss/" htmlUrl="https://openai.com"/>
+    </outline>
+  </body>
+</opml>

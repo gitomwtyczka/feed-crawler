@@ -1,0 +1,45 @@
+# ── Departments — auto-generated from OPML ──
+# 6 active departments + 2 future slots
+
+departments:
+  - name: "DEFENCE & GEOPOLITICS"
+    slug: defence-geopolitics
+    description: "Obronność, geopolityka, bezpieczeństwo międzynarodowe (ISW, Atlantic Council, CSIS, SIPRI, RUSI)"
+
+  - name: "ECONOMY & GLOBAL TRADE"
+    slug: economy-global-trade
+    description: "Ekonomia, handel globalny, polityka monetarna (IMF, ECB, Bruegel, PIIE, OECD)"
+
+  - name: "SCIENCE & HIGH-TECH"
+    slug: science-high-tech
+    description: "Nauka, technologia, odkrycia naukowe (Nature, Science, NASA, MIT, Phys.org, CERN, Max Planck)"
+
+  - name: "HEALTH & BIOTECH"
+    slug: health-biotech
+    description: "Zdrowie, biotechnologia, medycyna (WHO, CDC, EMA, STAT News)"
+
+  - name: "ENERGY & CLIMATE"
+    slug: energy-climate
+    description: "Energia, klimat, odnawialne źródła (IEA, IRENA, The Conversation)"
+
+  - name: "CYBER & DIGITAL"
+    slug: cyber-digital
+    description: "Cyberbezpieczeństwo, AI, technologie cyfrowe (Check Point, Mandiant, OpenAI)"
+
+  # ── Konkurencja PL (monitoring portali) ──
+  - name: "KONKURENCJA — BIZNES"
+    slug: konkurencja-biznes
+    description: "Polskie portale biznesowe — konkurencja biznesciti.com (BI PL, Money.pl, Bankier, Rzeczpospolita, DGP, PB, Forsal, Wyborcza)"
+
+  - name: "KONKURENCJA — OGÓLNE / LIFESTYLE"
+    slug: konkurencja-ogolne-lifestyle
+    description: "Polskie portale ogólnotematyczne i lifestyle — konkurencja kurier365.pl (Onet, WP, Interia, TVN24, Gazeta.pl, Fakt, SE, NaTemat, Glamour, Vogue)"
+
+  # ── Sloty na przyszłe działy ──
+  - name: "HISTORYCZNY"
+    slug: historyczny
+    description: "Publikacje historyczne (slot na przyszłość)"
+
+  - name: "STATYSTYKI (Eurostat/GUS)"
+    slug: statystyki
+    description: "Statystyki Eurostat, GUS i inne (slot na przyszłość)"
