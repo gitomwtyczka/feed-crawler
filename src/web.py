@@ -28,7 +28,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 from fastapi import FastAPI, Query, Request
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import desc, func
@@ -407,9 +407,123 @@ def api_feeds():
                     "is_active": f.is_active,
                     "last_fetched": f.last_fetched.isoformat() if f.last_fetched else None,
                     "article_count": len(f.articles),
+                    "consecutive_errors": f.consecutive_errors or 0,
+                    "backoff_until": f.backoff_until.isoformat() if f.backoff_until else None,
                 }
                 for f in feeds
             ],
         }
     finally:
         db.close()
+
+
+# ── Export API ──
+
+
+@app.get("/api/export")
+def api_export(
+    format: str = Query("json", description="Export format: json or csv"),
+    department: str = Query(None, description="Filter by department slug"),
+    feed_id: int = Query(None, description="Filter by feed ID"),
+    limit: int = Query(1000, le=10000, description="Max articles to export"),
+):
+    """Export articles as JSON or CSV with optional filtering."""
+    import csv
+    import io
+
+    db = db_module.SessionLocal()
+    try:
+        query = db.query(Article).order_by(desc(Article.published_at))
+
+        if department:
+            dept = db.query(Department).filter(Department.slug == department).first()
+            if dept:
+                query = query.filter(Article.departments.any(Department.id == dept.id))
+
+        if feed_id:
+            query = query.filter(Article.feed_id == feed_id)
+
+        articles = query.limit(limit).all()
+
+        if format == "csv":
+            output = io.StringIO()
+            writer = csv.writer(output)
+            writer.writerow(["id", "title", "url", "author", "published_at", "feed_name", "departments"])
+            for a in articles:
+                writer.writerow([
+                    a.id,
+                    a.title,
+                    a.url,
+                    a.author or "",
+                    a.published_at.isoformat() if a.published_at else "",
+                    a.feed.name if a.feed else "",
+                    "|".join(d.slug for d in a.departments),
+                ])
+            output.seek(0)
+            return StreamingResponse(
+                iter([output.getvalue()]),
+                media_type="text/csv",
+                headers={"Content-Disposition": "attachment; filename=articles_export.csv"},
+            )
+
+        # JSON format (default)
+        return {
+            "total": len(articles),
+            "articles": [
+                {
+                    "id": a.id,
+                    "title": a.title,
+                    "url": a.url,
+                    "summary": a.summary or "",
+                    "content": a.content or "",
+                    "author": a.author or "",
+                    "published_at": a.published_at.isoformat() if a.published_at else None,
+                    "fetched_at": a.fetched_at.isoformat() if a.fetched_at else None,
+                    "feed_name": a.feed.name if a.feed else "",
+                    "departments": [d.slug for d in a.departments],
+                }
+                for a in articles
+            ],
+        }
+    finally:
+        db.close()
+
+
+@app.get("/api/health")
+def api_health():
+    """System health endpoint with feed error stats."""
+    db = db_module.SessionLocal()
+    try:
+        total_feeds = db.query(func.count(Feed.id)).scalar()
+        active_feeds = db.query(func.count(Feed.id)).filter(Feed.is_active).scalar()
+        total_articles = db.query(func.count(Article.id)).scalar()
+
+        # Feeds with errors
+        feeds_with_errors = (
+            db.query(Feed)
+            .filter(Feed.consecutive_errors > 0)
+            .order_by(desc(Feed.consecutive_errors))
+            .limit(20)
+            .all()
+        )
+
+        return {
+            "status": "healthy",
+            "feeds_total": total_feeds,
+            "feeds_active": active_feeds,
+            "feeds_disabled": total_feeds - active_feeds,
+            "articles_total": total_articles,
+            "feeds_with_errors": [
+                {
+                    "id": f.id,
+                    "name": f.name,
+                    "consecutive_errors": f.consecutive_errors,
+                    "backoff_until": f.backoff_until.isoformat() if f.backoff_until else None,
+                    "is_active": f.is_active,
+                }
+                for f in feeds_with_errors
+            ],
+        }
+    finally:
+        db.close()
+
