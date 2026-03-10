@@ -1,6 +1,3 @@
-# Feed Crawler Sources — 518 feeds (deduped)
-# Duplicates removed: 0
-
 sources:
 - name: ISBNews
   url: http://portal.isbnews.pl
@@ -3635,3 +3632,179 @@ sources:
   fetch_interval: 30
   departments:
   - business-economy
+- name: ECB Press Releases
+  url: https://www.ecb.europa.eu
+  rss_url: https://www.ecb.europa.eu/rss/press.html
+  feed_type: rss
+  fetch_interval: 60
+  departments:
+  - ekonomia
+- name: ECB Publications
+  url: https://www.ecb.europa.eu
+  rss_url: https://www.ecb.europa.eu/rss/pub.html
+  feed_type: rss
+  fetch_interval: 60
+  departments:
+  - ekonomia
+- name: ECB Working Papers
+  url: https://www.ecb.europa.eu
+  rss_url: https://www.ecb.europa.eu/rss/wppub.html
+  feed_type: rss
+  fetch_interval: 60
+  departments:
+  - ekonomia
+- name: ECB Blog
+  url: https://www.ecb.europa.eu
+  rss_url: https://www.ecb.europa.eu/rss/blog.html
+  feed_type: rss
+  fetch_interval: 60
+  departments:
+  - ekonomia
+- name: Federal Reserve Press Releases
+  url: https://www.federalreserve.gov
+  rss_url: https://www.federalreserve.gov/feeds/press_all.xml
+  feed_type: rss
+  fetch_interval: 60
+  departments:
+  - ekonomia
+- name: Federal Reserve Speeches
+  url: https://www.federalreserve.gov
+  rss_url: https://www.federalreserve.gov/feeds/speeches.xml
+  feed_type: rss
+  fetch_interval: 60
+  departments:
+  - ekonomia
+- name: Fed St. Louis - On The Economy
+  url: https://www.stlouisfed.org
+  rss_url: https://www.stlouisfed.org/on-the-economy/rss
+  feed_type: rss
+  fetch_interval: 60
+  departments:
+  - ekonomia
+- name: Fed NY Liberty Street Economics
+  url: https://libertystreeteconomics.newyorkfed.org
+  rss_url: https://libertystreeteconomics.newyorkfed.org/feed/
+  feed_type: rss
+  fetch_interval: 60
+  departments:
+  - ekonomia
+- name: Bank of England News
+  url: https://www.bankofengland.co.uk
+  rss_url: https://www.bankofengland.co.uk/rss/news
+  feed_type: rss
+  fetch_interval: 60
+  departments:
+  - ekonomia
+- name: Bank of England Publications
+  url: https://www.bankofengland.co.uk
+  rss_url: https://www.bankofengland.co.uk/rss/publications
+  feed_type: rss
+  fetch_interval: 60
+  departments:
+  - ekonomia
+- name: Bank of Japan Releases
+  url: https://www.boj.or.jp
+  rss_url: https://www.boj.or.jp/en/rss/whatsnew.xml
+  feed_type: rss
+  fetch_interval: 60
+  departments:
+  - ekonomia
+- name: Reserve Bank of Australia
+  url: https://www.rba.gov.au
+  rss_url: https://www.rba.gov.au/rss/rss-cb-media-releases.xml
+  feed_type: rss
+  fetch_interval: 60
+  departments:
+  - ekonomia
+- name: NBP Kursy Walut
+  url: https://www.nbp.pl
+  rss_url: https://rss.nbp.pl/kursy/TabelaA.xml
+  feed_type: rss
+  fetch_interval: 60
+  departments:
+  - ekonomia
+  - statystyki
+- name: IMF News
+  url: https://www.imf.org
+  rss_url: https://www.imf.org/en/News/rss.xml
+  feed_type: rss
+  fetch_interval: 60
+  departments:
+  - ekonomia
+- name: WTO News
+  url: https://www.wto.org
+  rss_url: https://www.wto.org/english/news_e/news_rss_e.xml
+  feed_type: rss
+  fetch_interval: 60
+  departments:
+  - ekonomia
+- name: UN News Economic Development
+  url: https://news.un.org
+  rss_url: https://news.un.org/feed/subscribe/en/news/topic/economic-development/feed/rss.xml
+  feed_type: rss
+  fetch_interval: 60
+  departments:
+  - ekonomia
+- name: Moody's Research
+  url: https://www.moodys.com
+  rss_url: https://www.moodys.com/feed/rss/Moodys_Research
+  feed_type: rss
+  fetch_interval: 60
+  departments:
+  - ekonomia
+- name: Fitch Ratings
+  url: https://www.fitchratings.com
+  rss_url: https://www.fitchratings.com/rss/research/sovereigns
+  feed_type: rss
+  fetch_interval: 60
+  departments:
+  - ekonomia
+- name: McKinsey Insights
+  url: https://www.mckinsey.com
+  rss_url: https://www.mckinsey.com/insights/rss
+  feed_type: rss
+  fetch_interval: 60
+  departments:
+  - ekonomia
+- name: GUS Komunikaty
+  url: https://stat.gov.pl
+  rss_url: https://stat.gov.pl/rss/
+  feed_type: rss
+  fetch_interval: 60
+  departments:
+  - statystyki
+- name: Financial Times World
+  url: https://www.ft.com
+  rss_url: https://www.ft.com/world?format=rss
+  feed_type: rss
+  fetch_interval: 60
+  departments:
+  - ekonomia
+- name: Złoty Blog NBP
+  url: https://www.nbp.pl
+  rss_url: https://www.nbp.pl/publikacje/rss/rss_nowosci.xml
+  feed_type: rss
+  fetch_interval: 60
+  departments:
+  - ekonomia
+- name: World Bank News
+  rss_url: https://www.worldbank.org/en/news/rss.xml
+  url: https://www.worldbank.org
+  feed_type: rss
+  fetch_interval: 60
+  departments:
+  - ekonomia
+- name: IMF Press Releases
+  rss_url: https://www.imf.org/en/News/RSS?dtype=Pressrelease
+  url: https://www.imf.org
+  feed_type: rss
+  fetch_interval: 60
+  departments:
+  - ekonomia
+- name: BIS Speeches
+  rss_url: https://www.bis.org/doclist/cbspeeches.rss
+  url: https://www.bis.org
+  feed_type: rss
+  fetch_interval: 60
+  departments:
+  - ekonomia
