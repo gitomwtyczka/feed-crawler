@@ -34,8 +34,8 @@ class Feed(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255), nullable=False)
-    url = Column(String(2048), nullable=False, unique=True, doc="Website URL")
-    rss_url = Column(String(2048), nullable=False, unique=True, doc="RSS/Atom feed URL")
+    url = Column(String(2048), nullable=True, default="", doc="Website URL")
+    rss_url = Column(String(2048), nullable=True, default="", doc="RSS/Atom feed URL")
     feed_type = Column(String(20), nullable=False, default="rss", doc="rss | atom | api")
     fetch_interval = Column(Integer, nullable=False, default=30, doc="Fetch interval in minutes")
     is_active = Column(Boolean, nullable=False, default=True)

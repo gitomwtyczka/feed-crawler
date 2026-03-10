@@ -53,8 +53,10 @@ def sync_config_to_db(db: Session, sources_path: str = "config/sources.yaml", de
     # Sync sources
     source_configs = load_sources(sources_path)
     for src_cfg in source_configs:
-        # Match by name (rss_url may be empty for scrapers)
+        # Match by name OR rss_url (avoid UNIQUE constraint violations)
         existing = db.query(Feed).filter(Feed.name == src_cfg.name).first()
+        if not existing and src_cfg.rss_url:
+            existing = db.query(Feed).filter(Feed.rss_url == src_cfg.rss_url).first()
         if not existing:
             feed = Feed(
                 name=src_cfg.name,

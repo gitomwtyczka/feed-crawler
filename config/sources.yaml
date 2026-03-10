@@ -1,6 +1,5 @@
-# Feed Crawler Sources — 518 feeds
-# Verified: 516 RSS + 2 scrapers
-# Removed: 101 dead feeds (403/404/timeout/error)
+# Feed Crawler Sources — 518 feeds (deduped)
+# Duplicates removed: 0
 
 sources:
 - name: ISBNews
