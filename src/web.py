@@ -244,6 +244,7 @@ def reader_search(request: Request, q: str = Query(""), page: int = Query(1, ge=
         offset = (page - 1) * per_page
         if q:
             # Multi-word AND search: each word must appear somewhere
+            # Searches: article title, summary, content, author, AND feed name
             from sqlalchemy import and_, or_
 
             words = q.strip().split()
@@ -255,8 +256,13 @@ def reader_search(request: Request, q: str = Query(""), page: int = Query(1, ge=
                     Article.summary.ilike(w),
                     Article.content.ilike(w),
                     Article.author.ilike(w),
+                    Feed.name.ilike(w),
                 ))
-            query = db.query(Article).filter(and_(*conditions)) if conditions else db.query(Article)
+            query = (
+                db.query(Article)
+                .outerjoin(Feed, Article.feed_id == Feed.id)
+                .filter(and_(*conditions))
+            ) if conditions else db.query(Article)
         else:
             query = db.query(Article)
 

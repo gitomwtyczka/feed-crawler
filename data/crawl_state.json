@@ -1,0 +1,4 @@
+{
+  "crawl_enabled": true,
+  "crawl_interval_minutes": 10
+}
