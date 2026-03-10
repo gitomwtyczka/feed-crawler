@@ -20,8 +20,6 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-crawler_secret}
     volumes:
       - pgdata:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U crawler -d feed_crawler"]
       interval: 10s
@@ -39,6 +37,10 @@ services:
       SAAS_WEBHOOK_URL: ${SAAS_WEBHOOK_URL:-}
       SAAS_WEBHOOK_API_KEY: ${SAAS_WEBHOOK_API_KEY:-}
       JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      SOURCE_ISBNEWS_USERNAME: ${SOURCE_ISBNEWS_USERNAME:-}
+      SOURCE_ISBNEWS_PASSWORD: ${SOURCE_ISBNEWS_PASSWORD:-}
+    volumes:
+      - crawl_data:/app/data
     depends_on:
       db:
         condition: service_healthy
@@ -52,6 +54,10 @@ services:
       DISCORD_CRAWLER_WEBHOOK_URL: ${DISCORD_CRAWLER_WEBHOOK_URL:-}
       SAAS_WEBHOOK_URL: ${SAAS_WEBHOOK_URL:-}
       SAAS_WEBHOOK_API_KEY: ${SAAS_WEBHOOK_API_KEY:-}
+      SOURCE_ISBNEWS_USERNAME: ${SOURCE_ISBNEWS_USERNAME:-}
+      SOURCE_ISBNEWS_PASSWORD: ${SOURCE_ISBNEWS_PASSWORD:-}
+    volumes:
+      - crawl_data:/app/data
     depends_on:
       db:
         condition: service_healthy
@@ -59,3 +65,4 @@ services:
 
 volumes:
   pgdata:
+  crawl_data:

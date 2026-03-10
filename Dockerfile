@@ -37,8 +37,11 @@ COPY templates/ ./templates/
 COPY config/ ./config/
 COPY requirements.txt .
 
+# Create data directory (for crawl_state.json, SQLite fallback)
+RUN mkdir -p /app/data
+
 # Create non-root user
-RUN useradd -m -s /bin/bash crawler
+RUN useradd -m -s /bin/bash crawler && chown -R crawler:crawler /app
 USER crawler
 
 # Health check
