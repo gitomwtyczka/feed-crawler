@@ -20,6 +20,7 @@ from sqlalchemy.orm import sessionmaker
 # Override DATABASE_URL before any src imports
 os.environ["DATABASE_URL"] = "sqlite://"  # in-memory
 
+from src import models as _models  # noqa: E402, F401  — ensure all tables registered
 from src.database import Base  # noqa: E402
 
 # ── In-memory SQLite for tests ──
