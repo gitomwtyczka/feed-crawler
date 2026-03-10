@@ -42,6 +42,24 @@ sources:
     auth_type: basic
     fetch_interval: 5
     departments: [konkurencja-biznes, economy-global-trade]
+
+  # ══════════════════════════════════════════════════
+  # SŁUŻBY MUNDUROWE — Policja, Straż Pożarna
+  # ══════════════════════════════════════════════════
+
+  - name: "Policja.pl"
+    url: "https://policja.pl"
+    rss_url: "https://policja.pl/dokumenty/rss/1-rss-1.rss"
+    feed_type: rss
+    fetch_interval: 10
+    departments: [defence-geopolitics, konkurencja-ogolne-lifestyle]
+
+  - name: "KGPSP (Straż Pożarna)"
+    url: "https://www.gov.pl/web/kgpsp"
+    feed_type: scraper
+    fetch_interval: 60
+    departments: [defence-geopolitics]
+
   # ── DEFENCE & GEOPOLITICS ──
   - name: "ISW"
     url: "https://www.understandingwar.org"
