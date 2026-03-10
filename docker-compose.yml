@@ -1,0 +1,61 @@
+# Feed Crawler — Docker Compose Stack
+#
+# Services:
+#   web      - FastAPI admin panel + reader (port 8000)
+#   crawler  - Continuous feed fetcher (daemon mode)
+#   db       - PostgreSQL 16
+#
+# Usage:
+#   docker compose up -d          # start all
+#   docker compose up web db      # web only (no crawler)
+#   docker compose logs -f crawler # follow crawler logs
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: feed_crawler
+      POSTGRES_USER: crawler
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-crawler_secret}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U crawler -d feed_crawler"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "${WEB_PORT:-8000}:8000"
+    environment:
+      DATABASE_URL: postgresql://crawler:${POSTGRES_PASSWORD:-crawler_secret}@db:5432/feed_crawler
+      DISCORD_CRAWLER_WEBHOOK_URL: ${DISCORD_CRAWLER_WEBHOOK_URL:-}
+      SAAS_WEBHOOK_URL: ${SAAS_WEBHOOK_URL:-}
+      SAAS_WEBHOOK_API_KEY: ${SAAS_WEBHOOK_API_KEY:-}
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ["uvicorn", "src.web:app", "--host", "0.0.0.0", "--port", "8000"]
+
+  crawler:
+    build: .
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://crawler:${POSTGRES_PASSWORD:-crawler_secret}@db:5432/feed_crawler
+      DISCORD_CRAWLER_WEBHOOK_URL: ${DISCORD_CRAWLER_WEBHOOK_URL:-}
+      SAAS_WEBHOOK_URL: ${SAAS_WEBHOOK_URL:-}
+      SAAS_WEBHOOK_API_KEY: ${SAAS_WEBHOOK_API_KEY:-}
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ["python", "-m", "src.scheduler", "--daemon", "--interval", "10"]
+
+volumes:
+  pgdata:

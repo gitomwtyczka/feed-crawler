@@ -27,13 +27,19 @@ from __future__ import annotations
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from fastapi import FastAPI, Query, Request
+from fastapi import FastAPI, Form, Query, Request
 from fastapi.responses import HTMLResponse, RedirectResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import desc, func
 
 from . import database as db_module
+from .auth import (
+    authenticate_user,
+    create_access_token,
+    decode_access_token,
+    ensure_default_admin,
+)
 from .models import Article, Department, Feed
 
 # ── App Setup ──
@@ -89,12 +95,29 @@ templates.env.filters["timeago"] = timeago
 templates.env.filters["truncate"] = truncate
 
 
+# ── Auth Helpers ──
+
+
+def _get_current_user(request: Request) -> str | None:
+    """Get current admin user from JWT cookie. Returns username or None."""
+    token = request.cookies.get("access_token")
+    if not token:
+        return None
+    return decode_access_token(token)
+
+
 # ── Startup ──
 
 
 @app.on_event("startup")
 def on_startup():
     db_module.init_db()
+    # Create default admin user if none exist
+    db = db_module.SessionLocal()
+    try:
+        ensure_default_admin(db)
+    finally:
+        db.close()
 
 
 # ── Reader Routes ──
@@ -239,11 +262,50 @@ def reader_search(request: Request, q: str = Query(""), page: int = Query(1, ge=
         db.close()
 
 
-# ── Admin Routes ──
+# ── Auth Routes ──
+
+
+@app.get("/login", response_class=HTMLResponse)
+def login_page(request: Request):
+    user = _get_current_user(request)
+    if user:
+        return RedirectResponse(url="/admin", status_code=303)
+    return templates.TemplateResponse("login.html", {"request": request, "error": None})
+
+
+@app.post("/login")
+def login_submit(request: Request, username: str = Form(...), password: str = Form(...)):
+    db = db_module.SessionLocal()
+    try:
+        user = authenticate_user(db, username, password)
+        if not user:
+            return templates.TemplateResponse("login.html", {
+                "request": request,
+                "error": "Nieprawidłowy login lub hasło",
+            })
+        token = create_access_token(user.username)
+        response = RedirectResponse(url="/admin", status_code=303)
+        response.set_cookie("access_token", token, httponly=True, max_age=86400)
+        return response
+    finally:
+        db.close()
+
+
+@app.get("/logout")
+def logout():
+    response = RedirectResponse(url="/", status_code=303)
+    response.delete_cookie("access_token")
+    return response
+
+
+# ── Admin Routes (auth required) ──
 
 
 @app.get("/admin", response_class=HTMLResponse)
 def admin_dashboard(request: Request):
+    user = _get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/login", status_code=303)
     db = db_module.SessionLocal()
     try:
         total_feeds = db.query(func.count(Feed.id)).scalar()
@@ -277,6 +339,7 @@ def admin_dashboard(request: Request):
 
         return templates.TemplateResponse("admin/dashboard.html", {
             "request": request,
+            "user": user,
             "total_feeds": total_feeds,
             "active_feeds": active_feeds,
             "total_articles": total_articles,
@@ -292,6 +355,9 @@ def admin_dashboard(request: Request):
 
 @app.get("/admin/feeds", response_class=HTMLResponse)
 def admin_feeds(request: Request, page: int = Query(1, ge=1)):
+    user = _get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/login", status_code=303)
     db = db_module.SessionLocal()
     try:
         per_page = 50
@@ -316,6 +382,7 @@ def admin_feeds(request: Request, page: int = Query(1, ge=1)):
 
         return templates.TemplateResponse("admin/feeds.html", {
             "request": request,
+            "user": user,
             "feeds": feeds,
             "page": page,
             "total_pages": total_pages,
@@ -326,7 +393,10 @@ def admin_feeds(request: Request, page: int = Query(1, ge=1)):
 
 
 @app.post("/admin/feeds/{feed_id}/toggle")
-def admin_toggle_feed(feed_id: int):
+def admin_toggle_feed(request: Request, feed_id: int):
+    user = _get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/login", status_code=303)
     db = db_module.SessionLocal()
     try:
         feed = db.query(Feed).filter(Feed.id == feed_id).first()

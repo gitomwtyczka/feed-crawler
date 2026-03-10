@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 # ── Configuration ──
 FETCH_TIMEOUT = int(os.getenv("FETCH_TIMEOUT_SECONDS", "30"))
-FETCH_CONCURRENCY = int(os.getenv("FETCH_CONCURRENCY", "20"))
+FETCH_CONCURRENCY = int(os.getenv("FETCH_CONCURRENCY", "10"))
 
 # User-Agent rotation pool — realistic browser strings to help with 403 feeds
 _USER_AGENTS = [
@@ -219,7 +219,13 @@ async def fetch_batch(
     feeds: list[dict],
     concurrency: int = FETCH_CONCURRENCY,
 ) -> list[FetchResult]:
-    """Fetch multiple feeds concurrently with semaphore-limited concurrency.
+    """Fetch multiple feeds concurrently with rate limiting.
+
+    Rate limiting strategy (non-aggressive crawling):
+    - Global semaphore limits concurrent requests (default: 10)
+    - Per-domain semaphore ensures max 1 concurrent request per domain
+    - Random jitter (0.2-1.0s) between each fetch to avoid spikes
+    - Respects server rate limits by spreading requests over time
 
     Args:
         feeds: List of dicts with keys: 'rss_url', 'name'.
@@ -228,10 +234,26 @@ async def fetch_batch(
     Returns:
         List of FetchResult for each feed.
     """
+    import random
+    from collections import defaultdict
+    from urllib.parse import urlparse
+
     semaphore = asyncio.Semaphore(concurrency)
 
+    # Per-domain locks: max 1 concurrent request to same domain
+    domain_locks: dict[str, asyncio.Lock] = defaultdict(asyncio.Lock)
+
+    def _get_domain(url: str) -> str:
+        try:
+            return urlparse(url).netloc
+        except Exception:
+            return url
+
     async def _limited_fetch(client: httpx.AsyncClient, feed: dict) -> FetchResult:
-        async with semaphore:
+        domain = _get_domain(feed["rss_url"])
+        async with semaphore, domain_locks[domain]:
+            # Random jitter to spread requests
+            await asyncio.sleep(random.uniform(0.2, 1.0))  # noqa: S311
             return await fetch_single_feed(
                 client=client,
                 url=feed["rss_url"],
@@ -262,3 +284,4 @@ async def fetch_batch(
             final_results.append(result)
 
     return final_results
+

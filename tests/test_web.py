@@ -8,7 +8,7 @@ We just need to ensure tables are created on that engine.
 
 from fastapi.testclient import TestClient
 
-from src import models as _models  # noqa: F401
+from src import database  # noqa: F401
 from src.database import Base, engine
 from src.web import app
 
@@ -111,16 +111,52 @@ class TestReaderRoutes:
 
 
 class TestAdminRoutes:
+    def _login(self):
+        """Login and return auth cookies."""
+        # Ensure default admin exists (startup event creates it)
+        from src.auth import ensure_default_admin
+
+        db = database.SessionLocal()
+        try:
+            ensure_default_admin(db)
+        finally:
+            db.close()
+
+        response = client.post(
+            "/login",
+            data={"username": "admin", "password": "admin"},
+            follow_redirects=False,
+        )
+        assert response.status_code == 303
+        return response.cookies
+
+    def test_login_page(self):
+        response = client.get("/login")
+        assert response.status_code == 200
+        assert "Login" in response.text
+
+    def test_admin_requires_auth(self):
+        response = client.get("/admin", follow_redirects=False)
+        assert response.status_code == 303  # redirect to login
+
     def test_admin_dashboard(self):
-        response = client.get("/admin")
+        cookies = self._login()
+        response = client.get("/admin", cookies=cookies)
         assert response.status_code == 200
         assert "Dashboard" in response.text
 
     def test_admin_feeds(self):
-        response = client.get("/admin/feeds")
+        cookies = self._login()
+        response = client.get("/admin/feeds", cookies=cookies)
         assert response.status_code == 200
         assert "Feed Management" in response.text
 
     def test_toggle_nonexistent_feed(self):
-        response = client.post("/admin/feeds/99999/toggle", follow_redirects=False)
+        cookies = self._login()
+        response = client.post("/admin/feeds/99999/toggle", cookies=cookies, follow_redirects=False)
         assert response.status_code == 303
+
+    def test_logout(self):
+        response = client.get("/logout", follow_redirects=False)
+        assert response.status_code == 303
+
