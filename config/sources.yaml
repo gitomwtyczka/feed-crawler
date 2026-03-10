@@ -1,5 +1,5 @@
 # ── Sources — auto-generated from OPML: żródła wiedzy.opml ──
-# 50 feeds + 2 authenticated sources across 10 departments
+# 41 active feeds + 1 scraper (ISBNews) + 9 disabled (no RSS)
 # Last updated: 2026-03-10
 
 sources:
@@ -145,24 +145,23 @@ sources:
 
   - name: "Phys.org"
     url: "https://phys.org"
-    rss_url: "https://phys.org/rss-feeds/"
+    rss_url: "https://phys.org/rss-feed/"
     feed_type: rss
     fetch_interval: 15
     departments: [science-high-tech]
 
   - name: "CERN"
     url: "https://home.cern"
-    rss_url: "https://home.cern/news/series/news/rss.xml"
+    rss_url: "https://home.cern/api/news/feed.rss"
     feed_type: rss
     fetch_interval: 60
     departments: [science-high-tech]
 
-  - name: "Max Planck"
-    url: "https://www.mpg.de"
-    rss_url: "https://www.mpg.de/en/rss-feeds"
-    feed_type: rss
-    fetch_interval: 60
-    departments: [science-high-tech]
+  # DISABLED: Max Planck — no public RSS (per-institute only)
+  # - name: "Max Planck"
+  #   url: "https://www.mpg.de"
+  #   rss_url: "https://www.mpg.de/en/rss-feeds"
+  #   departments: [science-high-tech]
 
   # ── HEALTH & BIOTECH ──
   - name: "WHO"
@@ -179,12 +178,11 @@ sources:
     fetch_interval: 30
     departments: [health-biotech]
 
-  - name: "EMA"
-    url: "https://www.ema.europa.eu"
-    rss_url: "https://www.ema.europa.eu/en/whats-new/rss.xml"
-    feed_type: rss
-    fetch_interval: 60
-    departments: [health-biotech]
+  # DISABLED: EMA — RSS removed from new website
+  # - name: "EMA"
+  #   url: "https://www.ema.europa.eu"
+  #   rss_url: "https://www.ema.europa.eu/en/whats-new/rss.xml"
+  #   departments: [health-biotech]
 
   - name: "STAT News"
     url: "https://www.statnews.com"
@@ -194,12 +192,11 @@ sources:
     departments: [health-biotech]
 
   # ── ENERGY & CLIMATE ──
-  - name: "IEA"
-    url: "https://www.iea.org"
-    rss_url: "https://www.iea.org/news/rss"
-    feed_type: rss
-    fetch_interval: 60
-    departments: [energy-climate]
+  # DISABLED: IEA — no native RSS feed
+  # - name: "IEA"
+  #   url: "https://www.iea.org"
+  #   rss_url: "https://www.iea.org/news/rss"
+  #   departments: [energy-climate]
 
   - name: "IRENA"
     url: "https://www.irena.org"
@@ -271,12 +268,11 @@ sources:
     fetch_interval: 10
     departments: [konkurencja-biznes]
 
-  - name: "Dziennik Gazeta Prawna"
-    url: "https://www.gazetaprawna.pl"
-    rss_url: "https://www.gazetaprawna.pl/rss.xml"
-    feed_type: rss
-    fetch_interval: 15
-    departments: [konkurencja-biznes]
+  # DISABLED: DGP — RSS removed
+  # - name: "Dziennik Gazeta Prawna"
+  #   url: "https://www.gazetaprawna.pl"
+  #   rss_url: "https://www.gazetaprawna.pl/rss.xml"
+  #   departments: [konkurencja-biznes]
 
   - name: "Puls Biznesu"
     url: "https://www.pb.pl"
@@ -285,19 +281,17 @@ sources:
     fetch_interval: 15
     departments: [konkurencja-biznes]
 
-  - name: "Forsal"
-    url: "https://forsal.pl"
-    rss_url: "https://forsal.pl/rss.xml"
-    feed_type: rss
-    fetch_interval: 15
-    departments: [konkurencja-biznes]
+  # DISABLED: Forsal — RSS removed
+  # - name: "Forsal"
+  #   url: "https://forsal.pl"
+  #   rss_url: "https://forsal.pl/rss.xml"
+  #   departments: [konkurencja-biznes]
 
-  - name: "Wyborcza (Biznes)"
-    url: "https://wyborcza.pl"
-    rss_url: "https://wyborcza.pl/0,171498.xml"
-    feed_type: rss
-    fetch_interval: 10
-    departments: [konkurencja-biznes]
+  # DISABLED: Wyborcza — RSS removed
+  # - name: "Wyborcza (Biznes)"
+  #   url: "https://wyborcza.pl"
+  #   rss_url: "https://wyborcza.pl/0,171498.xml"
+  #   departments: [konkurencja-biznes]
 
   # ── KONKURENCJA OGÓLNOTEMATYCZNE / LIFESTYLE ──
   - name: "Onet"
@@ -335,12 +329,11 @@ sources:
     fetch_interval: 5
     departments: [konkurencja-ogolne-lifestyle]
 
-  - name: "TVP Info"
-    url: "https://www.tvp.info"
-    rss_url: "https://www.tvp.info/informacje/rss"
-    feed_type: rss
-    fetch_interval: 10
-    departments: [konkurencja-ogolne-lifestyle]
+  # DISABLED: TVP Info — RSS removed from new website
+  # - name: "TVP Info"
+  #   url: "https://www.tvp.info"
+  #   rss_url: "https://www.tvp.info/informacje/rss"
+  #   departments: [konkurencja-ogolne-lifestyle]
 
   - name: "Polsat News"
     url: "https://www.polsatnews.pl"
@@ -356,12 +349,11 @@ sources:
     fetch_interval: 10
     departments: [konkurencja-ogolne-lifestyle]
 
-  - name: "Super Express"
-    url: "https://www.se.pl"
-    rss_url: "https://www.se.pl/rss"
-    feed_type: rss
-    fetch_interval: 10
-    departments: [konkurencja-ogolne-lifestyle]
+  # DISABLED: Super Express — RSS removed
+  # - name: "Super Express"
+  #   url: "https://www.se.pl"
+  #   rss_url: "https://www.se.pl/rss"
+  #   departments: [konkurencja-ogolne-lifestyle]
 
   - name: "NaTemat"
     url: "https://natemat.pl"
@@ -377,9 +369,8 @@ sources:
     fetch_interval: 30
     departments: [konkurencja-ogolne-lifestyle]
 
-  - name: "Vogue PL"
-    url: "https://www.vogue.pl"
-    rss_url: "https://www.vogue.pl/feed/rss"
-    feed_type: rss
-    fetch_interval: 30
-    departments: [konkurencja-ogolne-lifestyle]
+  # DISABLED: Vogue PL — RSS removed
+  # - name: "Vogue PL"
+  #   url: "https://www.vogue.pl"
+  #   rss_url: "https://www.vogue.pl/feed/rss"
+  #   departments: [konkurencja-ogolne-lifestyle]

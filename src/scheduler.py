@@ -199,11 +199,26 @@ async def run_fetch_cycle(sources_path: str = "config/sources.yaml", departments
         db.close()
 
 
-# ── CLI Entry point ──
+# ── Scheduled continuous mode ──
 
 
-def main() -> None:
-    """CLI entry point: run a single fetch cycle."""
+def run_scheduled(interval_minutes: int = 10) -> None:
+    """Run crawler in continuous scheduled mode.
+
+    Fetches all feeds every `interval_minutes`.
+    Runs ISBNews auth fetch alongside RSS feeds.
+    Sends Discord notifications on errors and daily summaries.
+
+    Args:
+        interval_minutes: Minutes between fetch cycles (default: 10)
+    """
+    import signal
+    import sys
+
+    from apscheduler.schedulers.blocking import BlockingScheduler
+
+    from .discord_notifier import send_discord
+
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s | %(levelname)-7s | %(name)s | %(message)s",
@@ -211,11 +226,139 @@ def main() -> None:
     )
 
     init_db()
-    logger.info("Feed Crawler starting (single cycle mode)")
+    logger.info("Feed Crawler starting (scheduled mode, interval=%dmin)", interval_minutes)
 
-    result = asyncio.run(run_fetch_cycle())
-    logger.info("Result: %s", result)
+    scheduler = BlockingScheduler()
+
+    def _cycle_job():
+        """Single fetch cycle job for APScheduler."""
+        try:
+            result = asyncio.run(run_fetch_cycle())
+
+            # Discord notification on errors
+            if result["errors"] > 0:
+                send_discord(
+                    title="⚠️ Feed Crawler — errors",
+                    description=(
+                        f"**Cycle complete**: {result['feeds']} feeds\n"
+                        f"**New articles**: {result['articles_new']}\n"
+                        f"**Errors**: {result['errors']}"
+                    ),
+                    level="warning",
+                )
+
+            # Success summary (quiet mode — only if new articles)
+            if result["articles_new"] > 0:
+                logger.info(
+                    "Cycle: %d new articles from %d feeds (%d errors)",
+                    result["articles_new"], result["feeds"], result["errors"],
+                )
+
+        except Exception as e:
+            logger.exception("Fetch cycle failed: %s", e)
+            send_discord(
+                title="🔴 Feed Crawler — cycle FAILED",
+                description=f"```{e!s}```",
+                level="error",
+            )
+
+    def _isbnews_job():
+        """ISBNews auth fetch job (separate, aggressive interval)."""
+        try:
+            from .auth_fetcher import fetch_authenticated_source
+
+            articles = asyncio.run(fetch_authenticated_source("isbnews"))
+            if articles:
+                # Store ISBNews articles in DB
+                db = SessionLocal()
+                try:
+                    feed = db.query(Feed).filter(Feed.name == "ISBNews").first()
+                    if feed:
+                        new_count = 0
+                        for art in articles:
+                            article_hash = compute_hash(art["url"], art["title"])
+                            existing = get_existing_by_hash(db, article_hash)
+                            if not existing:
+                                from .models import Article as ArticleModel
+
+                                new_art = ArticleModel(
+                                    feed_id=feed.id,
+                                    title=art["title"],
+                                    url=art["url"],
+                                    content=art.get("content", ""),
+                                    published_at=datetime.utcnow(),
+                                    hash=article_hash,
+                                )
+                                db.add(new_art)
+                                new_count += 1
+                        db.commit()
+                        if new_count > 0:
+                            logger.info("ISBNews: %d new dispatches stored", new_count)
+                finally:
+                    db.close()
+
+        except Exception as e:
+            logger.exception("ISBNews fetch failed: %s", e)
+
+    # Graceful shutdown
+    def _shutdown(signum, frame):
+        logger.info("Shutting down (signal %d)...", signum)
+        scheduler.shutdown(wait=False)
+        sys.exit(0)
+
+    signal.signal(signal.SIGTERM, _shutdown)
+    signal.signal(signal.SIGINT, _shutdown)
+
+    # Schedule jobs
+    scheduler.add_job(_cycle_job, "interval", minutes=interval_minutes, id="rss_cycle")
+    scheduler.add_job(_isbnews_job, "interval", minutes=5, id="isbnews_cycle")
+
+    # Run first cycle immediately
+    _cycle_job()
+    send_discord(
+        title="🟢 Feed Crawler started",
+        description=f"Scheduled mode: RSS every {interval_minutes}min, ISBNews every 5min",
+        level="info",
+    )
+
+    try:
+        scheduler.start()
+    except (KeyboardInterrupt, SystemExit):
+        logger.info("Crawler stopped")
+
+
+# ── CLI Entry point ──
+
+
+def main() -> None:
+    """CLI entry point.
+
+    Usage:
+        python -m src.scheduler           # single fetch cycle
+        python -m src.scheduler --daemon   # continuous scheduled mode
+        python -m src.scheduler --daemon --interval 5  # custom interval
+    """
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Feed Crawler")
+    parser.add_argument("--daemon", action="store_true", help="Run in continuous scheduled mode")
+    parser.add_argument("--interval", type=int, default=10, help="Minutes between cycles (default: 10)")
+    args = parser.parse_args()
+
+    if args.daemon:
+        run_scheduled(interval_minutes=args.interval)
+    else:
+        logging.basicConfig(
+            level=logging.INFO,
+            format="%(asctime)s | %(levelname)-7s | %(name)s | %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S",
+        )
+        init_db()
+        logger.info("Feed Crawler (single cycle mode)")
+        result = asyncio.run(run_fetch_cycle())
+        logger.info("Result: %s", result)
 
 
 if __name__ == "__main__":
     main()
+
