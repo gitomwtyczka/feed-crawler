@@ -63,6 +63,7 @@ class DiscoveredFeed:
     discovery_method: str = ""   # link_tag, common_path, sitemap
     article_count: int = 0
     sample_titles: list[str] = field(default_factory=list)
+    sample_links: list[str] = field(default_factory=list)
     is_valid: bool = False
     error: str = ""
 
@@ -103,6 +104,7 @@ async def _check_url_is_feed(client: httpx.AsyncClient, url: str) -> DiscoveredF
             source_domain=urlparse(url).netloc,
             article_count=len(entries),
             sample_titles=[e.get("title", "")[:80] for e in entries[:5]],
+            sample_links=[e.get("link", "") for e in entries[:5]],
             is_valid=True,
         )
     except Exception:

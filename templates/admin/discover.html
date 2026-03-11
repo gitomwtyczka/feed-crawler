@@ -54,14 +54,33 @@
                 {% for r in results %}
                 <tr>
                     <td>
-                        <div style="font-weight: 500; margin-bottom: 0.2rem;">{{ r.title[:40] }}{% if r.title|length > 40 %}...{% endif %}</div>
-                        <div style="color: var(--text-muted); font-size: 0.7rem; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ r.url }}</div>
+                        <div style="font-weight: 500; margin-bottom: 0.2rem;">
+                            <a href="{{ r.url }}" target="_blank" rel="noopener" style="color: var(--accent-light); text-decoration: none;" title="Otwórz feed RSS">
+                                🔗 {{ r.title[:40] }}{% if r.title|length > 40 %}...{% endif %}
+                            </a>
+                        </div>
+                        <div style="margin-bottom: 0.2rem;">
+                            <a href="{{ r.url }}" target="_blank" rel="noopener"
+                               style="color: var(--text-muted); font-size: 0.7rem; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; text-decoration: none;"
+                               title="{{ r.url }}">{{ r.url }}</a>
+                        </div>
+                        {% if r.site_url %}
+                        <a href="{{ r.site_url }}" target="_blank" rel="noopener"
+                           style="color: var(--text-secondary); font-size: 0.65rem; text-decoration: none;">🌐 {{ r.site_url[:40] }}</a>
+                        {% endif %}
                         {% if r.sample_titles %}
                         <details style="margin-top: 0.3rem;">
-                            <summary style="color: var(--accent-light); font-size: 0.7rem; cursor: pointer;">Przykładowe artykuły</summary>
-                            <ul style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 0.3rem; padding-left: 1rem;">
+                            <summary style="color: var(--accent-light); font-size: 0.7rem; cursor: pointer;">▶ Przykładowe artykuły</summary>
+                            <ul style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 0.3rem; padding-left: 1rem; list-style: none;">
                                 {% for t in r.sample_titles[:3] %}
-                                <li>{{ t }}</li>
+                                <li style="margin-bottom: 0.2rem;">
+                                    {% if r.sample_links and loop.index0 < r.sample_links|length %}
+                                    <a href="{{ r.sample_links[loop.index0] }}" target="_blank" rel="noopener"
+                                       style="color: var(--text-secondary); text-decoration: none;">📄 {{ t }}</a>
+                                    {% else %}
+                                    📄 {{ t }}
+                                    {% endif %}
+                                </li>
                                 {% endfor %}
                             </ul>
                         </details>
@@ -120,32 +139,44 @@
     <h3 style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">
         🚀 Quick Scout — popularne domeny</h3>
     <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 1rem;">Kliknij domenę aby przeskanować:</p>
-    <div id="quick-scout" style="display: flex; flex-wrap: wrap; gap: 0.4rem;"></div>
+    <div id="quick-scout"></div>
 </div>
 
 <script>
-const domains = [
-    ["🇵🇱", "bankier.pl"], ["🇵🇱", "money.pl"], ["🇵🇱", "pap.pl"], ["🇵🇱", "tvn24.pl"],
-    ["🇵🇱", "rp.pl"], ["🇵🇱", "gazetaprawna.pl"], ["🇵🇱", "wprost.pl"], ["🇵🇱", "onet.pl"],
-    ["🇵🇱", "forsal.pl"], ["🇵🇱", "parkiet.com"], ["🇵🇱", "obserwatorfinansowy.pl"],
-    ["🌍", "reuters.com"], ["🌍", "bbc.com"], ["🌍", "aljazeera.com"],
-    ["🌍", "theguardian.com"], ["🌍", "politico.eu"], ["🌍", "ft.com"],
-    ["💻", "techcrunch.com"], ["💻", "arstechnica.com"], ["💻", "theverge.com"],
-    ["💻", "wired.com"], ["🏦", "ecb.europa.eu"], ["🏦", "bis.org"],
-];
+const categories = {
+    "🇵🇱 Media polskie": ["bankier.pl", "money.pl", "tvn24.pl", "rp.pl", "gazetaprawna.pl", "wprost.pl", "onet.pl", "forsal.pl", "parkiet.com"],
+    "🇵🇱 Agencje PL": ["pap.pl", "isbnews.pl", "biznes.newseria.pl", "innowacje.newseria.pl"],
+    "🌍 Media globalne": ["reuters.com", "bbc.com", "aljazeera.com", "theguardian.com", "ft.com", "nytimes.com"],
+    "🏛️ Polityka": ["politico.eu", "foreignpolicy.com", "foreignaffairs.com"],
+    "💻 Tech": ["techcrunch.com", "arstechnica.com", "theverge.com", "wired.com"],
+    "🏦 Ekonomia/Finanse": ["ecb.europa.eu", "bis.org", "imf.org", "bloomberg.com"],
+    "🔬 Nauka": ["nature.com", "science.org", "phys.org", "nasa.gov"],
+};
 const container = document.getElementById("quick-scout");
-domains.forEach(([emoji, domain]) => {
-    const btn = document.createElement("button");
-    btn.textContent = emoji + " " + domain;
-    btn.style.cssText = "background: rgba(88,101,242,0.15); color: #818cf8; border: 1px solid rgba(88,101,242,0.3); padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 0.75rem; transition: all 0.2s;";
-    btn.onmouseover = () => { btn.style.background = "rgba(88,101,242,0.3)"; };
-    btn.onmouseout = () => { btn.style.background = "rgba(88,101,242,0.15)"; };
-    btn.onclick = () => {
-        const input = document.querySelector('input[name="url"]');
-        input.value = "https://www." + domain;
-        input.closest("form").submit();
-    };
-    container.appendChild(btn);
-});
+for (const [cat, domains] of Object.entries(categories)) {
+    const group = document.createElement("div");
+    group.style.cssText = "margin-bottom: 0.8rem;";
+    const label = document.createElement("div");
+    label.textContent = cat;
+    label.style.cssText = "font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.3rem; font-weight: 600;";
+    group.appendChild(label);
+    const btns = document.createElement("div");
+    btns.style.cssText = "display: flex; flex-wrap: wrap; gap: 0.3rem;";
+    domains.forEach(domain => {
+        const btn = document.createElement("button");
+        btn.textContent = domain;
+        btn.style.cssText = "background: rgba(88,101,242,0.15); color: #818cf8; border: 1px solid rgba(88,101,242,0.3); padding: 5px 12px; border-radius: 20px; cursor: pointer; font-size: 0.7rem; transition: all 0.2s;";
+        btn.onmouseover = () => { btn.style.background = "rgba(88,101,242,0.3)"; };
+        btn.onmouseout = () => { btn.style.background = "rgba(88,101,242,0.15)"; };
+        btn.onclick = () => {
+            const input = document.querySelector('input[name="url"]');
+            input.value = "https://www." + domain;
+            input.closest("form").submit();
+        };
+        btns.appendChild(btn);
+    });
+    group.appendChild(btns);
+    container.appendChild(group);
+}
 </script>
 {% endblock %}

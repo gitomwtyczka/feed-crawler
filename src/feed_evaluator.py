@@ -46,6 +46,7 @@ class FeedScore:
     recommendation: str = ""     # add, maybe, skip
 
     sample_titles: list[str] | None = None
+    sample_links: list[str] | None = None
 
 
 async def evaluate_feed(url: str, existing_urls: set[str] | None = None) -> FeedScore:
@@ -199,8 +200,9 @@ async def evaluate_feed(url: str, existing_urls: set[str] | None = None) -> Feed
                 else:
                     score.uniqueness_score = 8   # Many feeds from domain
 
-            # ── Sample titles ──
+            # ── Sample titles + links ──
             score.sample_titles = [e.get("title", "")[:80] for e in entries[:5]]
+            score.sample_links = [e.get("link", "") for e in entries[:5]]
 
             # ── Overall ──
             score.overall_score = (

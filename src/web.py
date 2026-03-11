@@ -536,6 +536,8 @@ async def admin_discover_run(request: Request, url: str = Form("")):
                 "articles_count": score.articles_count,
                 "articles_per_day": score.articles_per_day,
                 "sample_titles": score.sample_titles or feed.sample_titles,
+                "sample_links": score.sample_links or getattr(feed, "sample_links", []),
+                "site_url": getattr(feed, "source_domain", ""),
                 "discovery_method": feed.discovery_method,
                 "already_exists": feed.url in existing,
             })
