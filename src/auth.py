@@ -4,6 +4,11 @@ Authentication module for Feed Crawler Admin Panel.
 JWT-based auth with password hashing.
 Admin users stored in DB with bcrypt hashed passwords.
 
+Roles:
+    admin   — Full access + user management
+    editor  — Dashboard, feeds, discovery, monitoring, settings
+    viewer  — Read-only: dashboard, reader, search
+
 Usage:
     Set JWT_SECRET in .env (REQUIRED in production).
     Default admin: admin / admin (auto-created on first run).
@@ -35,6 +40,9 @@ JWT_SECRET = os.getenv("JWT_SECRET", "dev-secret-change-in-production")
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRE_HOURS = 24
 
+ROLES = ("admin", "editor", "viewer")
+ROLE_HIERARCHY = {"admin": 3, "editor": 2, "viewer": 1}
+
 pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
 
 
@@ -49,12 +57,14 @@ class AdminUser(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String(100), nullable=False, unique=True, index=True)
     password_hash = Column(String(255), nullable=False)
+    email = Column(String(255), nullable=True)
+    role = Column(String(20), nullable=False, default="viewer")
     is_active = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
     last_login = Column(DateTime, nullable=True)
 
     def __repr__(self) -> str:
-        return f"<AdminUser(username='{self.username}')>"
+        return f"<AdminUser(username='{self.username}', role='{self.role}')>"
 
 
 # ── Password helpers ──
@@ -121,7 +131,107 @@ def ensure_default_admin(db: Session) -> None:
         admin = AdminUser(
             username="admin",
             password_hash=hash_password("admin"),
+            role="admin",
         )
         db.add(admin)
         db.commit()
         logger.info("Created default admin user (admin/admin) — CHANGE PASSWORD IN PRODUCTION!")
+    else:
+        # Ensure existing admin user has role set
+        admin = db.query(AdminUser).filter(AdminUser.username == "admin").first()
+        if admin and not admin.role:
+            admin.role = "admin"
+            db.commit()
+
+
+# ── Permission helpers ──
+
+
+def has_permission(user_role: str, required_role: str) -> bool:
+    """Check if user_role has at least required_role level.
+
+    Hierarchy: admin (3) > editor (2) > viewer (1)
+    """
+    return ROLE_HIERARCHY.get(user_role, 0) >= ROLE_HIERARCHY.get(required_role, 0)
+
+
+# ── User CRUD ──
+
+
+def list_users(db: Session) -> list[AdminUser]:
+    """List all admin users."""
+    return db.query(AdminUser).order_by(AdminUser.created_at).all()
+
+
+def create_user(
+    db: Session,
+    username: str,
+    password: str,
+    role: str = "viewer",
+    email: str = "",
+) -> AdminUser:
+    """Create a new admin user."""
+    if role not in ROLES:
+        msg = f"Invalid role: {role}"
+        raise ValueError(msg)
+    user = AdminUser(
+        username=username,
+        password_hash=hash_password(password),
+        role=role,
+        email=email or None,
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    logger.info("Created user: %s (role=%s)", username, role)
+    return user
+
+
+def update_user(
+    db: Session,
+    user_id: int,
+    *,
+    email: str | None = None,
+    role: str | None = None,
+    password: str | None = None,
+    is_active: bool | None = None,
+) -> AdminUser | None:
+    """Update an existing user. Only provided fields are changed."""
+    user = db.query(AdminUser).filter(AdminUser.id == user_id).first()
+    if not user:
+        return None
+    if email is not None:
+        user.email = email or None
+    if role is not None:
+        if role not in ROLES:
+            msg = f"Invalid role: {role}"
+            raise ValueError(msg)
+        user.role = role
+    if password:
+        user.password_hash = hash_password(password)
+    if is_active is not None:
+        user.is_active = is_active
+    db.commit()
+    db.refresh(user)
+    logger.info("Updated user: %s (id=%d)", user.username, user.id)
+    return user
+
+
+def delete_user(db: Session, user_id: int) -> bool:
+    """Delete a user by ID. Cannot delete last admin."""
+    user = db.query(AdminUser).filter(AdminUser.id == user_id).first()
+    if not user:
+        return False
+    # Prevent deleting the last admin
+    if user.role == "admin":
+        admin_count = db.query(AdminUser).filter(
+            AdminUser.role == "admin",
+            AdminUser.id != user_id,
+        ).count()
+        if admin_count == 0:
+            logger.warning("Cannot delete last admin user: %s", user.username)
+            return False
+    db.delete(user)
+    db.commit()
+    logger.info("Deleted user: %s (id=%d)", user.username, user_id)
+    return True

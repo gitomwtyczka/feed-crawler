@@ -486,6 +486,133 @@ def admin_settings_save(
     return RedirectResponse(url="/admin/settings?saved=true", status_code=303)
 
 
+# ── User Management Routes ──
+
+
+@app.get("/admin/users", response_class=HTMLResponse)
+def admin_users_page(
+    request: Request,
+    message: str = Query(""),
+    error: str = Query(""),
+):
+    user = _get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/login", status_code=303)
+
+    # Admin-only guard
+    db = db_module.SessionLocal()
+    try:
+        from .auth import get_admin_user, has_permission, list_users
+
+        admin_user = get_admin_user(db, user)
+        if not admin_user or not has_permission(admin_user.role or "viewer", "admin"):
+            return RedirectResponse(url="/admin", status_code=303)
+
+        users = list_users(db)
+        return templates.TemplateResponse("admin/users.html", {
+            "request": request,
+            "user": user,
+            "current_user": user,
+            "users": users,
+            "message": message,
+            "error": error,
+        })
+    finally:
+        db.close()
+
+
+@app.post("/admin/users")
+def admin_users_create(
+    request: Request,
+    username: str = Form(...),
+    email: str = Form(""),
+    password: str = Form(...),
+    role: str = Form("viewer"),
+):
+    user = _get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/login", status_code=303)
+
+    db = db_module.SessionLocal()
+    try:
+        from .auth import create_user, get_admin_user, has_permission
+
+        admin_user = get_admin_user(db, user)
+        if not admin_user or not has_permission(admin_user.role or "viewer", "admin"):
+            return RedirectResponse(url="/admin", status_code=303)
+
+        try:
+            create_user(db, username=username, password=password, role=role, email=email)
+            return RedirectResponse(
+                url=f"/admin/users?message=Utworzono+konto+{username}",
+                status_code=303,
+            )
+        except Exception as e:
+            return RedirectResponse(
+                url=f"/admin/users?error={e!s}",
+                status_code=303,
+            )
+    finally:
+        db.close()
+
+
+@app.post("/admin/users/{user_id}/edit")
+def admin_users_edit(
+    request: Request,
+    user_id: int,
+    email: str = Form(""),
+    role: str = Form("viewer"),
+    password: str = Form(""),
+    is_active: str = Form(""),
+):
+    user = _get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/login", status_code=303)
+
+    db = db_module.SessionLocal()
+    try:
+        from .auth import get_admin_user, has_permission, update_user
+
+        admin_user = get_admin_user(db, user)
+        if not admin_user or not has_permission(admin_user.role or "viewer", "admin"):
+            return RedirectResponse(url="/admin", status_code=303)
+
+        update_user(
+            db, user_id,
+            email=email,
+            role=role,
+            password=password if password else None,
+            is_active=bool(is_active),
+        )
+        return RedirectResponse(url="/admin/users?message=Zaktualizowano+konto", status_code=303)
+    finally:
+        db.close()
+
+
+@app.post("/admin/users/{user_id}/delete")
+def admin_users_delete(request: Request, user_id: int):
+    user = _get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/login", status_code=303)
+
+    db = db_module.SessionLocal()
+    try:
+        from .auth import delete_user, get_admin_user, has_permission
+
+        admin_user = get_admin_user(db, user)
+        if not admin_user or not has_permission(admin_user.role or "viewer", "admin"):
+            return RedirectResponse(url="/admin", status_code=303)
+
+        if delete_user(db, user_id):
+            return RedirectResponse(url="/admin/users?message=Usunięto+konto", status_code=303)
+        return RedirectResponse(
+            url="/admin/users?error=Nie+można+usunąć+ostatniego+admina",
+            status_code=303,
+        )
+    finally:
+        db.close()
+
+
 @app.get("/admin/discover", response_class=HTMLResponse)
 def admin_discover_page(request: Request):
     user = _get_current_user(request)

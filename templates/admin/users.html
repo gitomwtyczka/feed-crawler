@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% block title %}Users — Feed Crawler{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>👥 Users</h1>
+    <p>Zarządzanie kontami użytkowników</p>
+</div>
+
+{% if message %}
+<div style="background: rgba(87,242,135,0.15); border: 1px solid rgba(87,242,135,0.3); border-radius: 8px; padding: 0.8rem 1.2rem; margin-bottom: 1.5rem; color: #57f287; font-size: 0.9rem;">
+    ✅ {{ message }}
+</div>
+{% endif %}
+
+{% if error %}
+<div style="background: rgba(237,66,69,0.15); border: 1px solid rgba(237,66,69,0.3); border-radius: 8px; padding: 0.8rem 1.2rem; margin-bottom: 1.5rem; color: #ed4245; font-size: 0.9rem;">
+    ❌ {{ error }}
+</div>
+{% endif %}
+
+<!-- Add User -->
+<div class="card" style="margin-bottom: 1.5rem;">
+    <h3 style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">
+        ➕ Dodaj użytkownika</h3>
+    <form method="POST" action="/admin/users" autocomplete="off">
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1rem; align-items: flex-end;">
+            <div>
+                <label style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">Username *</label>
+                <input type="text" name="username" required placeholder="jan.kowalski"
+                    style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 1rem; color: var(--text-primary); font-size: 0.9rem; outline: none;">
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">Email</label>
+                <input type="email" name="email" placeholder="jan@example.com"
+                    style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 1rem; color: var(--text-primary); font-size: 0.9rem; outline: none;">
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">Hasło *</label>
+                <input type="password" name="password" required placeholder="min. 6 znaków" minlength="6"
+                    style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 1rem; color: var(--text-primary); font-size: 0.9rem; outline: none;">
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">Rola</label>
+                <select name="role"
+                    style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 1rem; color: var(--text-primary); font-size: 0.9rem; outline: none; cursor: pointer;">
+                    <option value="viewer">👁️ Viewer — tylko odczyt</option>
+                    <option value="editor">✏️ Editor — zarządzanie feedami</option>
+                    <option value="admin">🔑 Admin — pełen dostęp</option>
+                </select>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary" style="margin-top: 1rem; padding: 0.6rem 1.5rem;">
+            ➕ Dodaj konto
+        </button>
+    </form>
+</div>
+
+<!-- User List -->
+<div class="card">
+    <h3 style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">
+        📋 Użytkownicy ({{ users|length }})</h3>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Email</th>
+                    <th>Rola</th>
+                    <th>Status</th>
+                    <th>Last Login</th>
+                    <th>Created</th>
+                    <th>Akcje</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr>
+                    <td>
+                        <span style="font-weight: 600;">{{ u.username }}</span>
+                        {% if u.username == current_user %}
+                        <span style="font-size: 0.65rem; color: var(--accent-light); margin-left: 0.3rem;">(Ty)</span>
+                        {% endif %}
+                    </td>
+                    <td style="color: var(--text-secondary); font-size: 0.85rem;">{{ u.email or '—' }}</td>
+                    <td>
+                        {% if u.role == 'admin' %}
+                        <span class="badge" style="background: rgba(237,66,69,0.15); color: #ed4245; font-size: 0.7rem;">🔑 admin</span>
+                        {% elif u.role == 'editor' %}
+                        <span class="badge" style="background: rgba(254,231,92,0.15); color: #fee75c; font-size: 0.7rem;">✏️ editor</span>
+                        {% else %}
+                        <span class="badge" style="background: rgba(88,101,242,0.15); color: #818cf8; font-size: 0.7rem;">👁️ viewer</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if u.is_active %}
+                        <span style="color: #57f287; font-size: 0.8rem;">● Active</span>
+                        {% else %}
+                        <span style="color: #ed4245; font-size: 0.8rem;">● Disabled</span>
+                        {% endif %}
+                    </td>
+                    <td style="color: var(--text-muted); font-size: 0.8rem;">
+                        {{ u.last_login.strftime('%Y-%m-%d %H:%M') if u.last_login else 'Never' }}
+                    </td>
+                    <td style="color: var(--text-muted); font-size: 0.8rem;">
+                        {{ u.created_at.strftime('%Y-%m-%d') }}
+                    </td>
+                    <td>
+                        <div style="display: flex; gap: 0.3rem; flex-wrap: wrap;">
+                            <!-- Edit Role -->
+                            <details style="position: relative;">
+                                <summary style="background: rgba(88,101,242,0.15); color: #818cf8; border: 1px solid rgba(88,101,242,0.3); padding: 3px 10px; border-radius: 6px; cursor: pointer; font-size: 0.7rem; list-style: none;">
+                                    ✏️ Edytuj
+                                </summary>
+                                <div style="position: absolute; right: 0; top: 100%; z-index: 10; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; min-width: 240px; margin-top: 0.3rem; box-shadow: 0 8px 32px rgba(0,0,0,0.3);">
+                                    <form method="POST" action="/admin/users/{{ u.id }}/edit">
+                                        <div style="margin-bottom: 0.6rem;">
+                                            <label style="font-size: 0.75rem; color: var(--text-muted);">Email</label>
+                                            <input type="email" name="email" value="{{ u.email or '' }}"
+                                                style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 6px; padding: 0.4rem 0.6rem; color: var(--text-primary); font-size: 0.8rem; outline: none;">
+                                        </div>
+                                        <div style="margin-bottom: 0.6rem;">
+                                            <label style="font-size: 0.75rem; color: var(--text-muted);">Rola</label>
+                                            <select name="role"
+                                                style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 6px; padding: 0.4rem 0.6rem; color: var(--text-primary); font-size: 0.8rem; outline: none;">
+                                                <option value="viewer" {% if u.role == 'viewer' %}selected{% endif %}>👁️ Viewer</option>
+                                                <option value="editor" {% if u.role == 'editor' %}selected{% endif %}>✏️ Editor</option>
+                                                <option value="admin" {% if u.role == 'admin' %}selected{% endif %}>🔑 Admin</option>
+                                            </select>
+                                        </div>
+                                        <div style="margin-bottom: 0.6rem;">
+                                            <label style="font-size: 0.75rem; color: var(--text-muted);">Nowe hasło (puste = bez zmian)</label>
+                                            <input type="password" name="password" placeholder="••••••••"
+                                                style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 6px; padding: 0.4rem 0.6rem; color: var(--text-primary); font-size: 0.8rem; outline: none;">
+                                        </div>
+                                        <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.6rem;">
+                                            <label style="font-size: 0.75rem; color: var(--text-muted);">Aktywny</label>
+                                            <input type="checkbox" name="is_active" value="1" {% if u.is_active %}checked{% endif %}>
+                                        </div>
+                                        <button type="submit" style="background: rgba(88,101,242,0.2); color: #818cf8; border: 1px solid rgba(88,101,242,0.3); padding: 4px 14px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; width: 100%;">
+                                            💾 Zapisz
+                                        </button>
+                                    </form>
+                                </div>
+                            </details>
+
+                            <!-- Delete -->
+                            {% if u.username != current_user %}
+                            <form method="POST" action="/admin/users/{{ u.id }}/delete"
+                                  onsubmit="return confirm('Usunąć konto {{ u.username }}?');" style="display: inline;">
+                                <button type="submit" style="background: rgba(237,66,69,0.1); color: #ed4245; border: 1px solid rgba(237,66,69,0.2); padding: 3px 10px; border-radius: 6px; cursor: pointer; font-size: 0.7rem;">
+                                    🗑️
+                                </button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Role Legend -->
+<div class="card" style="margin-top: 1.5rem;">
+    <h3 style="margin-bottom: 0.8rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">
+        ℹ️ Role</h3>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; font-size: 0.8rem;">
+        <div>
+            <strong style="color: #ed4245;">🔑 Admin</strong>
+            <p style="color: var(--text-muted); margin-top: 0.2rem;">Pełen dostęp: zarządzanie użytkownikami, feedami, ustawienia, monitoring</p>
+        </div>
+        <div>
+            <strong style="color: #fee75c;">✏️ Editor</strong>
+            <p style="color: var(--text-muted); margin-top: 0.2rem;">Zarządzanie feedami, discovery, monitoring, ustawienia — bez Users</p>
+        </div>
+        <div>
+            <strong style="color: #818cf8;">👁️ Viewer</strong>
+            <p style="color: var(--text-muted); margin-top: 0.2rem;">Tylko odczyt: dashboard, reader, wyszukiwanie artykułów</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
