@@ -43,19 +43,30 @@ class AuthCredential:
 
 
 def load_credential(source_slug: str) -> AuthCredential:
-    """Load credentials for a source from environment variables.
+    """Load credentials for a source from environment variables or admin settings.
 
+    Priority: env vars > admin settings (data/settings.json).
     Convention: SOURCE_<SLUG>_USERNAME / SOURCE_<SLUG>_PASSWORD
-    Example: SOURCE_NEWSERIA_USERNAME, SOURCE_NEWSERIA_PASSWORD
     """
     prefix = f"SOURCE_{source_slug.upper().replace('-', '_')}"
     username = os.getenv(f"{prefix}_USERNAME", "")
     password = os.getenv(f"{prefix}_PASSWORD", "")
 
+    # Fallback: read from admin settings (set via /admin/settings form)
+    if not username or not password:
+        try:
+            from .admin_settings import get_settings
+            settings = get_settings()
+            slug_lower = source_slug.lower().replace("-", "_")
+            username = username or settings.get(f"{slug_lower}_username", "")
+            password = password or settings.get(f"{slug_lower}_password", "")
+        except Exception:
+            pass
+
     cred = AuthCredential(username=username, password=password, source_name=source_slug)
     if not cred.is_valid:
         logger.warning(
-            "Credentials for %s not configured (set %s_USERNAME / %s_PASSWORD in .env)",
+            "Credentials for %s not configured (set via /admin/settings or %s_USERNAME / %s_PASSWORD env vars)",
             source_slug, prefix, prefix,
         )
     return cred
