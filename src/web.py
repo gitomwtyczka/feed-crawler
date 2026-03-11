@@ -138,7 +138,7 @@ def reader_home(
         total = db.query(func.count(Article.id)).scalar()
         articles = (
             db.query(Article)
-            .order_by(desc(Article.published_at), desc(Article.fetched_at))
+            .order_by(desc(func.coalesce(Article.published_at, Article.fetched_at)))
             .offset(offset)
             .limit(per_page)
             .all()
@@ -203,7 +203,7 @@ def reader_department(request: Request, slug: str, page: int = Query(1, ge=1)):
         articles = (
             db.query(Article)
             .filter(Article.feed_id.in_(feed_ids))
-            .order_by(desc(Article.published_at))
+            .order_by(desc(func.coalesce(Article.published_at, Article.fetched_at)))
             .offset(offset)
             .limit(per_page)
             .all()
