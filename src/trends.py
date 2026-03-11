@@ -32,15 +32,46 @@ class TrendTopic:
     coverage_status: str = ""  # "covered", "partial", "missing"
 
 
+def _fetch_via_google_news_rss(limit: int = 20) -> list[TrendTopic]:
+    """Fallback: scrape trending topics from Google News PL RSS."""
+    import xml.etree.ElementTree as ET
+
+    import httpx
+
+    topics = []
+    try:
+        url = "https://news.google.com/rss?hl=pl&gl=PL&ceid=PL:pl"
+        resp = httpx.get(url, timeout=15, follow_redirects=True)
+        if resp.status_code == 200:
+            root = ET.fromstring(resp.text)  # noqa: S314
+            seen = set()
+            for item in root.iter("item"):
+                title_el = item.find("title")
+                if title_el is not None and title_el.text:
+                    # Google News titles often have " - Source" suffix
+                    raw = title_el.text.strip()
+                    clean = raw.rsplit(" - ", 1)[0].strip()
+                    # Extract key phrases (first 5 significant words)
+                    words = [w for w in clean.split() if len(w) > 3][:5]
+                    key = " ".join(words[:3]).lower()
+                    if key and key not in seen:
+                        seen.add(key)
+                        topics.append(TrendTopic(
+                            title=clean[:100],
+                            traffic="google_news",
+                        ))
+                        if len(topics) >= limit:
+                            break
+        logger.info("Fetched %d topics from Google News RSS (fallback)", len(topics))
+    except Exception:
+        logger.exception("Google News RSS fallback also failed")
+    return topics
+
+
 def fetch_trending_topics(geo: str = "PL", limit: int = 20) -> list[TrendTopic]:
     """Fetch current trending topics from Google Trends.
 
-    Args:
-        geo: Country code (default: PL for Poland)
-        limit: Max number of topics to return
-
-    Returns:
-        List of TrendTopic objects
+    Falls back to Google News RSS if pytrends is rate-limited.
     """
     try:
         from pytrends.request import TrendReq
@@ -61,8 +92,8 @@ def fetch_trending_topics(geo: str = "PL", limit: int = 20) -> list[TrendTopic]:
         return topics
 
     except Exception:
-        logger.exception("Failed to fetch Google Trends")
-        return []
+        logger.warning("pytrends failed (likely rate-limited), using Google News RSS fallback")
+        return _fetch_via_google_news_rss(limit=limit)
 
 
 def fetch_realtime_trends(geo: str = "PL", limit: int = 20) -> list[TrendTopic]:

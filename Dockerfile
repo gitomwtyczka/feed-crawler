@@ -35,6 +35,7 @@ COPY --from=builder /install /usr/local
 COPY src/ ./src/
 COPY templates/ ./templates/
 COPY config/ ./config/
+COPY static/ ./static/
 COPY requirements.txt .
 
 # Create data directory (for crawl_state.json, SQLite fallback)
