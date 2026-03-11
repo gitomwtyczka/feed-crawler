@@ -71,8 +71,8 @@ class DiscoveredFeed:
 async def _check_url_is_feed(client: httpx.AsyncClient, url: str) -> DiscoveredFeed | None:
     """Check if a URL is a valid RSS/Atom feed."""
     try:
-        resp = await client.get(url, timeout=10, follow_redirects=True)
-        if resp.status_code != 200:
+        resp = await client.get(url, timeout=12, follow_redirects=True)
+        if resp.status_code not in (200, 301, 302):
             return None
 
         content_type = resp.headers.get("content-type", "").lower()
@@ -179,7 +179,10 @@ async def discover_feeds(url: str) -> list[DiscoveredFeed]:
     logger.info("Discovering feeds from: %s", url)
 
     async with httpx.AsyncClient(
-        headers={"User-Agent": "FeedCrawler/1.0 (feed discovery)"},
+        headers={
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        },
         follow_redirects=True,
     ) as client:
         # Run discovery methods
