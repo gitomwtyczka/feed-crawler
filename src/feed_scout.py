@@ -30,6 +30,7 @@ COMMON_FEED_PATHS = [
     "/feed/",
     "/rss",
     "/rss.xml",
+    "/rss/",
     "/atom.xml",
     "/feed.xml",
     "/feeds/posts/default",  # Blogger
@@ -39,9 +40,117 @@ COMMON_FEED_PATHS = [
     "/feed/atom",
     "/feed/rss",
     "/?feed=rss2",           # WordPress
-    "/wp-json/wp/v2/posts",  # WordPress REST API
-    "/sitemap.xml",
+    "/rss/news",
+    "/rss/latest",
+    "/rss.php",              # Newseria-style
+    "/news/rss.xml",
+    "/blog/rss.xml",
+    "/blog/feed.xml",
+    "/articles/feed",
+    "/latest/rss",
 ]
+
+# Known feed URLs for major domains that don't use standard <link> tags
+KNOWN_FEEDS: dict[str, list[str]] = {
+    "bbc.com": [
+        "https://feeds.bbci.co.uk/news/rss.xml",
+        "https://feeds.bbci.co.uk/news/world/rss.xml",
+        "https://feeds.bbci.co.uk/news/business/rss.xml",
+        "https://feeds.bbci.co.uk/news/technology/rss.xml",
+        "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml",
+    ],
+    "bbc.co.uk": [
+        "https://feeds.bbci.co.uk/news/rss.xml",
+        "https://feeds.bbci.co.uk/news/world/rss.xml",
+    ],
+    "reuters.com": [
+        "https://www.reutersagency.com/feed/",
+    ],
+    "theguardian.com": [
+        "https://www.theguardian.com/world/rss",
+        "https://www.theguardian.com/international/rss",
+        "https://www.theguardian.com/business/rss",
+        "https://www.theguardian.com/technology/rss",
+    ],
+    "nytimes.com": [
+        "https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml",
+        "https://rss.nytimes.com/services/xml/rss/nyt/World.xml",
+        "https://rss.nytimes.com/services/xml/rss/nyt/Business.xml",
+        "https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml",
+    ],
+    "aljazeera.com": [
+        "https://www.aljazeera.com/xml/rss/all.xml",
+    ],
+    "politico.eu": [
+        "https://www.politico.eu/feed/",
+    ],
+    "foreignpolicy.com": [
+        "https://foreignpolicy.com/feed/",
+    ],
+    "foreignaffairs.com": [
+        "https://www.foreignaffairs.com/rss.xml",
+    ],
+    "ecb.europa.eu": [
+        "https://www.ecb.europa.eu/rss/press.html",
+    ],
+    "nasa.gov": [
+        "https://www.nasa.gov/rss/dyn/breaking_news.rss",
+        "https://www.nasa.gov/rss/dyn/lg_image_of_the_day.rss",
+    ],
+    "nature.com": [
+        "https://www.nature.com/nature.rss",
+    ],
+    "science.org": [
+        "https://www.science.org/rss/news_current.xml",
+    ],
+    "bankier.pl": [
+        "https://www.bankier.pl/rss/wiadomosci.xml",
+        "https://www.bankier.pl/rss/forex.xml",
+    ],
+    "money.pl": [
+        "https://www.money.pl/rss/rss.xml",
+    ],
+    "tvn24.pl": [
+        "https://tvn24.pl/najnowsze.xml",
+        "https://tvn24.pl/najwazniejsze.xml",
+    ],
+    "rp.pl": [
+        "https://www.rp.pl/rss_main",
+    ],
+    "gazetaprawna.pl": [
+        "https://www.gazetaprawna.pl/rss.xml",
+    ],
+    "onet.pl": [
+        "https://wiadomosci.onet.pl/.feedsRSS",
+    ],
+    "forsal.pl": [
+        "https://forsal.pl/rss.xml",
+    ],
+    "pap.pl": [
+        "https://www.pap.pl/rss.xml",
+    ],
+    "techcrunch.com": [
+        "https://techcrunch.com/feed/",
+    ],
+    "arstechnica.com": [
+        "https://feeds.arstechnica.com/arstechnica/index",
+    ],
+    "theverge.com": [
+        "https://www.theverge.com/rss/index.xml",
+    ],
+    "wired.com": [
+        "https://www.wired.com/feed/rss",
+    ],
+    "phys.org": [
+        "https://phys.org/rss-feed/",
+    ],
+    "imf.org": [
+        "https://www.imf.org/en/News/RSS",
+    ],
+    "bloomberg.com": [
+        "https://feeds.bloomberg.com/markets/news.rss",
+    ],
+}
 
 # Content-Type patterns that indicate RSS/Atom
 FEED_CONTENT_TYPES = [
@@ -171,8 +280,9 @@ async def discover_feeds(url: str) -> list[DiscoveredFeed]:
     """Discover all RSS/Atom feeds from a given URL.
 
     Tries multiple discovery methods:
-    1. HTML <link> tags
-    2. Common RSS URL patterns
+    1. Known feed URLs for major domains
+    2. HTML <link> tags
+    3. Common RSS URL patterns
 
     Returns deduplicated list of discovered feeds.
     """
@@ -185,14 +295,27 @@ async def discover_feeds(url: str) -> list[DiscoveredFeed]:
         },
         follow_redirects=True,
     ) as client:
-        # Run discovery methods
+        # 1. Check known feeds for this domain
+        parsed_domain = urlparse(url).netloc.replace("www.", "")
+        known_feeds: list[DiscoveredFeed] = []
+        if parsed_domain in KNOWN_FEEDS:
+            logger.info("Found known feeds for domain: %s", parsed_domain)
+            for feed_url in KNOWN_FEEDS[parsed_domain]:
+                feed = await _check_url_is_feed(client, feed_url)
+                if feed:
+                    feed.discovery_method = "known_feed"
+                    known_feeds.append(feed)
+
+        # 2. HTML <link> tags
         html_feeds = await _discover_from_html(client, url)
+
+        # 3. Common RSS URL patterns
         path_feeds = await _discover_from_common_paths(client, url)
 
         # Deduplicate by URL
         seen = set()
         all_feeds = []
-        for feed in html_feeds + path_feeds:
+        for feed in known_feeds + html_feeds + path_feeds:
             if feed.url not in seen:
                 seen.add(feed.url)
                 all_feeds.append(feed)
