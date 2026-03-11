@@ -463,6 +463,8 @@ def admin_settings_save(
     request: Request,
     isbnews_username: str = Form(""),
     isbnews_password: str = Form(""),
+    newseria_username: str = Form(""),
+    newseria_password: str = Form(""),
     discord_crawler_webhook_url: str = Form(""),
     saas_webhook_url: str = Form(""),
     saas_webhook_api_key: str = Form(""),
@@ -475,6 +477,8 @@ def admin_settings_save(
     update_settings({
         "isbnews_username": isbnews_username,
         "isbnews_password": isbnews_password,
+        "newseria_username": newseria_username,
+        "newseria_password": newseria_password,
         "discord_crawler_webhook_url": discord_crawler_webhook_url,
         "saas_webhook_url": saas_webhook_url,
         "saas_webhook_api_key": saas_webhook_api_key,

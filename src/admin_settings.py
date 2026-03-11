@@ -20,6 +20,8 @@ SETTINGS_PATH = Path(os.getenv("DATA_DIR", "data")) / "settings.json"
 DEFAULTS: dict[str, str] = {
     "isbnews_username": "",
     "isbnews_password": "",
+    "newseria_username": "",
+    "newseria_password": "",
     "discord_crawler_webhook_url": "",
     "saas_webhook_url": "",
     "saas_webhook_api_key": "",

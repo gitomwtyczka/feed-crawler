@@ -38,6 +38,31 @@
     </div>
 </div>
 
+<!-- Newseria Credentials -->
+<div class="card" style="margin-bottom: 1.5rem;">
+    <h3 style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">
+        📰 Newseria — Credentials</h3>
+    <p style="color: var(--text-muted); font-size: 0.8rem; margin-bottom: 1rem;">Login do info.newseria.pl (pobieranie mediów: video, audio, transkrypty)</p>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div>
+            <label style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">Email</label>
+            <input type="email" name="newseria_username" value="{{ settings.newseria_username }}"
+                placeholder="email@example.com"
+                style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 1rem; color: var(--text-primary); font-size: 0.9rem; outline: none;">
+        </div>
+        <div>
+            <label style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">Hasło</label>
+            <input type="password" name="newseria_password"
+                placeholder="{% if settings.newseria_password %}••••••••{% else %}hasło{% endif %}"
+                style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 1rem; color: var(--text-primary); font-size: 0.9rem; outline: none;">
+            {% if settings.newseria_password %}
+            <span style="color: var(--text-muted); font-size: 0.7rem;">Wpisz nowe hasło lub zostaw puste aby zachować obecne</span>
+            {% endif %}
+        </div>
+    </div>
+    <p style="color: var(--text-muted); font-size: 0.75rem; margin-top: 0.8rem;">ℹ️ RSS feedów Newseria (biznes, lifestyle, innowacje) jest publiczny i nie wymaga logowania. Credentials potrzebne tylko do pobierania plików multimedialnych.</p>
+</div>
+
 <!-- Discord Webhook -->
 <div class="card" style="margin-bottom: 1.5rem;">
     <h3 style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">
