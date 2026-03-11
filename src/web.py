@@ -156,6 +156,41 @@ def research_page(
     })
 
 
+# ── Trends Routes ──
+
+
+@app.get("/trends", response_class=HTMLResponse)
+def trends_page(request: Request):
+    """Google Trends — Early Warning System."""
+    from datetime import datetime as dt
+
+    topics = []
+    error = None
+    db = db_module.SessionLocal()
+    try:
+        from .trends import correlate_with_articles, fetch_trending_topics
+
+        topics = fetch_trending_topics(geo="PL", limit=20)
+        if topics:
+            topics = correlate_with_articles(topics, db)
+        else:
+            error = "Nie udało się pobrać trendów z Google. Spróbuj ponownie za chwilę."
+    except Exception:
+        import logging
+
+        logging.getLogger(__name__).exception("Trends fetch failed")
+        error = "Błąd połączenia z Google Trends."
+    finally:
+        db.close()
+
+    return templates.TemplateResponse("trends.html", {
+        "request": request,
+        "topics": topics,
+        "error": error,
+        "refresh_time": dt.now().strftime("%H:%M:%S"),
+    })
+
+
 # ── Reader Routes ──
 
 

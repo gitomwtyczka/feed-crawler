@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}Trends — Early Warning{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>📈 Trends — Early Warning</h1>
+    <p>Trending topics z Google Trends (PL) skorelowane z naszą bazą artykułów</p>
+</div>
+
+{% if error %}
+<div class="card" style="border-left: 3px solid #f87171; margin-bottom: 1rem;">
+    <p style="color: #f87171;">⚠️ {{ error }}</p>
+</div>
+{% endif %}
+
+{% if topics %}
+<div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+    <span style="background: rgba(52,211,153,0.1); color: #34d399; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; border: 1px solid rgba(52,211,153,0.2);">
+        ✅ Covered: {{ topics|selectattr('coverage_status', 'equalto', 'covered')|list|length }}
+    </span>
+    <span style="background: rgba(251,191,36,0.1); color: #fbbf24; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; border: 1px solid rgba(251,191,36,0.2);">
+        ⚠️ Partial: {{ topics|selectattr('coverage_status', 'equalto', 'partial')|list|length }}
+    </span>
+    <span style="background: rgba(248,113,113,0.1); color: #f87171; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; border: 1px solid rgba(248,113,113,0.2);">
+        ❌ Missing: {{ topics|selectattr('coverage_status', 'equalto', 'missing')|list|length }}
+    </span>
+    <span style="color: var(--text-muted); font-size: 0.8rem; margin-left: auto;">
+        🕐 Odświeżono: {{ refresh_time }}
+    </span>
+</div>
+
+<div class="table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Trending Topic</th>
+                <th>Coverage</th>
+                <th>Artykuły</th>
+                <th>Tier Breakdown</th>
+                <th>Akcja</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for topic in topics %}
+            <tr>
+                <td style="color: var(--text-muted);">{{ loop.index }}</td>
+                <td>
+                    <span style="font-weight: 600; color: var(--text-primary);">{{ topic.title }}</span>
+                    <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 2px;">{{ topic.traffic }}</div>
+                </td>
+                <td>
+                    {% if topic.coverage_status == 'covered' %}
+                    <span class="badge badge-success">✅ Covered</span>
+                    {% elif topic.coverage_status == 'partial' %}
+                    <span class="badge" style="background: rgba(251,191,36,0.15); color: #fbbf24;">⚠️ Partial</span>
+                    {% elif topic.coverage_status == 'missing' %}
+                    <span class="badge badge-danger">❌ Missing</span>
+                    {% else %}
+                    <span class="badge" style="background: rgba(255,255,255,0.05); color: var(--text-muted);">—</span>
+                    {% endif %}
+                </td>
+                <td style="font-weight: 600; text-align: center;">{{ topic.article_count }}</td>
+                <td>
+                    {% for tier_id, count in topic.tier_breakdown.items() %}
+                    {% set tier = SOURCE_TIERS.get(tier_id, SOURCE_TIERS[4]) %}
+                    <span style="background: {{ tier.color }}15; color: {{ tier.color }}; padding: 1px 6px; border-radius: 8px; font-size: 0.65rem; border: 1px solid {{ tier.color }}30; margin-right: 3px;">
+                        {{ tier.emoji }} {{ count }}
+                    </span>
+                    {% endfor %}
+                    {% if not topic.tier_breakdown %}
+                    <span style="color: var(--text-muted); font-size: 0.75rem;">—</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="/research?q={{ topic.title|urlencode }}&days=7"
+                       style="color: var(--accent-light); text-decoration: none; font-size: 0.8rem;">
+                        🔍 Research
+                    </a>
+                </td>
+            </tr>
+            {% if topic.sample_articles %}
+            <tr>
+                <td></td>
+                <td colspan="5" style="padding: 0.3rem 0 0.8rem;">
+                    {% for article in topic.sample_articles %}
+                    <div style="font-size: 0.75rem; padding: 2px 0; color: var(--text-secondary);">
+                        {% set tier = SOURCE_TIERS.get(article.source_tier, SOURCE_TIERS[4]) %}
+                        <span style="color: {{ tier.color }}; font-size: 0.6rem;">{{ tier.emoji }}</span>
+                        <a href="{{ article.url }}" target="_blank" rel="noopener"
+                           style="color: var(--text-secondary); text-decoration: none;">
+                            {{ article.title[:80] }}{% if article.title|length > 80 %}...{% endif %}
+                        </a>
+                        <span style="color: var(--text-muted); margin-left: 4px;">— {{ article.feed_name }}</span>
+                    </div>
+                    {% endfor %}
+                </td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% else %}
+<div class="card" style="text-align: center; padding: 3rem;">
+    <div style="font-size: 3rem; margin-bottom: 1rem;">📈</div>
+    <h3 style="color: var(--text-primary); margin-bottom: 0.5rem;">Ładowanie trendów...</h3>
+    <p style="color: var(--text-secondary);">
+        Kliknij <a href="/trends" style="color: var(--accent-light);">Odśwież</a> aby pobrać najnowsze trendy z Google.
+    </p>
+</div>
+{% endif %}
+{% endblock %}

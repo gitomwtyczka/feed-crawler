@@ -27,3 +27,4 @@ python-multipart==0.0.20
 
 # AI & Analytics
 google-generativeai>=0.8.0
+pytrends>=4.9.0

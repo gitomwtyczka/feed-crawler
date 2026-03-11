@@ -495,6 +495,7 @@
             <ul class="nav-links">
                 <li><a href="/" {% if request.url.path=="/" %}class="active" {% endif %}>📰 Reader</a></li>
                 <li><a href="/research" {% if request.url.path == "/research" %}class="active"{% endif %}>🧠 Research</a></li>
+                <li><a href="/trends" {% if request.url.path == "/trends" %}class="active"{% endif %}>📈 Trends</a></li>
                 <li><a href="/admin" {% if "/admin" in request.url.path %}class="active" {% endif %}>⚙️ Admin</a></li>
                 <li><a href="/admin/feeds" {% if request.url.path=="/admin/feeds" %}class="active" {% endif %}>📡
                         Feeds</a></li>
