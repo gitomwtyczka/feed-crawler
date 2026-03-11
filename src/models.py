@@ -32,11 +32,19 @@ class Feed(Base):
 
     __tablename__ = "feeds"
 
+    # Source tier constants
+    TIER_SCIENTIFIC = 1      # 🔬 PubMed, Nature, Science, Lancet, arXiv
+    TIER_INDUSTRY = 2        # 🎓 STAT News, MedPage, BIS, IRENA, think tanks
+    TIER_QUALITY_NEWS = 3    # 📰 Reuters, BBC, Guardian, PAP, ISBNews
+    TIER_PORTAL = 4          # 📱 WP, Onet, TVN24, Interia, general portals
+    TIER_UGC = 5             # 💬 Reddit, X/Twitter, blogs, forums
+
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255), nullable=False)
     url = Column(String(2048), nullable=True, default="", doc="Website URL")
     rss_url = Column(String(2048), nullable=True, default="", doc="RSS/Atom feed URL")
     feed_type = Column(String(20), nullable=False, default="rss", doc="rss | atom | api")
+    source_tier = Column(Integer, nullable=False, default=4, doc="Source tier: 1=Scientific 2=Industry 3=QualityNews 4=Portal 5=UGC")
     fetch_interval = Column(Integer, nullable=False, default=30, doc="Fetch interval in minutes")
     is_active = Column(Boolean, nullable=False, default=True)
     last_fetched = Column(DateTime, nullable=True)
@@ -51,7 +59,17 @@ class Feed(Base):
     fetch_logs = relationship("FetchLog", back_populates="feed", cascade="all, delete-orphan")
 
     def __repr__(self) -> str:
-        return f"<Feed(id={self.id}, name='{self.name}', active={self.is_active})>"
+        return f"<Feed(id={self.id}, name='{self.name}', tier={self.source_tier}, active={self.is_active})>"
+
+
+# Tier display helpers
+SOURCE_TIERS = {
+    1: {"label": "Naukowe", "emoji": "🔬", "color": "#a78bfa"},
+    2: {"label": "Branżowe", "emoji": "🎓", "color": "#60a5fa"},
+    3: {"label": "Quality News", "emoji": "📰", "color": "#34d399"},
+    4: {"label": "Portal", "emoji": "📱", "color": "#fbbf24"},
+    5: {"label": "UGC", "emoji": "💬", "color": "#f87171"},
+}
 
 
 class Department(Base):

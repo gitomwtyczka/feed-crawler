@@ -6,6 +6,23 @@
     <p>{{ "{:,}".format(total) }} articles from 500+ sources worldwide</p>
 </div>
 
+<!-- Tier Filter Bar -->
+<div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: center;">
+    <span style="color: var(--text-muted); font-size: 0.8rem; margin-right: 0.3rem;">Filtruj:</span>
+    <a href="/?per_page={{ per_page }}"
+       style="padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; text-decoration: none;
+              {% if not current_tier %}background: var(--accent); color: white;{% else %}background: rgba(255,255,255,0.05); color: var(--text-secondary); border: 1px solid var(--border);{% endif %}">
+        Wszystkie
+    </a>
+    {% for tier_id, tier_info in SOURCE_TIERS.items() %}
+    <a href="/?tier={{ tier_id }}&per_page={{ per_page }}"
+       style="padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; text-decoration: none;
+              {% if current_tier == tier_id %}background: {{ tier_info.color }}22; color: {{ tier_info.color }}; border: 1px solid {{ tier_info.color }}44;{% else %}background: rgba(255,255,255,0.05); color: var(--text-secondary); border: 1px solid var(--border);{% endif %}">
+        {{ tier_info.emoji }} {{ tier_info.label }}
+    </a>
+    {% endfor %}
+</div>
+
 <div class="article-list">
     {% for article in articles %}
     <div class="article-item">
@@ -17,6 +34,10 @@
         {% endif %}
         <div class="article-meta">
             {% if article.feed %}
+            {% set tier = SOURCE_TIERS.get(article.feed.source_tier, SOURCE_TIERS[4]) %}
+            <span style="background: {{ tier.color }}15; color: {{ tier.color }}; padding: 1px 8px; border-radius: 10px; font-size: 0.65rem; border: 1px solid {{ tier.color }}30;">
+                {{ tier.emoji }} {{ tier.label }}
+            </span>
             <span>📡 <a href="/feed/{{ article.feed_id }}" style="color: var(--accent-light); text-decoration: none;">{{
                     article.feed.name[:30] }}</a></span>
             {% endif %}
@@ -36,17 +57,17 @@
 
 {% if total_pages > 1 %}
 <div class="pagination">
-    {% if page > 1 %}<a href="?page={{ page - 1 }}&per_page={{ per_page }}">← Prev</a>{% endif %}
+    {% if page > 1 %}<a href="?page={{ page - 1 }}&per_page={{ per_page }}&tier={{ current_tier }}">← Prev</a>{% endif %}
     {% for p in range(1, total_pages + 1) %}
     {% if p == page %}
     <span class="active">{{ p }}</span>
     {% elif p <= 3 or p> total_pages - 2 or (p >= page - 1 and p <= page + 1) %} <a
-            href="?page={{ p }}&per_page={{ per_page }}">{{ p }}</a>
+            href="?page={{ p }}&per_page={{ per_page }}&tier={{ current_tier }}">{{ p }}</a>
             {% elif p == 4 or p == total_pages - 2 %}
             <span style="color: var(--text-muted)">…</span>
             {% endif %}
             {% endfor %}
-            {% if page < total_pages %}<a href="?page={{ page + 1 }}&per_page={{ per_page }}">Next →</a>{% endif %}
+            {% if page < total_pages %}<a href="?page={{ page + 1 }}&per_page={{ per_page }}&tier={{ current_tier }}">Next →</a>{% endif %}
 </div>
 {% endif %}
 {% endblock %}

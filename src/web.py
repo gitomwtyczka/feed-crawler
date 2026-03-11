@@ -42,7 +42,7 @@ from .auth import (
 )
 from .crawl_state import get_state as get_crawl_state
 from .crawl_state import toggle_crawl
-from .models import Article, Department, Feed
+from .models import SOURCE_TIERS, Article, Department, Feed
 
 # ── App Setup ──
 
@@ -57,6 +57,7 @@ TEMPLATES_DIR = BASE_DIR / "templates"
 STATIC_DIR = BASE_DIR / "static"
 
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
+templates.env.globals["SOURCE_TIERS"] = SOURCE_TIERS
 
 if STATIC_DIR.exists():
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
@@ -130,15 +131,20 @@ def reader_home(
     request: Request,
     page: int = Query(1, ge=1),
     per_page: int = Query(50, ge=10, le=200),
+    tier: int = Query(0, ge=0, le=5),
 ):
     """Latest articles from all feeds."""
     db = db_module.SessionLocal()
     try:
         offset = (page - 1) * per_page
-        total = db.query(func.count(Article.id)).scalar()
+        q = db.query(Article)
+        count_q = db.query(func.count(Article.id))
+        if tier:
+            q = q.join(Feed).filter(Feed.source_tier == tier)
+            count_q = count_q.join(Feed).filter(Feed.source_tier == tier)
+        total = count_q.scalar()
         articles = (
-            db.query(Article)
-            .order_by(desc(func.coalesce(Article.published_at, Article.fetched_at)))
+            q.order_by(desc(func.coalesce(Article.published_at, Article.fetched_at)))
             .offset(offset)
             .limit(per_page)
             .all()
@@ -151,6 +157,7 @@ def reader_home(
             "total_pages": total_pages,
             "total": total,
             "per_page": per_page,
+            "current_tier": tier,
         })
     finally:
         db.close()

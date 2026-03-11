@@ -15,6 +15,7 @@
                 <th>Status</th>
                 <th>Feed Name</th>
                 <th>Type</th>
+                <th>Tier</th>
                 <th>Articles</th>
                 <th>Last Fetched</th>
                 <th>Action</th>
@@ -40,6 +41,12 @@
                     {% endif %}
                 </td>
                 <td><span class="badge badge-info">{{ item.feed.feed_type }}</span></td>
+                <td>
+                    {% set tier = SOURCE_TIERS.get(item.feed.source_tier, SOURCE_TIERS[4]) %}
+                    <span style="background: {{ tier.color }}15; color: {{ tier.color }}; padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; border: 1px solid {{ tier.color }}30;">
+                        {{ tier.emoji }} {{ tier.label }}
+                    </span>
+                </td>
                 <td style="font-weight: 600;">{{ item.article_count }}</td>
                 <td style="color: var(--text-secondary); font-size: 0.85rem;">{{ item.feed.last_fetched|timeago }}</td>
                 <td>
