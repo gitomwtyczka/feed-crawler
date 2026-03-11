@@ -63,7 +63,7 @@ async def evaluate_feed(url: str, existing_urls: set[str] | None = None) -> Feed
 
     try:
         async with httpx.AsyncClient(
-            headers={"User-Agent": "FeedCrawler/1.0 (feed evaluation)"},
+            headers={"User-Agent": "Mozilla/5.0 (compatible; FeedCrawler/1.0; +https://impresjapr.pl)"},
             follow_redirects=True,
         ) as client:
             # ── Reliability check ──
@@ -72,7 +72,23 @@ async def evaluate_feed(url: str, existing_urls: set[str] | None = None) -> Feed
             resp = await client.get(url, timeout=15)
             score.response_time_ms = int((time.monotonic() - t0) * 1000)
 
-            if resp.status_code != 200:
+            if resp.status_code == 429:
+                # Rate limited — not our fault, give partial score
+                score.reliability_score = 12
+                score.recommendation = "maybe"
+                score.title = "(Rate limited — spróbuj później)"
+                score.overall_score = 12
+                return score
+
+            if resp.status_code == 403:
+                # Forbidden — server blocks us
+                score.reliability_score = 5
+                score.recommendation = "maybe"
+                score.title = "(Serwer blokuje — możliwy WAF/bot protection)"
+                score.overall_score = 5
+                return score
+
+            if resp.status_code not in (200, 301, 302):
                 score.reliability_score = 0
                 score.recommendation = "skip"
                 return score
