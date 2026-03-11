@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block title %}Ask Crawl — Research{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>🧠 Ask Crawl</h1>
+    <p>AI-powered research — wyszukaj temat i zobacz wyniki pogrupowane wg wiarygodności źródeł</p>
+</div>
+
+<!-- Search Form -->
+<div class="card" style="margin-bottom: 1.5rem;">
+    <form method="GET" action="/research" autocomplete="off">
+        <div style="display: flex; gap: 1rem; align-items: flex-end;">
+            <div style="flex: 1;">
+                <label style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">
+                    Wpisz temat badawczy
+                </label>
+                <input type="text" name="q" value="{{ query or '' }}" required
+                    placeholder="np. alzheimer, AI regulation, klimat, EBC stopy procentowe..."
+                    style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; padding: 0.8rem 1.2rem; color: var(--text-primary); font-size: 1rem; outline: none;"
+                    autofocus>
+            </div>
+            <div>
+                <label style="display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.3rem;">Okres</label>
+                <select name="days" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; padding: 0.8rem 1rem; color: var(--text-primary); font-size: 0.9rem; outline: none;">
+                    <option value="7" {% if days == 7 %}selected{% endif %}>7 dni</option>
+                    <option value="30" {% if days == 30 %}selected{% endif %}>30 dni</option>
+                    <option value="90" {% if days == 90 %}selected{% endif %}>90 dni</option>
+                    <option value="365" {% if days == 365 or not days %}selected{% endif %}>Rok</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary" style="padding: 0.8rem 2rem; font-size: 1rem;">
+                🔍 Szukaj
+            </button>
+        </div>
+    </form>
+</div>
+
+{% if result %}
+<!-- Stats -->
+<div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: center;">
+    <span style="background: var(--accent-glow); color: var(--accent-light); padding: 4px 12px; border-radius: 20px; font-size: 0.8rem;">
+        📊 {{ result.total_results }} wyników
+    </span>
+    <span style="color: var(--text-muted); font-size: 0.8rem;">
+        ⏱️ {{ result.search_time_ms }}ms
+    </span>
+    {% for tier_id, articles in result.tier_groups.items() %}
+    {% set tier = SOURCE_TIERS.get(tier_id, SOURCE_TIERS[4]) %}
+    <span style="background: {{ tier.color }}15; color: {{ tier.color }}; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; border: 1px solid {{ tier.color }}30;">
+        {{ tier.emoji }} {{ tier.label }}: {{ articles|length }}
+    </span>
+    {% endfor %}
+</div>
+
+<!-- AI Summary -->
+{% if result.ai_summary %}
+<div class="card" style="margin-bottom: 1.5rem; border-left: 3px solid var(--accent);">
+    <h3 style="font-size: 0.85rem; color: var(--accent-light); margin-bottom: 0.5rem;">
+        🤖 AI Summary
+    </h3>
+    <p style="color: var(--text-primary); font-size: 0.9rem; line-height: 1.7;">
+        {{ result.ai_summary }}
+    </p>
+</div>
+{% endif %}
+
+<!-- Results grouped by tier -->
+{% for tier_id, articles in result.tier_groups.items() %}
+{% set tier = SOURCE_TIERS.get(tier_id, SOURCE_TIERS[4]) %}
+<div class="card" style="margin-bottom: 1rem; border-left: 3px solid {{ tier.color }};">
+    <h3 style="font-size: 0.9rem; margin-bottom: 0.8rem;">
+        <span style="color: {{ tier.color }};">{{ tier.emoji }} {{ tier.label }}</span>
+        <span style="color: var(--text-muted); font-weight: 400; margin-left: 0.5rem;">{{ articles|length }} artykułów</span>
+    </h3>
+
+    {% for article in articles %}
+    <div style="padding: 0.6rem 0; {% if not loop.last %}border-bottom: 1px solid var(--border);{% endif %}">
+        <a href="{{ article.url }}" target="_blank" rel="noopener"
+           style="color: var(--text-primary); text-decoration: none; font-weight: 500; font-size: 0.9rem;">
+            {{ article.title }}
+        </a>
+        {% if article.summary %}
+        <p style="color: var(--text-secondary); font-size: 0.8rem; margin-top: 0.2rem; line-height: 1.4;">
+            {{ article.summary }}
+        </p>
+        {% endif %}
+        <div style="display: flex; gap: 0.8rem; margin-top: 0.3rem; font-size: 0.75rem; color: var(--text-muted);">
+            <span>📡 {{ article.feed_name }}</span>
+            {% if article.published_at %}
+            <span>📅 {{ article.published_at.strftime('%Y-%m-%d') }}</span>
+            {% endif %}
+            <span style="color: var(--accent-light); opacity: 0.6;">relevance: {{ "%.2f"|format(article.rank) }}</span>
+            <a href="/article/{{ article.id }}" style="color: var(--text-muted); text-decoration: none;">→ details</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endfor %}
+
+{% elif query %}
+<div class="card" style="text-align: center; padding: 3rem;">
+    <p style="color: var(--text-muted); font-size: 1.1rem;">
+        🔍 Brak wyników dla "{{ query }}"
+    </p>
+    <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">
+        Spróbuj innego zapytania lub zwiększ okres wyszukiwania
+    </p>
+</div>
+{% else %}
+<!-- Welcome / instructions -->
+<div class="card" style="text-align: center; padding: 3rem;">
+    <div style="font-size: 3rem; margin-bottom: 1rem;">🧠</div>
+    <h3 style="color: var(--text-primary); margin-bottom: 0.5rem;">Wpisz zapytanie badawcze</h3>
+    <p style="color: var(--text-secondary); max-width: 500px; margin: 0 auto;">
+        Wyniki zostaną pogrupowane wg wiarygodności źródeł:
+        od 🔬 naukowych, przez 🎓 branżowe, po 📱 portale informacyjne.
+    </p>
+    <div style="display: flex; gap: 0.5rem; justify-content: center; margin-top: 1.5rem; flex-wrap: wrap;">
+        <a href="/research?q=AI+regulation&days=365" class="btn" style="font-size: 0.8rem;">AI regulation</a>
+        <a href="/research?q=climate+change&days=365" class="btn" style="font-size: 0.8rem;">climate change</a>
+        <a href="/research?q=stopy+procentowe&days=90" class="btn" style="font-size: 0.8rem;">stopy procentowe</a>
+        <a href="/research?q=quantum+computing&days=365" class="btn" style="font-size: 0.8rem;">quantum computing</a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

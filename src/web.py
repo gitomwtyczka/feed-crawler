@@ -123,6 +123,39 @@ def on_startup():
         db.close()
 
 
+# ── Research Routes ──
+
+
+@app.get("/research", response_class=HTMLResponse)
+def research_page(
+    request: Request,
+    q: str = Query(""),
+    days: int = Query(365, ge=1, le=3650),
+):
+    """Ask Crawl — prompt-based research with tier grouping."""
+    result = None
+    if q.strip():
+        db = db_module.SessionLocal()
+        try:
+            from .research import generate_ai_summary, search_articles
+
+            result = search_articles(db, q.strip(), days_back=days)
+            if result.total_results > 0:
+                result.ai_summary = generate_ai_summary(result)
+        except Exception:
+            import logging
+            logging.getLogger(__name__).exception("Research query failed")
+        finally:
+            db.close()
+
+    return templates.TemplateResponse("research.html", {
+        "request": request,
+        "query": q,
+        "days": days,
+        "result": result,
+    })
+
+
 # ── Reader Routes ──
 
 
