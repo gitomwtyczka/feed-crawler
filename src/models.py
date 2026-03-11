@@ -45,6 +45,7 @@ class Feed(Base):
     rss_url = Column(String(2048), nullable=True, default="", doc="RSS/Atom feed URL")
     feed_type = Column(String(20), nullable=False, default="rss", doc="rss | atom | api")
     source_tier = Column(Integer, nullable=False, default=4, doc="Source tier: 1=Scientific 2=Industry 3=QualityNews 4=Portal 5=UGC")
+    language = Column(String(5), nullable=True, default=None, doc="ISO language code: pl, en, de, fr, es, it, pt")
     fetch_interval = Column(Integer, nullable=False, default=30, doc="Fetch interval in minutes")
     is_active = Column(Boolean, nullable=False, default=True)
     last_fetched = Column(DateTime, nullable=True)
@@ -69,6 +70,16 @@ SOURCE_TIERS = {
     3: {"label": "Quality News", "emoji": "📰", "color": "#34d399"},
     4: {"label": "Portal", "emoji": "📱", "color": "#fbbf24"},
     5: {"label": "UGC", "emoji": "💬", "color": "#f87171"},
+}
+
+LANGUAGES = {
+    "pl": {"label": "Polski", "flag": "🇵🇱", "google_hl": "pl", "google_gl": "PL", "google_ceid": "PL:pl"},
+    "en": {"label": "English", "flag": "🇬🇧", "google_hl": "en", "google_gl": "US", "google_ceid": "US:en"},
+    "de": {"label": "Deutsch", "flag": "🇩🇪", "google_hl": "de", "google_gl": "DE", "google_ceid": "DE:de"},
+    "fr": {"label": "Français", "flag": "🇫🇷", "google_hl": "fr", "google_gl": "FR", "google_ceid": "FR:fr"},
+    "es": {"label": "Español", "flag": "🇪🇸", "google_hl": "es", "google_gl": "ES", "google_ceid": "ES:es"},
+    "it": {"label": "Italiano", "flag": "🇮🇹", "google_hl": "it", "google_gl": "IT", "google_ceid": "IT:it"},
+    "pt": {"label": "Português", "flag": "🇵🇹", "google_hl": "pt-PT", "google_gl": "PT", "google_ceid": "PT:pt-150"},
 }
 
 
