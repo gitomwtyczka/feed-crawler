@@ -110,7 +110,8 @@ function filterFeeds(query) {
         if (match) visible++;
     });
     info.style.display = 'block';
-    info.textContent = `Filtr na bieżącej stronie: ${visible} z ${rows.length} feedów. Naciśnij "Szukaj" aby przeszukać wszystkie ${{{ total }}}.`;
+    const totalFeeds = {{ total }};
+    info.textContent = 'Filtr na bieżącej stronie: ' + visible + ' z ' + rows.length + ' feedów. Naciśnij "Szukaj" aby przeszukać wszystkie ' + totalFeeds + '.';
 }
 {% if q %}
 // Auto-focus search if query was submitted
