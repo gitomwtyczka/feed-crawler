@@ -73,6 +73,42 @@
     </div>
 </div>
 
+<!-- Language Breakdown -->
+<div class="card" style="margin-top: 1.5rem;">
+    <h3
+        style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">
+        🌍 Sources by Language</h3>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Language</th>
+                    <th>Feeds</th>
+                    <th>Articles</th>
+                    <th style="width: 40%">Coverage</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ls in lang_stats %}
+                <tr>
+                    <td style="font-size: 1.2rem;">{{ ls.flag }}</td>
+                    <td><a href="/?lang={{ ls.code }}" style="color: var(--accent-light); text-decoration: none;">{{ ls.label }}</a></td>
+                    <td><span class="badge badge-info">{{ ls.feeds }}</span></td>
+                    <td><span class="badge badge-success">{{ "{:,}".format(ls.articles) }}</span></td>
+                    <td>
+                        {% set max_feeds = lang_stats[0].feeds if lang_stats else 1 %}
+                        <div style="background: rgba(255,255,255,0.05); border-radius: 4px; height: 20px; width: 100%; overflow: hidden;">
+                            <div style="background: var(--accent); height: 100%; width: {{ (ls.feeds / max_feeds * 100)|round }}%; border-radius: 4px; transition: width 0.5s;"></div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <!-- Recent Articles -->
 <div class="card" style="margin-top: 1.5rem;">
     <h3

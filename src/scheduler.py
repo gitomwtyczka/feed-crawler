@@ -431,18 +431,41 @@ def run_scheduled(interval_minutes: int = 10) -> None:
         scheduler.shutdown(wait=False)
         sys.exit(0)
 
+    def _scout_job():
+        """Source Scout — auto-discover new feeds from article domains."""
+        try:
+            from .source_scout import run_discovery
+
+            stats = run_discovery(dry_run=False, hours_back=48)
+            if stats["feeds_added"] > 0:
+                send_discord(
+                    title="🔍 Source Scout — nowe źródła",
+                    description=(
+                        f"**Domeny z artykułów**: {stats['domains_found']}\n"
+                        f"**Nowe domeny**: {stats['domains_new']}\n"
+                        f"**Odkryte feedy RSS**: {stats['feeds_discovered']}\n"
+                        f"**Dodane do bazy**: {stats['feeds_added']}"
+                    ),
+                    level="info",
+                )
+                logger.info("Source Scout: +%d new feeds", stats["feeds_added"])
+        except Exception as e:
+            logger.exception("Source Scout failed: %s", e)
+
     signal.signal(signal.SIGTERM, _shutdown)
     signal.signal(signal.SIGINT, _shutdown)
 
     # Schedule jobs
     scheduler.add_job(_cycle_job, "interval", minutes=interval_minutes, id="rss_cycle")
     scheduler.add_job(_isbnews_job, "interval", minutes=5, id="isbnews_cycle")
+    scheduler.add_job(_scout_job, "interval", hours=6, id="source_scout")
 
     # Run first cycle immediately
     _cycle_job()
+    _scout_job()  # Initial discovery
     send_discord(
         title="🟢 Feed Crawler started",
-        description=f"Scheduled mode: RSS every {interval_minutes}min, ISBNews every 5min",
+        description=f"Scheduled mode: RSS every {interval_minutes}min, ISBNews every 5min, Scout every 6h",
         level="info",
     )
 

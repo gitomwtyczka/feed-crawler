@@ -441,6 +441,32 @@ def admin_dashboard(request: Request):
             feed_count = len(dept.feeds)
             dept_stats.append({"name": dept.name, "slug": dept.slug, "feeds": feed_count})
 
+        # Language breakdown — feeds and articles per language
+        lang_feeds = (
+            db.query(Feed.language, func.count(Feed.id).label("feeds"))
+            .group_by(Feed.language)
+            .order_by(desc("feeds"))
+            .all()
+        )
+        lang_articles = (
+            db.query(Feed.language, func.count(Article.id).label("articles"))
+            .join(Article, Article.feed_id == Feed.id)
+            .group_by(Feed.language)
+            .order_by(desc("articles"))
+            .all()
+        )
+        articles_by_lang = {lang: cnt for lang, cnt in lang_articles}
+        lang_stats = []
+        for lang, feed_cnt in lang_feeds:
+            lang_info = LANGUAGES.get(lang or "en", {"flag": "🌍", "label": lang or "?"})
+            lang_stats.append({
+                "code": lang or "?",
+                "flag": lang_info.get("flag", "🌍"),
+                "label": lang_info.get("label", lang or "?"),
+                "feeds": feed_cnt,
+                "articles": articles_by_lang.get(lang, 0),
+            })
+
         return templates.TemplateResponse("admin/dashboard.html", {
             "request": request,
             "user": user,
@@ -452,6 +478,7 @@ def admin_dashboard(request: Request):
             "top_feeds": top_feeds,
             "recent": recent,
             "dept_stats": dept_stats,
+            "lang_stats": lang_stats,
         })
     finally:
         db.close()
