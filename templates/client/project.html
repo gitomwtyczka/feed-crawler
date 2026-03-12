@@ -103,7 +103,7 @@
                         {% endif %}
                     </td>
                     <td style="font-size: 0.8rem; color: var(--text-secondary); white-space: nowrap;">
-                        {% if article.feed %}{{ article.feed.name[:25] }}{% endif %}
+                        {{ article.url|source_domain }}
                     </td>
                     <td style="font-size: 0.8rem; color: var(--text-muted); white-space: nowrap;">
                         {% if article.published_at %}

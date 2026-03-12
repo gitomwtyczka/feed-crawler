@@ -136,6 +136,7 @@ def client_dashboard(request: Request):
     from pathlib import Path
     templates = Jinja2Templates(directory=str(Path(__file__).parent.parent / "templates"))
     templates.env.filters["timeago"] = _timeago
+    templates.env.filters["source_domain"] = _source_domain
 
     client = _get_current_client(request)
     if not client:
@@ -210,6 +211,7 @@ def client_project_view(
     from pathlib import Path
     templates = Jinja2Templates(directory=str(Path(__file__).parent.parent / "templates"))
     templates.env.filters["timeago"] = _timeago
+    templates.env.filters["source_domain"] = _source_domain
 
     client = _get_current_client(request)
     if not client:
@@ -310,6 +312,26 @@ def _timeago(dt: datetime | None) -> str:
     if delta.total_seconds() < 86400:
         return f"{int(delta.total_seconds() // 3600)}h ago"
     return f"{delta.days}d ago"
+
+
+def _source_domain(url: str) -> str:
+    """Extract clean domain from URL for source attribution.
+    
+    GNews articles have real portal URL, not google.com.
+    e.g. 'https://www.parkiet.com/abc' → 'parkiet.com'
+    """
+    if not url:
+        return "unknown"
+    try:
+        from urllib.parse import urlparse
+        parsed = urlparse(url)
+        domain = parsed.netloc or ""
+        # Strip www.
+        if domain.startswith("www."):
+            domain = domain[4:]
+        return domain or "unknown"
+    except Exception:
+        return "unknown"
 
 
 def _count_articles_for_keywords(
