@@ -475,6 +475,78 @@ def run_scheduled(interval_minutes: int = 10) -> None:
         except Exception as e:
             logger.exception("Social monitor failed: %s", e)
 
+    def _ai_enrich_job():
+        """AI enrichment — classify, extract keywords, sentiment, summarize articles."""
+        try:
+            from .ai_router import (
+                classify_article,
+                extract_keywords,
+                analyze_sentiment,
+                summarize_article,
+                check_router_health,
+            )
+
+            # Check router is up
+            health = check_router_health()
+            if not health:
+                logger.warning("AI Router offline, skipping enrichment")
+                return
+
+            db = SessionLocal()
+            try:
+                # Get unprocessed articles (batch of 50)
+                articles = (
+                    db.query(Article)
+                    .filter(Article.ai_processed == False)
+                    .order_by(Article.fetched_at.desc())
+                    .limit(50)
+                    .all()
+                )
+
+                if not articles:
+                    return
+
+                enriched = 0
+                for article in articles:
+                    try:
+                        # 1. Classify (Bielik, $0, ~50ms)
+                        cat_resp = classify_article(article.title, article.summary or "")
+                        if cat_resp and cat_resp.get("response"):
+                            article.ai_category = cat_resp["response"][:100]
+
+                        # 2. Keywords (Bielik, $0, ~50ms)
+                        kws = extract_keywords(article.title, article.content or article.summary or "")
+                        if kws:
+                            article.ai_keywords = ", ".join(kws)
+
+                        # 3. Sentiment (Bielik, $0, ~50ms)
+                        sent_resp = analyze_sentiment(article.title, article.summary or "")
+                        if sent_resp and sent_resp.get("response"):
+                            article.ai_sentiment = sent_resp["response"][:20]
+
+                        # 4. Summary (Gemini, $0, ~2s) — only for articles with content
+                        if article.content and len(article.content) > 200:
+                            summary = summarize_article(article.title, article.content)
+                            if summary:
+                                article.ai_summary = summary
+
+                        article.ai_processed = True
+                        enriched += 1
+
+                    except Exception as e:
+                        logger.debug("AI enrich failed for article %d: %s", article.id, e)
+                        article.ai_processed = True  # Mark as processed to avoid infinite retry
+
+                db.commit()
+                if enriched > 0:
+                    logger.info("🧠 AI enriched %d/%d articles", enriched, len(articles))
+
+            finally:
+                db.close()
+
+        except Exception as e:
+            logger.exception("AI enrichment failed: %s", e)
+
     signal.signal(signal.SIGTERM, _shutdown)
     signal.signal(signal.SIGINT, _shutdown)
 
@@ -484,6 +556,7 @@ def run_scheduled(interval_minutes: int = 10) -> None:
     scheduler.add_job(_scout_job, "interval", hours=2, id="source_scout")
     scheduler.add_job(_broadcast_job, "interval", minutes=2, id="broadcast_monitor")
     scheduler.add_job(_social_job, "interval", minutes=30, id="social_monitor")
+    scheduler.add_job(_ai_enrich_job, "interval", minutes=5, id="ai_enrichment")
 
     # Run first cycle immediately
     _cycle_job()
@@ -491,8 +564,8 @@ def run_scheduled(interval_minutes: int = 10) -> None:
     send_discord(
         title="🟢 Feed Crawler started",
         description=(
-            f"RSS every {interval_minutes}min, ISBNews 5min, "
-            f"Scout 2h, Broadcast 2min, Social 30min"
+            f"RSS {interval_minutes}min, ISBNews 5min, Scout 2h, "
+            f"Broadcast 2min, Social 30min, AI Enrich 5min"
         ),
         level="info",
     )

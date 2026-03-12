@@ -129,6 +129,13 @@ class Article(Base):
     sent_to_saas = Column(Boolean, nullable=False, default=False)
     sent_at = Column(DateTime, nullable=True)
 
+    # AI enrichment (via AI Router — Bielik + Gemini)
+    ai_category = Column(String(100), nullable=True, doc="AI-classified category: polityka, sport, tech...")
+    ai_keywords = Column(Text, nullable=True, doc="Comma-separated AI-extracted keywords")
+    ai_sentiment = Column(String(20), nullable=True, doc="positive, negative, neutral")
+    ai_summary = Column(Text, nullable=True, doc="AI-generated summary (Gemini)")
+    ai_processed = Column(Boolean, nullable=False, default=False, doc="True if AI enrichment was done")
+
     # Relationships
     feed = relationship("Feed", back_populates="articles")
     departments = relationship("Department", secondary="article_departments", back_populates="articles")
