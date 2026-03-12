@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 # ── Configuration ──
 
 AI_ROUTER_URL = os.environ.get("AI_ROUTER_URL", "http://95.179.201.157:8000")
-AI_ROUTER_TIMEOUT = 30  # seconds
+AI_ROUTER_TIMEOUT = 60  # Bielik on Vultr 2vCPU needs more time
 
 
 async def _post(endpoint: str, payload: dict) -> dict | None:

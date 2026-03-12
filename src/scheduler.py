@@ -476,15 +476,13 @@ def run_scheduled(interval_minutes: int = 10) -> None:
             logger.exception("Social monitor failed: %s", e)
 
     def _ai_enrich_job():
-        """AI enrichment — classify, extract keywords, sentiment, summarize articles."""
+        """AI enrichment — single combined prompt for classify + keywords + sentiment.
+
+        Uses /ask endpoint with one combined prompt instead of 4 separate calls.
+        Bielik on Vultr (2 vCPU) takes ~5s per call, so 1 call >> 4 calls.
+        """
         try:
-            from .ai_router import (
-                classify_article,
-                extract_keywords,
-                analyze_sentiment,
-                summarize_article,
-                check_router_health,
-            )
+            from .ai_router import _post_sync, check_router_health
 
             # Check router is up
             health = check_router_health()
@@ -494,12 +492,18 @@ def run_scheduled(interval_minutes: int = 10) -> None:
 
             db = SessionLocal()
             try:
-                # Get unprocessed articles (batch of 50)
+                # Only process recent articles (last 24h) — skip 76K backlog
+                from datetime import timedelta
+                cutoff = datetime.utcnow() - timedelta(hours=24)
+
                 articles = (
                     db.query(Article)
-                    .filter(Article.ai_processed == False)
+                    .filter(
+                        Article.ai_processed.is_(False),
+                        Article.fetched_at >= cutoff,
+                    )
                     .order_by(Article.fetched_at.desc())
-                    .limit(50)
+                    .limit(10)  # Small batch — Bielik is slow (~6s per article)
                     .all()
                 )
 
@@ -509,33 +513,39 @@ def run_scheduled(interval_minutes: int = 10) -> None:
                 enriched = 0
                 for article in articles:
                     try:
-                        # 1. Classify (Bielik, $0, ~50ms)
-                        cat_resp = classify_article(article.title, article.summary or "")
-                        if cat_resp and cat_resp.get("response"):
-                            article.ai_category = cat_resp["response"][:100]
+                        text = f"{article.title}. {(article.summary or '')[:300]}"
 
-                        # 2. Keywords (Bielik, $0, ~50ms)
-                        kws = extract_keywords(article.title, article.content or article.summary or "")
-                        if kws:
-                            article.ai_keywords = ", ".join(kws)
+                        # Single combined prompt → 1 API call instead of 4
+                        result = _post_sync("/ask", {
+                            "prompt": (
+                                f"Przeanalizuj ten artykuł prasowy:\n\n"
+                                f"\"{text}\"\n\n"
+                                f"Odpowiedz DOKŁADNIE w tym formacie (każda linia osobno):\n"
+                                f"KATEGORIA: [jedna z: polityka, gospodarka, sport, technologia, kultura, nauka, zdrowie, społeczeństwo, prawo, inne]\n"
+                                f"SŁOWA KLUCZOWE: [max 5 słów kluczowych po przecinku]\n"
+                                f"SENTYMENT: [positive, negative, neutral]"
+                            ),
+                            "max_tokens": 150,
+                        })
 
-                        # 3. Sentiment (Bielik, $0, ~50ms)
-                        sent_resp = analyze_sentiment(article.title, article.summary or "")
-                        if sent_resp and sent_resp.get("response"):
-                            article.ai_sentiment = sent_resp["response"][:20]
-
-                        # 4. Summary (Gemini, $0, ~2s) — only for articles with content
-                        if article.content and len(article.content) > 200:
-                            summary = summarize_article(article.title, article.content)
-                            if summary:
-                                article.ai_summary = summary
+                        if result and result.get("response"):
+                            resp = result["response"]
+                            # Parse structured response
+                            for line in resp.split("\n"):
+                                line = line.strip()
+                                if line.upper().startswith("KATEGORIA:"):
+                                    article.ai_category = line.split(":", 1)[1].strip()[:100]
+                                elif line.upper().startswith("SŁOWA KLUCZOWE:") or line.upper().startswith("SLOWA KLUCZOWE:"):
+                                    article.ai_keywords = line.split(":", 1)[1].strip()[:500]
+                                elif line.upper().startswith("SENTYMENT:"):
+                                    article.ai_sentiment = line.split(":", 1)[1].strip()[:20]
 
                         article.ai_processed = True
                         enriched += 1
 
                     except Exception as e:
                         logger.debug("AI enrich failed for article %d: %s", article.id, e)
-                        article.ai_processed = True  # Mark as processed to avoid infinite retry
+                        article.ai_processed = True  # Avoid infinite retry
 
                 db.commit()
                 if enriched > 0:
