@@ -172,6 +172,12 @@ def client_dashboard(request: Request):
             # Reprint stats
             reprint_stats = _get_reprint_stats(db, keyword_list, since=week_ago)
 
+            # Latest mention
+            latest = _get_latest_mention(db, keyword_list)
+
+            # Unique sources (portals)
+            unique_sources = _get_unique_sources(db, keyword_list, since=week_ago)
+
             project_stats.append({
                 "project": project,
                 "keywords": keyword_list,
@@ -180,16 +186,29 @@ def client_dashboard(request: Request):
                 "articles_7d": articles_7d,
                 "sentiment": sentiment,
                 "reprint_stats": reprint_stats,
+                "latest_mention": latest,
+                "unique_sources": unique_sources,
             })
 
         # Generate AI brief for dashboard
         ai_brief = _generate_dashboard_brief(project_stats)
+
+        # Aggregate KPIs across all projects
+        total_mentions_7d = sum(ps["articles_7d"] for ps in project_stats)
+        total_mentions_24h = sum(ps["articles_24h"] for ps in project_stats)
+        total_portals = sum(ps["unique_sources"] for ps in project_stats)
+        all_latests = [ps["latest_mention"] for ps in project_stats if ps["latest_mention"]]
+        latest_overall = max(all_latests) if all_latests else None
 
         return templates.TemplateResponse("client/dashboard.html", {
             "request": request,
             "client": client,
             "project_stats": project_stats,
             "ai_brief": ai_brief,
+            "total_mentions_7d": total_mentions_7d,
+            "total_mentions_24h": total_mentions_24h,
+            "total_portals": total_portals,
+            "latest_overall": latest_overall,
         })
     finally:
         db.close()
@@ -267,6 +286,12 @@ def client_project_view(
         sentiment_breakdown = _get_sentiment_breakdown(db, keyword_list, since=since)
         reprint_breakdown = _get_reprint_stats(db, keyword_list, since=since)
 
+        # Daily trend data for chart
+        daily_trend = _get_daily_trend(db, keyword_list, days=days)
+
+        # Unique sources
+        unique_sources = _get_unique_sources(db, keyword_list, since=since)
+
         return templates.TemplateResponse("client/project.html", {
             "request": request,
             "client": client,
@@ -281,6 +306,8 @@ def client_project_view(
             "reprint_filter": reprint,
             "sentiment_breakdown": sentiment_breakdown,
             "reprint_breakdown": reprint_breakdown,
+            "daily_trend": daily_trend,
+            "unique_sources": unique_sources,
         })
     finally:
         db.close()
@@ -383,6 +410,54 @@ def _get_reprint_stats(
         query = query.filter(Article.published_at >= since)
     query = query.group_by(Article.reprint_type)
     return dict(query.all())
+
+
+def _get_daily_trend(
+    db, keywords: list[str], days: int = 7
+) -> list[dict]:
+    """Get daily article counts for chart. Returns [{date: 'YYYY-MM-DD', count: N}, ...]."""
+    if not keywords:
+        return []
+    from sqlalchemy import or_, cast, Date
+    since = datetime.utcnow() - timedelta(days=days)
+    query = db.query(
+        cast(Article.published_at, Date).label('day'),
+        func.count(Article.id).label('cnt'),
+    )
+    keyword_filters = [Article.title.ilike(f"%{kw}%") for kw in keywords]
+    query = query.filter(or_(*keyword_filters))
+    query = query.filter(Article.published_at >= since)
+    query = query.group_by('day').order_by('day')
+    results = query.all()
+    return [{"date": str(r.day), "count": r.cnt} for r in results]
+
+
+def _get_unique_sources(
+    db, keywords: list[str], since: datetime | None = None
+) -> int:
+    """Count unique feed sources for matching articles."""
+    if not keywords:
+        return 0
+    from sqlalchemy import or_
+    query = db.query(func.count(func.distinct(Article.feed_id)))
+    keyword_filters = [Article.title.ilike(f"%{kw}%") for kw in keywords]
+    query = query.filter(or_(*keyword_filters))
+    if since:
+        query = query.filter(Article.published_at >= since)
+    return query.scalar() or 0
+
+
+def _get_latest_mention(
+    db, keywords: list[str]
+) -> datetime | None:
+    """Get timestamp of most recent matching article."""
+    if not keywords:
+        return None
+    from sqlalchemy import or_
+    query = db.query(func.max(Article.published_at))
+    keyword_filters = [Article.title.ilike(f"%{kw}%") for kw in keywords]
+    query = query.filter(or_(*keyword_filters))
+    return query.scalar()
 
 
 def _generate_dashboard_brief(project_stats: list[dict]) -> str:

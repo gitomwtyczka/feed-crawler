@@ -12,6 +12,70 @@
     <a href="/client/logout" style="color: var(--text-muted); font-size: 0.8rem; text-decoration: none;">🚪 Wyloguj</a>
 </div>
 
+<!-- KPI Hero -->
+<div class="card" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(139,92,246,0.08) 50%, rgba(236,72,153,0.05) 100%); border: 1px solid rgba(139,92,246,0.2);">
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; text-align: center; padding: 0.5rem 0;">
+        <!-- Mentions 7d -->
+        <div>
+            <div class="kpi-value" data-target="{{ total_mentions_7d }}" style="font-size: 2.2rem; font-weight: 800; color: #a78bfa; font-variant-numeric: tabular-nums;">0</div>
+            <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px;">Wzmianek (7 dni)</div>
+        </div>
+        <!-- Mentions 24h -->
+        <div>
+            <div class="kpi-value" data-target="{{ total_mentions_24h }}" style="font-size: 2.2rem; font-weight: 800; color: #818cf8; font-variant-numeric: tabular-nums;">0</div>
+            <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px;">Nowe (24h)</div>
+        </div>
+        <!-- Unique portals -->
+        <div>
+            <div class="kpi-value" data-target="{{ total_portals }}" style="font-size: 2.2rem; font-weight: 800; color: #6366f1; font-variant-numeric: tabular-nums;">0</div>
+            <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px;">Portali</div>
+        </div>
+        <!-- Live Pulse -->
+        <div>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 4px;">
+                <span class="pulse-dot" style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 12px rgba(34,197,94,0.6);"></span>
+                <span style="font-size: 1.1rem; font-weight: 700; color: #22c55e;">LIVE</span>
+            </div>
+            {% if latest_overall %}
+            <div style="font-size: 0.85rem; color: var(--text-primary); font-weight: 500;">{{ latest_overall|timeago }}</div>
+            <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 2px;">Ostatnia wzmianka</div>
+            {% else %}
+            <div style="font-size: 0.8rem; color: var(--text-muted);">Brak danych</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes pulse-live {
+    0%, 100% { opacity: 1; box-shadow: 0 0 12px rgba(34,197,94,0.6); }
+    50% { opacity: 0.4; box-shadow: 0 0 4px rgba(34,197,94,0.2); }
+}
+.pulse-dot { animation: pulse-live 2s ease-in-out infinite; }
+</style>
+
+<script>
+// Count-up animation for KPI values
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.kpi-value').forEach(function(el) {
+        var target = parseInt(el.getAttribute('data-target')) || 0;
+        if (target === 0) { el.textContent = '0'; return; }
+        var duration = 1200;
+        var start = 0;
+        var startTime = null;
+        function animate(ts) {
+            if (!startTime) startTime = ts;
+            var progress = Math.min((ts - startTime) / duration, 1);
+            // Ease-out cubic
+            var eased = 1 - Math.pow(1 - progress, 3);
+            el.textContent = Math.round(eased * target).toLocaleString('pl-PL');
+            if (progress < 1) requestAnimationFrame(animate);
+        }
+        requestAnimationFrame(animate);
+    });
+});
+</script>
+
 <!-- AI Brief -->
 {% if ai_brief %}
 <div class="card" style="margin-bottom: 1.5rem; border-left: 3px solid rgba(139,92,246,0.5);">

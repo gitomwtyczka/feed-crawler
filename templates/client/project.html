@@ -75,6 +75,88 @@
     </form>
 </div>
 
+<!-- Trend Chart -->
+{% if daily_trend %}
+<div class="card" style="margin-bottom: 1.2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+        <h3 style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">
+            📈 Trend wzmianek
+        </h3>
+        <div style="display: flex; gap: 1rem; font-size: 0.75rem; color: var(--text-muted);">
+            <span>📊 {{ total }} artykułów</span>
+            <span>🌐 {{ unique_sources }} portali</span>
+        </div>
+    </div>
+    <div style="position: relative; height: 200px;">
+        <canvas id="trendChart"></canvas>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var trendData = {{ daily_trend | tojson }};
+    var labels = trendData.map(function(d) {
+        var parts = d.date.split('-');
+        return parts[2] + '.' + parts[1];
+    });
+    var values = trendData.map(function(d) { return d.count; });
+
+    var ctx = document.getElementById('trendChart').getContext('2d');
+    var gradient = ctx.createLinearGradient(0, 0, 0, 200);
+    gradient.addColorStop(0, 'rgba(139, 92, 246, 0.3)');
+    gradient.addColorStop(1, 'rgba(139, 92, 246, 0.0)');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Wzmianki',
+                data: values,
+                borderColor: '#8b5cf6',
+                backgroundColor: gradient,
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: '#8b5cf6',
+                pointBorderColor: '#8b5cf6',
+                pointRadius: 3,
+                pointHoverRadius: 6,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: 'rgba(15, 15, 25, 0.9)',
+                    titleColor: '#e2e8f0',
+                    bodyColor: '#a78bfa',
+                    borderColor: 'rgba(139, 92, 246, 0.3)',
+                    borderWidth: 1,
+                    cornerRadius: 8,
+                    callbacks: {
+                        label: function(ctx) { return ctx.parsed.y + ' artykułów'; }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { color: 'rgba(255,255,255,0.05)' },
+                    ticks: { color: '#64748b', font: { size: 10 } }
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(255,255,255,0.05)' },
+                    ticks: { color: '#64748b', font: { size: 10 }, stepSize: 1 }
+                }
+            }
+        }
+    });
+});
+</script>
+{% endif %}
 <!-- Articles Table -->
 <div class="card">
     <div class="table-wrap">
