@@ -121,15 +121,18 @@ def store_articles(db: Session, result: FetchResult, feed: Feed) -> int:
             hash=article_hash,
         )
         db.add(article)
-        db.flush()
+        try:
+            db.flush()
 
-        # Tag with departments
-        for dept_id in dept_ids:
-            db.add(ArticleDepartment(article_id=article.id, department_id=dept_id))
+            # Tag with departments
+            for dept_id in dept_ids:
+                db.add(ArticleDepartment(article_id=article.id, department_id=dept_id))
+            db.commit()
+            new_count += 1
+        except Exception:
+            db.rollback()
+            logger.debug("Failed to store article: %s", raw.title[:60] if raw.title else "?")
 
-        new_count += 1
-
-    db.commit()
     return new_count
 
 
