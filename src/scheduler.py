@@ -476,10 +476,11 @@ def run_scheduled(interval_minutes: int = 10) -> None:
             logger.exception("Social monitor failed: %s", e)
 
     def _ai_enrich_job():
-        """AI enrichment — single combined prompt for classify + keywords + sentiment.
+        """AI enrichment — classify + keywords + sentiment via Gemini.
 
-        Uses /ask endpoint with one combined prompt instead of 4 separate calls.
-        Bielik on Vultr (2 vCPU) takes ~5s per call, so 1 call >> 4 calls.
+        Uses Gemini Flash (via task='summarize' routing hint) instead of Bielik.
+        Bielik 1.5B is too small for Polish NLP — classifies everything as 'sport'.
+        Gemini Flash is $0 and far better at structured Polish text analysis.
         """
         try:
             from .ai_router import _post_sync, check_router_health
@@ -492,18 +493,20 @@ def run_scheduled(interval_minutes: int = 10) -> None:
 
             db = SessionLocal()
             try:
-                # Only process recent articles (last 24h) — skip 76K backlog
+                # Only process recent PL articles (last 24h)
                 from datetime import timedelta
                 cutoff = datetime.utcnow() - timedelta(hours=24)
 
                 articles = (
                     db.query(Article)
+                    .join(Feed, Article.feed_id == Feed.id)
                     .filter(
                         Article.ai_processed.is_(False),
                         Article.fetched_at >= cutoff,
+                        Feed.language == "pl",  # Only Polish articles
                     )
                     .order_by(Article.fetched_at.desc())
-                    .limit(10)  # Small batch — Bielik is slow (~6s per article)
+                    .limit(5)  # Small batch — Gemini ~2s per article
                     .all()
                 )
 
@@ -515,27 +518,28 @@ def run_scheduled(interval_minutes: int = 10) -> None:
                     try:
                         text = f"{article.title}. {(article.summary or '')[:300]}"
 
-                        # Single combined prompt → 1 API call instead of 4
+                        # Use task='summarize' to route to Gemini instead of Bielik
                         result = _post_sync("/ask", {
                             "prompt": (
-                                f"Przeanalizuj ten artykuł prasowy:\n\n"
+                                f"Przeanalizuj ten polski artykuł prasowy:\n\n"
                                 f"\"{text}\"\n\n"
                                 f"Odpowiedz DOKŁADNIE w tym formacie (każda linia osobno):\n"
-                                f"KATEGORIA: [jedna z: polityka, gospodarka, sport, technologia, kultura, nauka, zdrowie, społeczeństwo, prawo, inne]\n"
+                                f"KATEGORIA: [jedna z: polityka, gospodarka, sport, technologia, "
+                                f"kultura, nauka, zdrowie, społeczeństwo, prawo, energetyka, inne]\n"
                                 f"SŁOWA KLUCZOWE: [max 5 słów kluczowych po przecinku]\n"
                                 f"SENTYMENT: [positive, negative, neutral]"
                             ),
+                            "task": "summarize",  # Routes to Gemini tier
                             "max_tokens": 150,
                         })
 
                         if result and result.get("response"):
                             resp = result["response"]
-                            # Parse structured response
                             for line in resp.split("\n"):
                                 line = line.strip()
                                 if line.upper().startswith("KATEGORIA:"):
                                     article.ai_category = line.split(":", 1)[1].strip()[:100]
-                                elif line.upper().startswith("SŁOWA KLUCZOWE:") or line.upper().startswith("SLOWA KLUCZOWE:"):
+                                elif "KLUCZOWE:" in line.upper():
                                     article.ai_keywords = line.split(":", 1)[1].strip()[:500]
                                 elif line.upper().startswith("SENTYMENT:"):
                                     article.ai_sentiment = line.split(":", 1)[1].strip()[:20]
@@ -549,7 +553,7 @@ def run_scheduled(interval_minutes: int = 10) -> None:
 
                 db.commit()
                 if enriched > 0:
-                    logger.info("🧠 AI enriched %d/%d articles", enriched, len(articles))
+                    logger.info("🧠 AI enriched %d/%d articles (Gemini)", enriched, len(articles))
 
             finally:
                 db.close()
