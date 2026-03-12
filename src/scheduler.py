@@ -452,6 +452,17 @@ def run_scheduled(interval_minutes: int = 10) -> None:
         except Exception as e:
             logger.exception("Source Scout failed: %s", e)
 
+    def _broadcast_job():
+        """TV/Radio broadcast monitor — capture + transcribe + keyword match."""
+        try:
+            from .tv_radio_monitor import run_monitoring_cycle, seed_stations
+
+            # Seed stations on first run
+            seed_stations()
+            run_monitoring_cycle()
+        except Exception as e:
+            logger.exception("Broadcast monitor failed: %s", e)
+
     signal.signal(signal.SIGTERM, _shutdown)
     signal.signal(signal.SIGINT, _shutdown)
 
@@ -459,13 +470,17 @@ def run_scheduled(interval_minutes: int = 10) -> None:
     scheduler.add_job(_cycle_job, "interval", minutes=interval_minutes, id="rss_cycle")
     scheduler.add_job(_isbnews_job, "interval", minutes=5, id="isbnews_cycle")
     scheduler.add_job(_scout_job, "interval", hours=2, id="source_scout")
+    scheduler.add_job(_broadcast_job, "interval", minutes=2, id="broadcast_monitor")
 
     # Run first cycle immediately
     _cycle_job()
     _scout_job()  # Initial discovery
     send_discord(
         title="🟢 Feed Crawler started",
-        description=f"Scheduled mode: RSS every {interval_minutes}min, ISBNews every 5min, Scout every 6h",
+        description=(
+            f"Scheduled mode: RSS every {interval_minutes}min, ISBNews every 5min, "
+            f"Scout every 2h, Broadcast every 2min"
+        ),
         level="info",
     )
 

@@ -169,3 +169,41 @@ class FetchLog(Base):
 
     def __repr__(self) -> str:
         return f"<FetchLog(feed_id={self.feed_id}, status='{self.status}', new={self.articles_new})>"
+
+
+class BroadcastStation(Base):
+    """TV/Radio station for stream monitoring."""
+
+    __tablename__ = "broadcast_stations"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(255), nullable=False, doc="Station name, e.g. 'TVP Info'")
+    station_type = Column(String(10), nullable=False, doc="tv | radio")
+    stream_url = Column(String(2048), nullable=False, doc="HLS/HTTP stream URL")
+    language = Column(String(5), nullable=False, default="pl")
+    is_active = Column(Boolean, nullable=False, default=True)
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+    transcripts = relationship("Transcript", back_populates="station", cascade="all, delete-orphan")
+
+    def __repr__(self) -> str:
+        return f"<BroadcastStation(id={self.id}, name='{self.name}', type={self.station_type})>"
+
+
+class Transcript(Base):
+    """Transcribed audio chunk from a TV/Radio broadcast."""
+
+    __tablename__ = "transcripts"
+
+    id = Column(Integer, primary_key=True, index=True)
+    station_id = Column(Integer, ForeignKey("broadcast_stations.id", ondelete="CASCADE"), nullable=False, index=True)
+    text = Column(Text, nullable=False, doc="Transcribed text of audio chunk")
+    chunk_start = Column(DateTime, nullable=False, doc="Start time of audio chunk")
+    chunk_end = Column(DateTime, nullable=False, doc="End time of audio chunk")
+    keywords_found = Column(Text, nullable=True, doc="Comma-separated matched keywords")
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+    station = relationship("BroadcastStation", back_populates="transcripts")
+
+    def __repr__(self) -> str:
+        return f"<Transcript(station_id={self.station_id}, start={self.chunk_start}, keywords={self.keywords_found})>"

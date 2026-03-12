@@ -21,11 +21,12 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Runtime deps for lxml
+# Runtime deps for lxml + ffmpeg for TV/Radio stream capture
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libxml2 \
     libxslt1.1 \
     curl \
+    ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy installed packages from builder
