@@ -896,7 +896,7 @@ def admin_discover_add(request: Request, feed_url: str = Form(...), feed_name: s
 
 
 @app.get("/admin/feeds", response_class=HTMLResponse)
-def admin_feeds(request: Request, page: int = Query(1, ge=1)):
+def admin_feeds(request: Request, page: int = Query(1, ge=1), q: str = Query("", max_length=200)):
     user = _get_current_user(request)
     if not user:
         return RedirectResponse(url="/login", status_code=303)
@@ -904,14 +904,28 @@ def admin_feeds(request: Request, page: int = Query(1, ge=1)):
     try:
         per_page = 50
         offset = (page - 1) * per_page
-        total = db.query(func.count(Feed.id)).scalar()
+
+        # Base query
+        base_query = db.query(Feed)
+        count_query = db.query(func.count(Feed.id))
+
+        # Search filter
+        if q.strip():
+            from sqlalchemy import or_
+            search_filter = or_(
+                Feed.name.ilike(f"%{q.strip()}%"),
+                Feed.rss_url.ilike(f"%{q.strip()}%"),
+                Feed.url.ilike(f"%{q.strip()}%"),
+            )
+            base_query = base_query.filter(search_filter)
+            count_query = count_query.filter(search_filter)
+
+        total = count_query.scalar()
 
         feeds_raw = (
-            db.query(
-                Feed,
-                func.count(Article.id).label("article_count"),
-            )
+            base_query
             .outerjoin(Article, Article.feed_id == Feed.id)
+            .with_entities(Feed, func.count(Article.id).label("article_count"))
             .group_by(Feed.id)
             .order_by(desc("article_count"))
             .offset(offset)
@@ -929,6 +943,7 @@ def admin_feeds(request: Request, page: int = Query(1, ge=1)):
             "page": page,
             "total_pages": total_pages,
             "total": total,
+            "q": q.strip(),
         })
     finally:
         db.close()

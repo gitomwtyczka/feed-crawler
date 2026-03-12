@@ -8,6 +8,21 @@
     </div>
 </div>
 
+<!-- Search Bar -->
+<div class="card" style="margin-bottom: 1rem; padding: 0.7rem 1rem;">
+    <form method="get" action="/admin/feeds" style="display: flex; gap: 0.6rem; align-items: center;">
+        <input type="text" name="q" id="feed-search" value="{{ q }}" placeholder="🔍 Szukaj feedu po nazwie lub URL..." 
+            style="flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem 1rem; color: var(--text-primary); font-size: 0.85rem; outline: none;"
+            onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"
+            oninput="filterFeeds(this.value)">
+        <button type="submit" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.8rem; white-space: nowrap;">🔎 Szukaj</button>
+        {% if q %}
+        <a href="/admin/feeds" style="color: var(--text-muted); font-size: 0.8rem; text-decoration: none;">✕ Wyczyść</a>
+        {% endif %}
+    </form>
+    <div id="filter-info" style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.3rem; display: none;"></div>
+</div>
+
 <div class="table-wrap">
     <table>
         <thead>
@@ -68,12 +83,38 @@
     {% for p in range(1, total_pages + 1) %}
     {% if p == page %}
     <span class="active">{{ p }}</span>
-    {% elif p <= 3 or p> total_pages - 2 or (p >= page - 1 and p <= page + 1) %} <a href="?page={{ p }}">{{ p }}</a>
+    {% elif p <= 3 or p> total_pages - 2 or (p >= page - 1 and p <= page + 1) %} <a href="?page={{ p }}{% if q %}&q={{ q }}{% endif %}">{{ p }}</a>
             {% elif p == 4 or p == total_pages - 2 %}
             <span style="color: var(--text-muted)">…</span>
             {% endif %}
             {% endfor %}
-            {% if page < total_pages %}<a href="?page={{ page + 1 }}">Next →</a>{% endif %}
+            {% if page < total_pages %}<a href="?page={{ page + 1 }}{% if q %}&q={{ q }}{% endif %}">Next →</a>{% endif %}
 </div>
 {% endif %}
+
+<script>
+function filterFeeds(query) {
+    const rows = document.querySelectorAll('tbody tr');
+    const info = document.getElementById('filter-info');
+    if (!query) {
+        rows.forEach(r => r.style.display = '');
+        info.style.display = 'none';
+        return;
+    }
+    const q = query.toLowerCase();
+    let visible = 0;
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        const match = text.includes(q);
+        row.style.display = match ? '' : 'none';
+        if (match) visible++;
+    });
+    info.style.display = 'block';
+    info.textContent = `Filtr na bieżącej stronie: ${visible} z ${rows.length} feedów. Naciśnij "Szukaj" aby przeszukać wszystkie ${{{ total }}}.`;
+}
+{% if q %}
+// Auto-focus search if query was submitted
+document.getElementById('feed-search').focus();
+{% endif %}
+</script>
 {% endblock %}
