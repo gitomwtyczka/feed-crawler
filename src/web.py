@@ -111,7 +111,7 @@ def _get_current_user(request: Request) -> str | None:
 
 
 # Public paths that don't require auth
-PUBLIC_PATHS = {"/login", "/static", "/favicon.ico", "/api", "/register"}
+PUBLIC_PATHS = {"/login", "/static", "/favicon.ico", "/api", "/register", "/client"}
 
 
 @app.middleware("http")
@@ -191,6 +191,10 @@ def on_startup():
         ensure_default_admin(db)
     finally:
         db.close()
+
+    # Register client panel router
+    from .client import router as client_router
+    app.include_router(client_router)
 
 
 # ── Research Routes ──
