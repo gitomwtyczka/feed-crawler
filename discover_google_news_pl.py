@@ -159,18 +159,21 @@ def discover_and_add():
         # Get existing feeds
         existing_domains = set()
         for feed in db.query(Feed).all():
-            if feed.rss_url:
-                parsed = urlparse(feed.rss_url)
-                d = parsed.netloc.lower()
-                if d.startswith("www."):
-                    d = d[4:]
-                existing_domains.add(d)
-            if feed.url:
-                parsed = urlparse(feed.url)
-                d = parsed.netloc.lower()
-                if d.startswith("www."):
-                    d = d[4:]
-                existing_domains.add(d)
+            try:
+                if feed.rss_url:
+                    parsed = urlparse(feed.rss_url)
+                    d = parsed.netloc.lower()
+                    if d.startswith("www."):
+                        d = d[4:]
+                    existing_domains.add(d)
+                if feed.url:
+                    parsed = urlparse(feed.url)
+                    d = parsed.netloc.lower()
+                    if d.startswith("www."):
+                        d = d[4:]
+                    existing_domains.add(d)
+            except (ValueError, Exception):
+                continue
 
         logger.info("Existing domains in DB: %d", len(existing_domains))
 
