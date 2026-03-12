@@ -162,6 +162,65 @@
     </div>
 </div>
 
+<!-- Client Accounts -->
+<div class="card" style="margin-top: 1.5rem;">
+    <h3 style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">
+        🏢 Konta klientów ({{ clients|length }})</h3>
+    
+    {% if clients %}
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Login</th>
+                    <th>Firma</th>
+                    <th>Email</th>
+                    <th>Tier</th>
+                    <th>Status</th>
+                    <th>Utworzony</th>
+                    <th>Panel</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in clients %}
+                <tr>
+                    <td><span style="font-weight: 600;">{{ c.username }}</span></td>
+                    <td style="color: var(--text-secondary);">{{ c.company_name }}</td>
+                    <td style="color: var(--text-muted); font-size: 0.85rem;">{{ c.email or '—' }}</td>
+                    <td>
+                        {% if c.tier == 'pro' %}
+                        <span class="badge" style="background: rgba(254,231,92,0.15); color: #fee75c; font-size: 0.7rem;">⭐ Pro</span>
+                        {% elif c.tier == 'enterprise' %}
+                        <span class="badge" style="background: rgba(237,66,69,0.15); color: #ed4245; font-size: 0.7rem;">🏢 Enterprise</span>
+                        {% else %}
+                        <span class="badge" style="background: rgba(88,101,242,0.15); color: #818cf8; font-size: 0.7rem;">📋 Basic</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if c.is_active %}
+                        <span style="color: #57f287; font-size: 0.8rem;">● Active</span>
+                        {% else %}
+                        <span style="color: #ed4245; font-size: 0.8rem;">● Disabled</span>
+                        {% endif %}
+                    </td>
+                    <td style="color: var(--text-muted); font-size: 0.8rem;">
+                        {{ c.created_at.strftime('%Y-%m-%d') }}
+                    </td>
+                    <td>
+                        <a href="/client/login" target="_blank" 
+                           style="background: rgba(88,101,242,0.15); color: #818cf8; border: 1px solid rgba(88,101,242,0.3); padding: 3px 10px; border-radius: 6px; font-size: 0.7rem; text-decoration: none;">
+                            🔗 Panel klienta
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p style="color: var(--text-muted); text-align: center; padding: 1rem;">Brak kont klientów.</p>
+    {% endif %}
+</div>
 <!-- Role Legend -->
 <div class="card" style="margin-top: 1.5rem;">
     <h3 style="margin-bottom: 0.8rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">

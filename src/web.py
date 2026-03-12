@@ -694,11 +694,17 @@ def admin_users_page(
             return RedirectResponse(url="/admin", status_code=303)
 
         users = list_users(db)
+
+        # Also get client accounts
+        from .models import ClientAccount
+        clients = db.query(ClientAccount).order_by(ClientAccount.created_at.desc()).all()
+
         return templates.TemplateResponse("admin/users.html", {
             "request": request,
             "user": user,
             "current_user": user,
             "users": users,
+            "clients": clients,
             "message": message,
             "error": error,
         })
