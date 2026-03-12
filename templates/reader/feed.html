@@ -17,7 +17,7 @@
             <a href="{{ article.url }}" target="_blank" rel="noopener">{{ article.title }}</a>
         </div>
         {% if article.summary %}
-        <div class="article-summary">{{ article.summary|truncate }}</div>
+        <div class="article-summary">{{ article.summary|clean_html|truncate }}</div>
         {% endif %}
         <div class="article-meta">
             {% if article.author %}<span>✍️ {{ article.author[:30] }}</span>{% endif %}

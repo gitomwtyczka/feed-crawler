@@ -47,7 +47,7 @@
             <a href="{{ article.url }}" target="_blank" rel="noopener">{{ article.title }}</a>
         </div>
         {% if article.summary %}
-        <div class="article-summary">{{ article.summary|truncate }}</div>
+        <div class="article-summary">{{ article.summary|clean_html|truncate }}</div>
         {% endif %}
         <div class="article-meta">
             {% if article.feed %}
@@ -61,8 +61,7 @@
             <span style="font-size: 0.7rem; color: var(--text-muted);">{{ feed_lang.flag }}</span>
             {% endif %}
             {% endif %}
-            <span>📡 <a href="/feed/{{ article.feed_id }}" style="color: var(--accent-light); text-decoration: none;">{{
-                    article.feed.name[:30] }}</a></span>
+            <span>📡 <a href="/feed/{{ article.feed_id }}" style="color: var(--accent-light); text-decoration: none;">{{ article|real_source }}</a></span>
             {% endif %}
             {% if article.author %}<span>✍️ {{ article.author[:30] }}</span>{% endif %}
             {% if article.published_at %}<span>📅 {{ article.published_at.strftime('%Y-%m-%d %H:%M') }}</span>{% endif

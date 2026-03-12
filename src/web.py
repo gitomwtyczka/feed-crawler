@@ -95,8 +95,45 @@ def truncate(text: str | None, length: int = 200) -> str:
     return text[:length] + "..." if len(text) > length else text
 
 
+import re
+
+def clean_html(text: str | None) -> str:
+    """Strip HTML tags from text, decode common entities."""
+    if not text:
+        return ""
+    # Remove HTML tags
+    clean = re.sub(r'<[^>]+>', '', text)
+    # Decode common HTML entities
+    clean = clean.replace('&amp;', '&').replace('&lt;', '<').replace('&gt;', '>')
+    clean = clean.replace('&quot;', '"').replace('&#39;', "'")
+    clean = clean.replace('&nbsp;', ' ').replace('&#160;', ' ')
+    # Collapse whitespace
+    clean = re.sub(r'\s+', ' ', clean).strip()
+    return clean
+
+
+def real_source(article) -> str:
+    """Extract real source portal for GNews articles from title suffix.
+    Returns: 'PortalName (via GNews)' for GNews, or feed.name for others.
+    """
+    if not hasattr(article, 'feed') or not article.feed:
+        return "—"
+    feed_name = article.feed.name or ""
+    # GNews feeds start with 'GNews'
+    if feed_name.startswith("GNews"):
+        title = article.title or ""
+        parts = title.rsplit(" - ", 1)
+        if len(parts) == 2 and len(parts[1].strip()) > 1:
+            portal = parts[1].strip()
+            return f"{portal} (via GNews)"
+        return feed_name  # fallback if no suffix
+    return feed_name
+
+
 templates.env.filters["timeago"] = timeago
 templates.env.filters["truncate"] = truncate
+templates.env.filters["clean_html"] = clean_html
+templates.env.filters["real_source"] = real_source
 
 
 # ── Auth Helpers ──
