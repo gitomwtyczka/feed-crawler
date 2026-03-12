@@ -25,6 +25,17 @@
     <p style="color: var(--text-muted); font-size: 0.75rem; margin-top: 0.5rem;">
         Sprawdza: HTML &lt;link&gt; tags, typowe ścieżki (/feed, /rss, /atom.xml, itp.) — może trwać 10-15 sekund
     </p>
+    <details style="margin-top: 0.5rem;">
+        <summary style="color: var(--accent-light); font-size: 0.7rem; cursor: pointer;">ℹ️ Co oznaczają kolumny Score?</summary>
+        <div style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 0.4rem; padding: 0.5rem; background: rgba(255,255,255,0.03); border-radius: 6px;">
+            <strong>Score</strong> = suma 4 kryteriów (max 100):<br>
+            <strong>ACT</strong> (Aktywność /25) — jak często feed publikuje nowe artykuły<br>
+            <strong>QAL</strong> (Jakość /25) — liczba artykułów, treść, formatowanie<br>
+            <strong>REL</strong> (Niezawodność /25) — czas odpowiedzi, poprawność formatu RSS<br>
+            <strong>UNQ</strong> (Unikalność /25) — czy nie duplikuje istniejących źródeł w bazie<br>
+            <span style="color: #57f287;">🟢 70+</span> = dodaj • <span style="color: #fee75c;">🟡 40-69</span> = rozważ • <span style="color: #ed4245;">🔴 &lt;40</span> = pomiń
+        </div>
+    </details>
 </div>
 
 {% if results is not none %}
@@ -39,15 +50,15 @@
             <thead>
                 <tr>
                     <th>Feed</th>
-                    <th>Score</th>
-                    <th style="font-size: 0.65rem;">ACT</th>
-                    <th style="font-size: 0.65rem;">QAL</th>
-                    <th style="font-size: 0.65rem;">REL</th>
-                    <th style="font-size: 0.65rem;">UNQ</th>
+                    <th title="Ocena jakości feeda 0-100 (suma: Aktywność + Jakość + Niezawodność + Unikalność)">Score</th>
+                    <th style="font-size: 0.65rem;" title="Aktywność: jak często publikuje (częstotliwość i świeżość)">ACT</th>
+                    <th style="font-size: 0.65rem;" title="Jakość: liczba artykułów, treść, formatowanie">QAL</th>
+                    <th style="font-size: 0.65rem;" title="Niezawodność: czas odpowiedzi, poprawność feedu">REL</th>
+                    <th style="font-size: 0.65rem;" title="Unikalność: czy nie duplikuje istniejących źródeł">UNQ</th>
                     <th>Articles</th>
                     <th>Freq</th>
                     <th>Method</th>
-                    <th>Akcja</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -106,18 +117,18 @@
                         {% if r.already_exists %}
                         <span style="color: var(--text-muted); font-size: 0.8rem;">✅ Mamy</span>
                         {% elif r.recommendation == 'add' %}
-                        <form method="POST" action="/admin/discover/add" style="display: inline;">
+                        <form method="POST" action="/admin/discover/add" style="display: inline;" onsubmit="event.preventDefault(); const btn=this.querySelector('button'); btn.innerHTML='✅ Dodano!'; btn.style.background='rgba(34,197,94,0.3)'; btn.style.color='#22c55e'; btn.disabled=true; fetch(this.action, {method:'POST', body:new URLSearchParams(new FormData(this)), redirect:'follow'}).then(()=>{setTimeout(()=>{btn.innerHTML='✅ W bazie'; btn.style.opacity='0.6';}, 1000);});">
                             <input type="hidden" name="feed_url" value="{{ r.url }}">
                             <input type="hidden" name="feed_name" value="{{ r.title }}">
-                            <button type="submit" style="background: rgba(87,242,135,0.15); color: #57f287; border: 1px solid rgba(87,242,135,0.3); padding: 4px 12px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 600;">
+                            <button type="submit" style="background: rgba(87,242,135,0.15); color: #57f287; border: 1px solid rgba(87,242,135,0.3); padding: 4px 12px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 600; transition: all 0.3s;">
                                 ➕ Dodaj
                             </button>
                         </form>
                         {% elif r.recommendation == 'maybe' %}
-                        <form method="POST" action="/admin/discover/add" style="display: inline;">
+                        <form method="POST" action="/admin/discover/add" style="display: inline;" onsubmit="event.preventDefault(); const btn=this.querySelector('button'); btn.innerHTML='✅ Dodano!'; btn.style.background='rgba(34,197,94,0.3)'; btn.style.color='#22c55e'; btn.disabled=true; fetch(this.action, {method:'POST', body:new URLSearchParams(new FormData(this)), redirect:'follow'}).then(()=>{setTimeout(()=>{btn.innerHTML='✅ W bazie'; btn.style.opacity='0.6';}, 1000);});">
                             <input type="hidden" name="feed_url" value="{{ r.url }}">
                             <input type="hidden" name="feed_name" value="{{ r.title }}">
-                            <button type="submit" style="background: rgba(254,231,92,0.1); color: #fee75c; border: 1px solid rgba(254,231,92,0.2); padding: 4px 12px; border-radius: 6px; cursor: pointer; font-size: 0.75rem;">
+                            <button type="submit" style="background: rgba(254,231,92,0.1); color: #fee75c; border: 1px solid rgba(254,231,92,0.2); padding: 4px 12px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; transition: all 0.3s;">
                                 🤔 Dodaj
                             </button>
                         </form>
