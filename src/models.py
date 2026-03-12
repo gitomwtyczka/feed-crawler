@@ -260,9 +260,11 @@ class Project(Base):
     description = Column(Text, nullable=True)
     is_active = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    client_id = Column(Integer, ForeignKey("client_accounts.id"), nullable=True)
 
     # Relationships
     keywords = relationship("ProjectKeyword", back_populates="project", cascade="all, delete-orphan")
+    client = relationship("ClientAccount", back_populates="projects")
 
     def __repr__(self) -> str:
         return f"<Project(id={self.id}, name='{self.name}', slug='{self.slug}')>"
@@ -283,3 +285,24 @@ class ProjectKeyword(Base):
 
     def __repr__(self) -> str:
         return f"<ProjectKeyword(id={self.id}, keyword='{self.keyword}', type='{self.match_type}')>"
+
+
+class ClientAccount(Base):
+    """Client account for media monitoring panel."""
+
+    __tablename__ = "client_accounts"
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String(100), nullable=False, unique=True, index=True)
+    password_hash = Column(String(255), nullable=False)
+    company_name = Column(String(255), nullable=False)
+    email = Column(String(255), nullable=True)
+    tier = Column(String(20), nullable=False, default="basic")
+    is_active = Column(Boolean, nullable=False, default=True)
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+    # Relacja do projektów
+    projects = relationship("Project", back_populates="client")
+
+    def __repr__(self) -> str:
+        return f"<ClientAccount(id={self.id}, username='{self.username}', company='{self.company_name}')>"
