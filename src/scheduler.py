@@ -574,7 +574,7 @@ def run_scheduled(interval_minutes: int = 10) -> None:
     signal.signal(signal.SIGTERM, _shutdown)
     signal.signal(signal.SIGINT, _shutdown)
 
-    # Schedule jobs
+    # Schedule interval jobs
     scheduler.add_job(_cycle_job, "interval", minutes=interval_minutes, id="rss_cycle")
     scheduler.add_job(_isbnews_job, "interval", minutes=5, id="isbnews_cycle")
     scheduler.add_job(_scout_job, "interval", hours=2, id="source_scout")
@@ -582,10 +582,13 @@ def run_scheduled(interval_minutes: int = 10) -> None:
     scheduler.add_job(_social_job, "interval", minutes=30, id="social_monitor")
     scheduler.add_job(_ai_enrich_job, "interval", minutes=5, id="ai_enrichment")
 
-    # Run first cycle immediately
-    _cycle_job()
-    _scout_job()  # Initial discovery
-    _ai_enrich_job()  # Initial AI enrichment
+    # One-shot initial triggers (non-blocking — scheduler handles them)
+    from datetime import timedelta
+    now = datetime.utcnow()
+    scheduler.add_job(_cycle_job, "date", run_date=now + timedelta(seconds=5), id="initial_cycle")
+    scheduler.add_job(_scout_job, "date", run_date=now + timedelta(seconds=15), id="initial_scout")
+    scheduler.add_job(_ai_enrich_job, "date", run_date=now + timedelta(seconds=10), id="initial_ai")
+
     send_discord(
         title="🟢 Feed Crawler started",
         description=(
@@ -595,6 +598,7 @@ def run_scheduled(interval_minutes: int = 10) -> None:
         level="info",
     )
 
+    # BlockingScheduler.start() runs event loop — processes jobs in background threads
     try:
         scheduler.start()
     except (KeyboardInterrupt, SystemExit):
