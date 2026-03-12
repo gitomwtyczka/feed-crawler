@@ -42,7 +42,7 @@ from .auth import (
 )
 from .crawl_state import get_state as get_crawl_state
 from .crawl_state import toggle_crawl
-from .models import LANGUAGES, SOURCE_TIERS, Article, Department, Feed
+from .models import LANGUAGES, SOURCE_TIERS, Article, Department, Feed, Journalist
 
 # ── App Setup ──
 
@@ -1066,3 +1066,162 @@ def api_health():
     finally:
         db.close()
 
+
+# ── Journalist Registration (RODO compliant, opt-in) ──
+
+
+@app.get("/register/journalist", response_class=HTMLResponse)
+async def journalist_register_form(request: Request):
+    """Display journalist registration form."""
+    return templates.TemplateResponse("journalist/register.html", {
+        "request": request,
+        "error": None,
+        "success": False,
+    })
+
+
+@app.post("/register/journalist", response_class=HTMLResponse)
+async def journalist_register_submit(
+    request: Request,
+    name: str = Form(...),
+    email: str = Form(...),
+    media_outlet: str = Form(""),
+    beat: str = Form(""),
+    bio: str = Form(""),
+    region: str = Form(""),
+    rodo_consent: str = Form(""),
+):
+    """Process journalist registration with RODO consent."""
+    db = db_module.SessionLocal()
+    try:
+        # Validate RODO consent
+        if rodo_consent != "on":
+            return templates.TemplateResponse("journalist/register.html", {
+                "request": request,
+                "error": "Wymagana jest zgoda RODO na przetwarzanie danych osobowych.",
+                "success": False,
+            })
+
+        # Check duplicate email
+        existing = db.query(Journalist).filter(Journalist.email == email).first()
+        if existing:
+            return templates.TemplateResponse("journalist/register.html", {
+                "request": request,
+                "error": "Konto z tym adresem email już istnieje.",
+                "success": False,
+            })
+
+        # Create journalist profile
+        journalist = Journalist(
+            name=name.strip(),
+            email=email.strip().lower(),
+            media_outlet=media_outlet.strip() or None,
+            beat=beat.strip() or None,
+            bio=bio.strip() or None,
+            region=region.strip() or None,
+            rodo_consent=True,
+            rodo_consent_date=datetime.utcnow(),
+            is_verified=False,
+        )
+        db.add(journalist)
+        db.commit()
+
+        return templates.TemplateResponse("journalist/register.html", {
+            "request": request,
+            "error": None,
+            "success": True,
+        })
+
+    except Exception:
+        db.rollback()
+        return templates.TemplateResponse("journalist/register.html", {
+            "request": request,
+            "error": "Wystąpił błąd. Spróbuj ponownie.",
+            "success": False,
+        })
+    finally:
+        db.close()
+
+
+@app.get("/admin/journalists", response_class=HTMLResponse)
+async def admin_journalists(
+    request: Request,
+    q: str = Query("", description="Search query"),
+    beat: str = Query("", description="Filter by beat"),
+    outlet: str = Query("", description="Filter by media outlet"),
+):
+    """Admin panel — journalist search and management."""
+    db = db_module.SessionLocal()
+    try:
+        query = db.query(Journalist).filter(Journalist.is_active == True)
+
+        if q:
+            query = query.filter(
+                Journalist.name.ilike(f"%{q}%")
+                | Journalist.email.ilike(f"%{q}%")
+                | Journalist.media_outlet.ilike(f"%{q}%")
+            )
+        if beat:
+            query = query.filter(Journalist.beat.ilike(f"%{beat}%"))
+        if outlet:
+            query = query.filter(Journalist.media_outlet.ilike(f"%{outlet}%"))
+
+        journalists = query.order_by(Journalist.created_at.desc()).limit(100).all()
+        total = db.query(func.count(Journalist.id)).filter(Journalist.is_active == True).scalar()
+
+        return templates.TemplateResponse("journalist/list.html", {
+            "request": request,
+            "journalists": journalists,
+            "total": total,
+            "q": q,
+            "beat": beat,
+            "outlet": outlet,
+        })
+    finally:
+        db.close()
+
+
+@app.get("/api/journalists")
+async def api_journalists(
+    q: str = Query("", description="Search name, email, or outlet"),
+    beat: str = Query("", description="Filter by beat"),
+    media: str = Query("", description="Filter by media outlet"),
+    limit: int = Query(50, ge=1, le=200),
+):
+    """JSON API — search journalist database."""
+    db = db_module.SessionLocal()
+    try:
+        query = db.query(Journalist).filter(
+            Journalist.is_active == True,
+            Journalist.rodo_consent == True,
+        )
+
+        if q:
+            query = query.filter(
+                Journalist.name.ilike(f"%{q}%")
+                | Journalist.media_outlet.ilike(f"%{q}%")
+            )
+        if beat:
+            query = query.filter(Journalist.beat.ilike(f"%{beat}%"))
+        if media:
+            query = query.filter(Journalist.media_outlet.ilike(f"%{media}%"))
+
+        journalists = query.limit(limit).all()
+
+        return {
+            "total": len(journalists),
+            "journalists": [
+                {
+                    "name": j.name,
+                    "media_outlet": j.media_outlet,
+                    "beat": j.beat,
+                    "region": j.region,
+                    "bio": j.bio,
+                    "is_verified": j.is_verified,
+                    # Email hidden unless subscriber (implement auth check later)
+                }
+                for j in journalists
+            ],
+        }
+    finally:
+        db.close()

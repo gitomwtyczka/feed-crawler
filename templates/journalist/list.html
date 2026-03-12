@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Baza Dziennikarzy — Admin{% endblock %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: 2rem auto; padding: 0 1rem;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+    <h1 style="font-size: 1.6rem; margin: 0;">📋 Baza Dziennikarzy ({{ total }})</h1>
+    <a href="/register/journalist" target="_blank"
+       style="padding: 0.5rem 1rem; border-radius: 6px; background: #3b82f6; color: white;
+              text-decoration: none; font-size: 0.85rem;">
+      + Link rejestracji
+    </a>
+  </div>
+
+  <!-- Search -->
+  <form method="GET" action="/admin/journalists"
+        style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+    <input type="text" name="q" value="{{ q }}" placeholder="Szukaj: imię, email, redakcja..."
+           style="flex: 2; min-width: 200px; padding: 0.5rem; border-radius: 6px; border: 1px solid #475569;
+                  background: #1e293b; color: #f1f5f9;">
+    <input type="text" name="beat" value="{{ beat }}" placeholder="Beat: polityka, tech..."
+           style="flex: 1; min-width: 120px; padding: 0.5rem; border-radius: 6px; border: 1px solid #475569;
+                  background: #1e293b; color: #f1f5f9;">
+    <input type="text" name="outlet" value="{{ outlet }}" placeholder="Redakcja..."
+           style="flex: 1; min-width: 120px; padding: 0.5rem; border-radius: 6px; border: 1px solid #475569;
+                  background: #1e293b; color: #f1f5f9;">
+    <button type="submit"
+            style="padding: 0.5rem 1rem; border-radius: 6px; background: #6366f1; color: white;
+                   border: none; cursor: pointer;">
+      🔍 Szukaj
+    </button>
+  </form>
+
+  <!-- Table -->
+  {% if journalists %}
+  <div style="overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+      <thead>
+        <tr style="border-bottom: 2px solid #334155;">
+          <th style="text-align: left; padding: 0.6rem; color: #94a3b8;">Imię</th>
+          <th style="text-align: left; padding: 0.6rem; color: #94a3b8;">Redakcja</th>
+          <th style="text-align: left; padding: 0.6rem; color: #94a3b8;">Beat</th>
+          <th style="text-align: left; padding: 0.6rem; color: #94a3b8;">Region</th>
+          <th style="text-align: center; padding: 0.6rem; color: #94a3b8;">Status</th>
+          <th style="text-align: left; padding: 0.6rem; color: #94a3b8;">Data</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for j in journalists %}
+        <tr style="border-bottom: 1px solid #1e293b;">
+          <td style="padding: 0.6rem; color: #f1f5f9; font-weight: 600;">{{ j.name }}</td>
+          <td style="padding: 0.6rem; color: #94a3b8;">{{ j.media_outlet or '—' }}</td>
+          <td style="padding: 0.6rem;">
+            {% if j.beat %}
+            <span style="background: #312e81; color: #a5b4fc; padding: 0.15rem 0.5rem;
+                         border-radius: 4px; font-size: 0.8rem;">{{ j.beat }}</span>
+            {% else %}
+            <span style="color: #475569;">—</span>
+            {% endif %}
+          </td>
+          <td style="padding: 0.6rem; color: #94a3b8;">{{ j.region or '—' }}</td>
+          <td style="padding: 0.6rem; text-align: center;">
+            {% if j.is_verified %}
+            <span title="Zweryfikowany">✅</span>
+            {% else %}
+            <span title="Oczekuje weryfikacji">⏳</span>
+            {% endif %}
+          </td>
+          <td style="padding: 0.6rem; color: #64748b; font-size: 0.8rem;">
+            {{ j.created_at.strftime('%Y-%m-%d') }}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div style="text-align: center; padding: 3rem; color: #64748b;">
+    <p style="font-size: 1.2rem;">Brak dziennikarzy w bazie</p>
+    <p>Udostępnij link rejestracji: <code>/register/journalist</code></p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

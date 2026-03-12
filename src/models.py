@@ -207,3 +207,30 @@ class Transcript(Base):
 
     def __repr__(self) -> str:
         return f"<Transcript(station_id={self.station_id}, start={self.chunk_start}, keywords={self.keywords_found})>"
+
+
+class Journalist(Base):
+    """Journalist profile — opt-in registration (RODO compliant).
+    
+    Journalists get free Professional access in exchange for creating
+    a public profile that PR agencies can search.
+    """
+
+    __tablename__ = "journalists"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(255), nullable=False, doc="Full name")
+    email = Column(String(255), nullable=False, unique=True, index=True)
+    media_outlet = Column(String(255), nullable=True, doc="Current media outlet/redakcja")
+    beat = Column(String(255), nullable=True, doc="Speciality/beat: polityka, ekonomia, tech...")
+    bio = Column(Text, nullable=True, doc="Short bio / description")
+    region = Column(String(100), nullable=True, doc="Region: Warszawa, Kraków, etc.")
+    is_verified = Column(Boolean, nullable=False, default=False, doc="Verified via editorial email")
+    rodo_consent = Column(Boolean, nullable=False, default=False, doc="Explicit RODO consent")
+    rodo_consent_date = Column(DateTime, nullable=True, doc="When consent was given")
+    is_active = Column(Boolean, nullable=False, default=True)
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def __repr__(self) -> str:
+        return f"<Journalist(id={self.id}, name='{self.name}', outlet='{self.media_outlet}')>"
