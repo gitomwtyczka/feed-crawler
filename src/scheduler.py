@@ -476,11 +476,11 @@ def run_scheduled(interval_minutes: int = 10) -> None:
             logger.exception("Social monitor failed: %s", e)
 
     def _ai_enrich_job():
-        """AI enrichment — classify + keywords + sentiment via Gemini.
+        """AI enrichment — classify + keywords + sentiment via Bielik.
 
-        Uses Gemini Flash (via task='summarize' routing hint) instead of Bielik.
-        Bielik 1.5B is too small for Polish NLP — classifies everything as 'sport'.
-        Gemini Flash is $0 and far better at structured Polish text analysis.
+        Bielik produces better structured output than Gemini for extraction tasks.
+        Gemini truncates to 1 line, Bielik returns full 3-line analysis.
+        ~23s per article on Vultr 2 vCPU.
         """
         try:
             from .ai_router import _post_sync, check_router_health
@@ -506,7 +506,7 @@ def run_scheduled(interval_minutes: int = 10) -> None:
                         Feed.language == "pl",  # Only Polish articles
                     )
                     .order_by(Article.fetched_at.desc())
-                    .limit(5)  # Small batch — Gemini ~2s per article
+                    .limit(3)  # Small batch — Bielik ~23s per article
                     .all()
                 )
 
@@ -518,7 +518,7 @@ def run_scheduled(interval_minutes: int = 10) -> None:
                     try:
                         text = f"{article.title}. {(article.summary or '')[:300]}"
 
-                        # Use task='summarize' to route to Gemini instead of Bielik
+                        # No task hint — routes to Bielik which handles structured extraction better
                         result = _post_sync("/ask", {
                             "prompt": (
                                 f"Przeanalizuj ten polski artykuł prasowy:\n\n"
@@ -529,23 +529,33 @@ def run_scheduled(interval_minutes: int = 10) -> None:
                                 f"SŁOWA KLUCZOWE: [max 5 słów kluczowych po przecinku]\n"
                                 f"SENTYMENT: [positive, negative, neutral]"
                             ),
-                            "task": "summarize",  # Routes to Gemini tier
-                            "max_tokens": 150,
+                            "max_tokens": 200,
                         })
 
                         if result and result.get("response"):
                             resp = result["response"]
                             for line in resp.split("\n"):
                                 line = line.strip()
-                                if line.upper().startswith("KATEGORIA:"):
-                                    article.ai_category = line.split(":", 1)[1].strip()[:100]
-                                elif "KLUCZOWE:" in line.upper():
-                                    article.ai_keywords = line.split(":", 1)[1].strip()[:500]
-                                elif line.upper().startswith("SENTYMENT:"):
-                                    article.ai_sentiment = line.split(":", 1)[1].strip()[:20]
+                                low = line.upper()
+                                if "KATEGORIA" in low and ":" in line:
+                                    val = line.split(":", 1)[1].strip().lower()
+                                    if val:
+                                        article.ai_category = val[:100]
+                                elif "KLUCZOWE" in low and ":" in line:
+                                    val = line.split(":", 1)[1].strip()
+                                    if val:
+                                        article.ai_keywords = val[:500]
+                                elif "SENTYMENT" in low and ":" in line:
+                                    val = line.split(":", 1)[1].strip().lower()
+                                    if val:
+                                        article.ai_sentiment = val[:20]
 
                         article.ai_processed = True
                         enriched += 1
+                        logger.debug("AI: '%s...' → cat=%s sent=%s",
+                                   article.title[:40],
+                                   article.ai_category,
+                                   article.ai_sentiment)
 
                     except Exception as e:
                         logger.debug("AI enrich failed for article %d: %s", article.id, e)
@@ -553,7 +563,7 @@ def run_scheduled(interval_minutes: int = 10) -> None:
 
                 db.commit()
                 if enriched > 0:
-                    logger.info("🧠 AI enriched %d/%d articles (Gemini)", enriched, len(articles))
+                    logger.info("🧠 AI enriched %d/%d articles", enriched, len(articles))
 
             finally:
                 db.close()
