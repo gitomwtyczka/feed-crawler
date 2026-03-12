@@ -137,6 +137,9 @@ def client_dashboard(request: Request):
     templates = Jinja2Templates(directory=str(Path(__file__).parent.parent / "templates"))
     templates.env.filters["timeago"] = _timeago
     templates.env.filters["source_domain"] = _source_domain
+    from .web import clean_html, truncate
+    templates.env.filters["clean_html"] = clean_html
+    templates.env.filters["truncate"] = truncate
 
     client = _get_current_client(request)
     if not client:
@@ -231,6 +234,9 @@ def client_project_view(
     templates = Jinja2Templates(directory=str(Path(__file__).parent.parent / "templates"))
     templates.env.filters["timeago"] = _timeago
     templates.env.filters["source_domain"] = _source_domain
+    from .web import clean_html, truncate
+    templates.env.filters["clean_html"] = clean_html
+    templates.env.filters["truncate"] = truncate
 
     client = _get_current_client(request)
     if not client:

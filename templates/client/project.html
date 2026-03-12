@@ -173,13 +173,18 @@ document.addEventListener('DOMContentLoaded', function() {
             <tbody>
                 {% for article in articles %}
                 <tr>
-                    <td style="max-width: 400px;">
+                    <td style="max-width: 450px;">
                         <a href="{{ article.url }}" target="_blank" rel="noopener"
                            style="color: var(--accent-light); text-decoration: none; font-weight: 500;">
-                            {{ article.title[:80] }}{% if article.title|length > 80 %}...{% endif %}
+                            {{ article.title[:100] }}{% if article.title|length > 100 %}...{% endif %}
                         </a>
+                        {% if article.summary %}
+                        <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 3px; line-height: 1.4; max-height: 2.8em; overflow: hidden;">
+                            {{ article.summary|clean_html|truncate(150) }}
+                        </div>
+                        {% endif %}
                         {% if article.ai_category %}
-                        <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 2px;">
+                        <div style="font-size: 0.6rem; color: #818cf8; margin-top: 2px;">
                             📁 {{ article.ai_category }}
                         </div>
                         {% endif %}
@@ -187,9 +192,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td style="font-size: 0.8rem; color: var(--text-secondary); white-space: nowrap;">
                         {% if article.feed and article.feed.name.startswith('GNews') %}
                             {% set parts = article.title.split(' - ') %}
-                            {% if parts|length > 1 %}{{ parts[-1][:30] }}{% else %}{{ article.url|source_domain }}{% endif %}
-                        {% else %}
+                            {% if parts|length > 1 %}
+                            <div style="font-weight: 500;">{{ parts[-1][:30] }}</div>
+                            <div style="font-size: 0.6rem; color: var(--text-muted);">via GNews</div>
+                            {% else %}
                             {{ article.url|source_domain }}
+                            {% endif %}
+                        {% else %}
+                            <div style="font-weight: 500;">{{ article.url|source_domain }}</div>
+                            {% if article.feed %}
+                            <div style="font-size: 0.6rem; color: var(--text-muted);">{{ article.feed.feed_type or 'rss' }}</div>
+                            {% endif %}
                         {% endif %}
                     </td>
                     <td style="font-size: 0.8rem; color: var(--text-muted); white-space: nowrap;">
@@ -201,23 +214,27 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td style="text-align: center;">
                         {% if article.ai_sentiment == 'positive' %}
                         <span style="color: #22c55e; font-size: 0.85rem;" title="Pozytywny">🟢</span>
+                        <div style="font-size: 0.55rem; color: #22c55e;">poz.</div>
                         {% elif article.ai_sentiment == 'negative' %}
                         <span style="color: #ef4444; font-size: 0.85rem;" title="Negatywny">🔴</span>
+                        <div style="font-size: 0.55rem; color: #ef4444;">neg.</div>
                         {% elif article.ai_sentiment == 'neutral' %}
                         <span style="color: #94a3b8; font-size: 0.85rem;" title="Neutralny">⚪</span>
+                        <div style="font-size: 0.55rem; color: #94a3b8;">neutr.</div>
                         {% elif article.ai_sentiment == 'mixed' %}
                         <span style="color: #f59e0b; font-size: 0.85rem;" title="Mieszany">🟡</span>
+                        <div style="font-size: 0.55rem; color: #f59e0b;">mix</div>
                         {% else %}
                         <span style="color: var(--text-muted); font-size: 0.7rem;">—</span>
                         {% endif %}
                     </td>
                     <td style="font-size: 0.75rem;">
                         {% if article.reprint_type == 'original' %}
-                        <span class="badge" style="background: rgba(34,197,94,0.15); color: #22c55e; font-size: 0.65rem;">Oryginał</span>
+                        <span class="badge" style="background: rgba(34,197,94,0.15); color: #22c55e; font-size: 0.65rem;">📰 Oryginał</span>
                         {% elif article.reprint_type == 'reprint' %}
-                        <span class="badge" style="background: rgba(245,158,11,0.15); color: #f59e0b; font-size: 0.65rem;">Przedruk</span>
+                        <span class="badge" style="background: rgba(245,158,11,0.15); color: #f59e0b; font-size: 0.65rem;">🔄 Przedruk</span>
                         {% elif article.reprint_type == 'modified_reprint' %}
-                        <span class="badge" style="background: rgba(99,102,241,0.15); color: #818cf8; font-size: 0.65rem;">Zmodyfikowany</span>
+                        <span class="badge" style="background: rgba(99,102,241,0.15); color: #818cf8; font-size: 0.65rem;">✏️ Zmodyf.</span>
                         {% else %}
                         <span style="color: var(--text-muted);">—</span>
                         {% endif %}
