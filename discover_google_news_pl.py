@@ -103,20 +103,26 @@ def extract_domains_from_google_news() -> dict[str, str]:
                 # Fallback: extract domain from link
                 if entry.get("link"):
                     link = entry["link"]
-                    # Google News wraps URLs — try to get real URL
+                    # Google News wraps URLs — follow redirect to get real URL
                     if "news.google.com" in link:
-                        # Extract from redirect URL if possible
-                        pass
-                    else:
-                        parsed_url = urlparse(link)
-                        domain = parsed_url.netloc.lower()
-                        if domain.startswith("www."):
-                            domain = domain[4:]
+                        try:
+                            head = httpx.head(link, timeout=5, follow_redirects=True, headers=headers)
+                            link = str(head.url)  # Final URL after redirects
+                        except Exception:
+                            continue  # Can't unwrap, skip
 
-                        if domain and domain not in SKIP_DOMAINS:
-                            if domain not in domains:
-                                name = source_name or domain.split(".")[0].title()
-                                domains[domain] = name
+                    try:
+                        parsed_url = urlparse(link)
+                    except ValueError:
+                        continue
+                    domain = parsed_url.netloc.lower()
+                    if domain.startswith("www."):
+                        domain = domain[4:]
+
+                    if domain and domain not in SKIP_DOMAINS and "google" not in domain:
+                        if domain not in domains:
+                            name = source_name or domain.split(".")[0].title()
+                            domains[domain] = name
 
             logger.info("  Scanned: %s → %d entries", gn_url.split("?q=")[-1][:30] if "?q=" in gn_url else "main", len(parsed.entries))
 
