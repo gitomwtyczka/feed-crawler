@@ -42,7 +42,7 @@ from .auth import (
 )
 from .crawl_state import get_state as get_crawl_state
 from .crawl_state import toggle_crawl
-from .models import SOURCE_TIERS, Article, Department, Feed
+from .models import LANGUAGES, SOURCE_TIERS, Article, Department, Feed
 
 # ── App Setup ──
 
@@ -58,6 +58,7 @@ STATIC_DIR = BASE_DIR / "static"
 
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 templates.env.globals["SOURCE_TIERS"] = SOURCE_TIERS
+templates.env.globals["LANGUAGES"] = LANGUAGES
 
 if STATIC_DIR.exists():
     app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
@@ -200,6 +201,7 @@ def reader_home(
     page: int = Query(1, ge=1),
     per_page: int = Query(50, ge=10, le=200),
     tier: int = Query(0, ge=0, le=5),
+    lang: str = Query(""),
 ):
     """Latest articles from all feeds."""
     db = db_module.SessionLocal()
@@ -207,9 +209,16 @@ def reader_home(
         offset = (page - 1) * per_page
         q = db.query(Article)
         count_q = db.query(func.count(Article.id))
+        needs_join = bool(tier or lang)
+        if needs_join:
+            q = q.join(Feed)
+            count_q = count_q.join(Feed)
         if tier:
-            q = q.join(Feed).filter(Feed.source_tier == tier)
-            count_q = count_q.join(Feed).filter(Feed.source_tier == tier)
+            q = q.filter(Feed.source_tier == tier)
+            count_q = count_q.filter(Feed.source_tier == tier)
+        if lang and lang in LANGUAGES:
+            q = q.filter(Feed.language == lang)
+            count_q = count_q.filter(Feed.language == lang)
         total = count_q.scalar()
         articles = (
             q.order_by(desc(func.coalesce(Article.published_at, Article.fetched_at)))
@@ -226,6 +235,7 @@ def reader_home(
             "total": total,
             "per_page": per_page,
             "current_tier": tier,
+            "current_lang": lang,
         })
     finally:
         db.close()
