@@ -27,8 +27,8 @@ from __future__ import annotations
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from fastapi import FastAPI, Form, Query, Request
-from fastapi.responses import HTMLResponse, RedirectResponse, StreamingResponse
+from fastapi import FastAPI, Form, HTTPException, Query, Request
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy import desc, func
@@ -42,7 +42,7 @@ from .auth import (
 )
 from .crawl_state import get_state as get_crawl_state
 from .crawl_state import toggle_crawl
-from .models import LANGUAGES, SOURCE_TIERS, Article, Department, Feed, Journalist
+from .models import LANGUAGES, SOURCE_TIERS, Article, Department, Feed, Journalist, Project, ProjectKeyword
 
 # ── App Setup ──
 
@@ -108,6 +108,75 @@ def _get_current_user(request: Request) -> str | None:
     if not token:
         return None
     return decode_access_token(token)
+
+
+# Public paths that don't require auth
+PUBLIC_PATHS = {"/login", "/static", "/favicon.ico", "/api", "/register"}
+
+
+@app.middleware("http")
+async def auth_middleware(request: Request, call_next):
+    """Redirect unauthenticated users to login page."""
+    path = request.url.path
+
+    # Allow public paths
+    if any(path.startswith(p) for p in PUBLIC_PATHS):
+        return await call_next(request)
+
+    # Check JWT cookie
+    user = _get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/login", status_code=302)
+
+    # Attach user to request state
+    request.state.user = user
+    return await call_next(request)
+
+
+# ── Login / Logout ──
+
+
+@app.get("/login", response_class=HTMLResponse)
+def login_page(request: Request, error: str = ""):
+    """Show login form."""
+    # If already logged in, redirect to home
+    if _get_current_user(request):
+        return RedirectResponse(url="/", status_code=302)
+    return templates.TemplateResponse("login.html", {"request": request, "error": error})
+
+
+@app.post("/login")
+def login_submit(request: Request, username: str = Form(...), password: str = Form(...)):
+    """Handle login form submission."""
+    db = get_db()
+    try:
+        user = authenticate_user(db, username, password)
+        if not user:
+            return templates.TemplateResponse(
+                "login.html",
+                {"request": request, "error": "Nieprawidłowy login lub hasło"},
+                status_code=401,
+            )
+        token = create_access_token(user.username)
+        response = RedirectResponse(url="/", status_code=302)
+        response.set_cookie(
+            key="access_token",
+            value=token,
+            httponly=True,
+            max_age=86400,  # 24h
+            samesite="lax",
+        )
+        return response
+    finally:
+        db.close()
+
+
+@app.get("/logout")
+def logout():
+    """Clear auth cookie and redirect to login."""
+    response = RedirectResponse(url="/login", status_code=302)
+    response.delete_cookie("access_token")
+    return response
 
 
 # ── Startup ──
@@ -1063,6 +1132,163 @@ def api_health():
                 for f in feeds_with_errors
             ],
         }
+    finally:
+        db.close()
+
+
+# ── Project Tracking API ──
+
+
+@app.get("/api/projects")
+def api_projects():
+    """List all active projects with their keywords."""
+    db = db_module.SessionLocal()
+    try:
+        projects = db.query(Project).filter(Project.is_active == True).all()  # noqa: E712
+        return {
+            "total": len(projects),
+            "projects": [
+                {
+                    "id": p.id,
+                    "name": p.name,
+                    "slug": p.slug,
+                    "description": p.description,
+                    "is_active": p.is_active,
+                    "created_at": str(p.created_at) if p.created_at else None,
+                    "keywords": [
+                        {"id": kw.id, "keyword": kw.keyword, "match_type": kw.match_type}
+                        for kw in p.keywords
+                    ],
+                }
+                for p in projects
+            ],
+        }
+    finally:
+        db.close()
+
+
+@app.get("/api/projects/{slug}/articles")
+def api_project_articles(slug: str, limit: int = Query(50, ge=1, le=500), offset: int = Query(0, ge=0)):
+    """Get articles matching a project's keywords."""
+    db = db_module.SessionLocal()
+    try:
+        project = db.query(Project).filter(Project.slug == slug).first()
+        if not project:
+            raise HTTPException(status_code=404, detail="Project not found")
+
+        keywords = [kw.keyword for kw in project.keywords]
+        if not keywords:
+            return {
+                "project": project.name,
+                "total": 0,
+                "articles": [],
+            }
+
+        # Build OR filter for all keywords (search title + summary)
+        from sqlalchemy import or_
+
+        filters = []
+        for kw in keywords:
+            filters.append(Article.title.ilike(f"%{kw}%"))
+            filters.append(Article.summary.ilike(f"%{kw}%"))
+
+        articles = (
+            db.query(Article)
+            .filter(or_(*filters))
+            .order_by(Article.fetched_at.desc())
+            .offset(offset)
+            .limit(limit)
+            .all()
+        )
+
+        total = db.query(func.count(Article.id)).filter(or_(*filters)).scalar()
+
+        return {
+            "project": project.name,
+            "total": total,
+            "articles": [
+                {
+                    "id": a.id,
+                    "title": a.title,
+                    "url": a.url,
+                    "source": a.feed.name if a.feed else None,
+                    "published_at": str(a.published_at) if a.published_at else None,
+                    "ai_category": a.ai_category,
+                    "ai_sentiment": a.ai_sentiment,
+                    "reprint_type": a.reprint_type,
+                    "similarity_score": a.similarity_score,
+                }
+                for a in articles
+            ],
+        }
+    finally:
+        db.close()
+
+
+@app.post("/api/projects")
+def api_create_project(
+    request: Request,
+    name: str = Form(...),
+    slug: str = Form(...),
+    description: str = Form(""),
+    keywords: str = Form(""),
+):
+    """Create a new project with keywords (comma-separated)."""
+    user = _get_current_user(request)
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+
+    db = db_module.SessionLocal()
+    try:
+        # Check for existing slug
+        existing = db.query(Project).filter(Project.slug == slug).first()
+        if existing:
+            raise HTTPException(status_code=409, detail=f"Project with slug '{slug}' already exists")
+
+        project = Project(
+            name=name.strip(),
+            slug=slug.strip(),
+            description=description.strip() or None,
+        )
+        db.add(project)
+        db.flush()
+
+        # Add keywords
+        if keywords.strip():
+            for kw in keywords.split(","):
+                kw = kw.strip()
+                if kw:
+                    db.add(ProjectKeyword(project_id=project.id, keyword=kw))
+
+        db.commit()
+        return JSONResponse(
+            status_code=201,
+            content={"id": project.id, "slug": project.slug, "name": project.name},
+        )
+    except HTTPException:
+        raise
+    except Exception:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Failed to create project")
+    finally:
+        db.close()
+
+
+@app.delete("/api/projects/{slug}")
+def api_delete_project(request: Request, slug: str):
+    """Delete a project by slug."""
+    user = _get_current_user(request)
+    if not user:
+        raise HTTPException(status_code=401, detail="Authentication required")
+
+    db = db_module.SessionLocal()
+    try:
+        project = db.query(Project).filter(Project.slug == slug).first()
+        if not project:
+            raise HTTPException(status_code=404, detail="Project not found")
+        db.delete(project)
+        db.commit()
+        return {"status": "deleted", "slug": slug}
     finally:
         db.close()
 

@@ -247,3 +247,39 @@ class Journalist(Base):
 
     def __repr__(self) -> str:
         return f"<Journalist(id={self.id}, name='{self.name}', outlet='{self.media_outlet}')>"
+
+
+class Project(Base):
+    """Brand monitoring project — tracks a brand/topic across all sources."""
+
+    __tablename__ = "projects"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(255), nullable=False, doc="Project name, e.g. 'Strabag'")
+    slug = Column(String(100), nullable=False, unique=True)
+    description = Column(Text, nullable=True)
+    is_active = Column(Boolean, nullable=False, default=True)
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+
+    # Relationships
+    keywords = relationship("ProjectKeyword", back_populates="project", cascade="all, delete-orphan")
+
+    def __repr__(self) -> str:
+        return f"<Project(id={self.id}, name='{self.name}', slug='{self.slug}')>"
+
+
+class ProjectKeyword(Base):
+    """Keyword to match articles against a project."""
+
+    __tablename__ = "project_keywords"
+
+    id = Column(Integer, primary_key=True, index=True)
+    project_id = Column(Integer, ForeignKey("projects.id", ondelete="CASCADE"), nullable=False)
+    keyword = Column(String(255), nullable=False, doc="Keyword to search for (case-insensitive)")
+    match_type = Column(String(20), nullable=False, default="contains", doc="contains | exact_word | regex")
+
+    # Relationships
+    project = relationship("Project", back_populates="keywords")
+
+    def __repr__(self) -> str:
+        return f"<ProjectKeyword(id={self.id}, keyword='{self.keyword}', type='{self.match_type}')>"
