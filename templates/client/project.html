@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% block title %}{{ project.name }} — Monitoring{% endblock %}
+
+{% block content %}
+<!-- Back + Title -->
+<div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+    <div>
+        <a href="/client/dashboard" style="color: var(--accent-light); text-decoration: none; font-size: 0.8rem;">← Dashboard</a>
+        <h1 style="font-size: 1.4rem; margin-top: 0.3rem;">🏷️ {{ project.name }}</h1>
+        <p style="color: var(--text-muted); font-size: 0.85rem;">
+            {{ total }} artykułów (ostatnie {{ days }} dni) •
+            Keywords: {% for kw in keywords %}<span style="background: rgba(99,102,241,0.1); color: #818cf8; padding: 1px 6px; border-radius: 8px; font-size: 0.7rem; margin-right: 3px;">{{ kw }}</span>{% endfor %}
+        </p>
+    </div>
+    <a href="/client/logout" style="color: var(--text-muted); font-size: 0.8rem; text-decoration: none;">🚪 Wyloguj</a>
+</div>
+
+<!-- Stats Bar -->
+<div class="card" style="margin-bottom: 1.2rem;">
+    <div style="display: flex; gap: 2rem; flex-wrap: wrap; align-items: center;">
+        <!-- Sentiment -->
+        <div>
+            <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Sentyment</div>
+            <div style="display: flex; gap: 0.6rem; font-size: 0.8rem;">
+                <span style="color: #22c55e;">🟢 {{ sentiment_breakdown.get('positive', 0) or 0 }}</span>
+                <span style="color: #94a3b8;">⚪ {{ sentiment_breakdown.get('neutral', 0) or 0 }}</span>
+                <span style="color: #ef4444;">🔴 {{ sentiment_breakdown.get('negative', 0) or 0 }}</span>
+            </div>
+        </div>
+        <!-- Reprints -->
+        <div>
+            <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Typ publikacji</div>
+            <div style="display: flex; gap: 0.6rem; font-size: 0.8rem;">
+                <span>📰 {{ reprint_breakdown.get('original', 0) or 0 }} oryg.</span>
+                <span>🔄 {{ reprint_breakdown.get('reprint', 0) or 0 }} przedr.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="card" style="margin-bottom: 1.2rem; padding: 0.8rem 1rem;">
+    <form method="get" action="/client/project/{{ project.slug }}" style="display: flex; gap: 0.8rem; flex-wrap: wrap; align-items: center;">
+        <div>
+            <label style="font-size: 0.7rem; color: var(--text-muted);">Okres</label>
+            <select name="days" style="background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px; font-size: 0.8rem;">
+                <option value="1" {% if days == 1 %}selected{% endif %}>24h</option>
+                <option value="7" {% if days == 7 %}selected{% endif %}>7 dni</option>
+                <option value="30" {% if days == 30 %}selected{% endif %}>30 dni</option>
+                <option value="90" {% if days == 90 %}selected{% endif %}>90 dni</option>
+                <option value="365" {% if days == 365 %}selected{% endif %}>Rok</option>
+            </select>
+        </div>
+        <div>
+            <label style="font-size: 0.7rem; color: var(--text-muted);">Sentyment</label>
+            <select name="sentiment" style="background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px; font-size: 0.8rem;">
+                <option value="" {% if not sentiment_filter %}selected{% endif %}>Wszystkie</option>
+                <option value="positive" {% if sentiment_filter == 'positive' %}selected{% endif %}>🟢 Pozytywny</option>
+                <option value="neutral" {% if sentiment_filter == 'neutral' %}selected{% endif %}>⚪ Neutralny</option>
+                <option value="negative" {% if sentiment_filter == 'negative' %}selected{% endif %}>🔴 Negatywny</option>
+            </select>
+        </div>
+        <div>
+            <label style="font-size: 0.7rem; color: var(--text-muted);">Typ</label>
+            <select name="reprint" style="background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px; font-size: 0.8rem;">
+                <option value="" {% if not reprint_filter %}selected{% endif %}>Wszystkie</option>
+                <option value="original" {% if reprint_filter == 'original' %}selected{% endif %}>📰 Oryginał</option>
+                <option value="reprint" {% if reprint_filter == 'reprint' %}selected{% endif %}>🔄 Przedruk</option>
+                <option value="modified_reprint" {% if reprint_filter == 'modified_reprint' %}selected{% endif %}>✏️ Zmodyfikowany</option>
+            </select>
+        </div>
+        <button type="submit" style="background: rgba(99,102,241,0.15); color: #818cf8; border: 1px solid rgba(99,102,241,0.3); padding: 4px 16px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; margin-top: 14px;">
+            🔍 Filtruj
+        </button>
+    </form>
+</div>
+
+<!-- Articles Table -->
+<div class="card">
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Tytuł</th>
+                    <th>Źródło</th>
+                    <th>Data</th>
+                    <th>Sentyment</th>
+                    <th>Typ</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for article in articles %}
+                <tr>
+                    <td style="max-width: 400px;">
+                        <a href="{{ article.url }}" target="_blank" rel="noopener"
+                           style="color: var(--accent-light); text-decoration: none; font-weight: 500;">
+                            {{ article.title[:80] }}{% if article.title|length > 80 %}...{% endif %}
+                        </a>
+                        {% if article.ai_category %}
+                        <div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 2px;">
+                            📁 {{ article.ai_category }}
+                        </div>
+                        {% endif %}
+                    </td>
+                    <td style="font-size: 0.8rem; color: var(--text-secondary); white-space: nowrap;">
+                        {% if article.feed %}{{ article.feed.name[:25] }}{% endif %}
+                    </td>
+                    <td style="font-size: 0.8rem; color: var(--text-muted); white-space: nowrap;">
+                        {% if article.published_at %}
+                        {{ article.published_at.strftime('%d.%m %H:%M') }}
+                        <div style="font-size: 0.65rem;">{{ article.published_at|timeago }}</div>
+                        {% endif %}
+                    </td>
+                    <td style="text-align: center;">
+                        {% if article.ai_sentiment == 'positive' %}
+                        <span style="color: #22c55e; font-size: 0.85rem;" title="Pozytywny">🟢</span>
+                        {% elif article.ai_sentiment == 'negative' %}
+                        <span style="color: #ef4444; font-size: 0.85rem;" title="Negatywny">🔴</span>
+                        {% elif article.ai_sentiment == 'neutral' %}
+                        <span style="color: #94a3b8; font-size: 0.85rem;" title="Neutralny">⚪</span>
+                        {% elif article.ai_sentiment == 'mixed' %}
+                        <span style="color: #f59e0b; font-size: 0.85rem;" title="Mieszany">🟡</span>
+                        {% else %}
+                        <span style="color: var(--text-muted); font-size: 0.7rem;">—</span>
+                        {% endif %}
+                    </td>
+                    <td style="font-size: 0.75rem;">
+                        {% if article.reprint_type == 'original' %}
+                        <span class="badge" style="background: rgba(34,197,94,0.15); color: #22c55e; font-size: 0.65rem;">Oryginał</span>
+                        {% elif article.reprint_type == 'reprint' %}
+                        <span class="badge" style="background: rgba(245,158,11,0.15); color: #f59e0b; font-size: 0.65rem;">Przedruk</span>
+                        {% elif article.reprint_type == 'modified_reprint' %}
+                        <span class="badge" style="background: rgba(99,102,241,0.15); color: #818cf8; font-size: 0.65rem;">Zmodyfikowany</span>
+                        {% else %}
+                        <span style="color: var(--text-muted);">—</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                        Brak artykułów spełniających kryteria.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Pagination -->
+{% if total_pages > 1 %}
+<div class="pagination" style="margin-top: 1rem;">
+    {% if page > 1 %}
+    <a href="?days={{ days }}&sentiment={{ sentiment_filter }}&reprint={{ reprint_filter }}&page={{ page - 1 }}">← Poprzednia</a>
+    {% endif %}
+    {% for p in range(1, total_pages + 1) %}
+        {% if p == page %}
+        <span class="active">{{ p }}</span>
+        {% elif p <= 3 or p > total_pages - 2 or (p >= page - 1 and p <= page + 1) %}
+        <a href="?days={{ days }}&sentiment={{ sentiment_filter }}&reprint={{ reprint_filter }}&page={{ p }}">{{ p }}</a>
+        {% elif p == 4 or p == total_pages - 2 %}
+        <span style="color: var(--text-muted);">…</span>
+        {% endif %}
+    {% endfor %}
+    {% if page < total_pages %}
+    <a href="?days={{ days }}&sentiment={{ sentiment_filter }}&reprint={{ reprint_filter }}&page={{ page + 1 }}">Następna →</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — {{ client.company_name }}{% endblock %}
+
+{% block content %}
+<div class="page-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+    <div>
+        <h1 style="font-size: 1.5rem;">📊 {{ client.company_name }}</h1>
+        <p style="color: var(--text-muted); font-size: 0.85rem;">
+            Panel monitoringu mediów • Abonament: <span class="badge" style="background: {% if client.tier == 'enterprise' %}rgba(234,179,8,0.2); color: #fbbf24{% elif client.tier == 'pro' %}rgba(139,92,246,0.2); color: #a78bfa{% else %}rgba(100,116,139,0.2); color: #94a3b8{% endif %}; font-size: 0.7rem; padding: 2px 8px;">{{ client.tier|upper }}</span>
+        </p>
+    </div>
+    <a href="/client/logout" style="color: var(--text-muted); font-size: 0.8rem; text-decoration: none;">🚪 Wyloguj</a>
+</div>
+
+<!-- AI Brief -->
+{% if ai_brief %}
+<div class="card" style="margin-bottom: 1.5rem; border-left: 3px solid rgba(139,92,246,0.5);">
+    <h3 style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.8rem;">
+        🤖 AI Brief
+    </h3>
+    <p style="color: var(--text-primary); font-size: 0.9rem; line-height: 1.6;">
+        {{ ai_brief|safe }}
+    </p>
+</div>
+{% endif %}
+
+<!-- Projects Grid -->
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.2rem;">
+    {% for ps in project_stats %}
+    <a href="/client/project/{{ ps.project.slug }}" style="text-decoration: none; color: inherit;">
+        <div class="card" style="transition: all 0.3s; cursor: pointer; border: 1px solid var(--border);"
+             onmouseover="this.style.borderColor='rgba(139,92,246,0.4)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.3)'"
+             onmouseout="this.style.borderColor='var(--border)'; this.style.transform='none'; this.style.boxShadow='none'">
+
+            <!-- Header -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="font-size: 1.1rem; font-weight: 600; color: var(--text-primary);">
+                    🏷️ {{ ps.project.name }}
+                </h3>
+                <span style="font-size: 0.7rem; color: var(--text-muted);">
+                    {{ ps.keywords|length }} keywords
+                </span>
+            </div>
+
+            <!-- Stats Row -->
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.8rem; margin-bottom: 1rem;">
+                <div style="text-align: center; padding: 0.6rem; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                    <div style="font-size: 1.4rem; font-weight: 700; color: #a78bfa;">{{ ps.articles_24h }}</div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;">24h</div>
+                </div>
+                <div style="text-align: center; padding: 0.6rem; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                    <div style="font-size: 1.4rem; font-weight: 700; color: #818cf8;">{{ ps.articles_7d }}</div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;">7 dni</div>
+                </div>
+                <div style="text-align: center; padding: 0.6rem; background: rgba(255,255,255,0.03); border-radius: 8px;">
+                    <div style="font-size: 1.4rem; font-weight: 700; color: #6366f1;">{{ ps.total_articles }}</div>
+                    <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase;">Łącznie</div>
+                </div>
+            </div>
+
+            <!-- Sentiment Bar -->
+            {% set pos = ps.sentiment.get('positive', 0) or 0 %}
+            {% set neg = ps.sentiment.get('negative', 0) or 0 %}
+            {% set neu = ps.sentiment.get('neutral', 0) or 0 %}
+            {% set total_s = pos + neg + neu %}
+            {% if total_s > 0 %}
+            <div style="margin-bottom: 0.8rem;">
+                <div style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 4px;">Sentyment (7d):</div>
+                <div style="display: flex; height: 6px; border-radius: 3px; overflow: hidden; background: rgba(255,255,255,0.05);">
+                    {% if pos > 0 %}<div style="width: {{ (pos / total_s * 100)|round }}%; background: #22c55e;"></div>{% endif %}
+                    {% if neu > 0 %}<div style="width: {{ (neu / total_s * 100)|round }}%; background: #64748b;"></div>{% endif %}
+                    {% if neg > 0 %}<div style="width: {{ (neg / total_s * 100)|round }}%; background: #ef4444;"></div>{% endif %}
+                </div>
+                <div style="display: flex; gap: 0.8rem; margin-top: 4px; font-size: 0.65rem; color: var(--text-muted);">
+                    <span>🟢 {{ pos }}</span>
+                    <span>⚪ {{ neu }}</span>
+                    <span>🔴 {{ neg }}</span>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Reprint Stats -->
+            {% set orig = ps.reprint_stats.get('original', 0) or 0 %}
+            {% set repr = ps.reprint_stats.get('reprint', 0) or 0 %}
+            {% if orig + repr > 0 %}
+            <div style="font-size: 0.7rem; color: var(--text-muted);">
+                📰 {{ orig }} oryginałów • 🔄 {{ repr }} przedruków
+            </div>
+            {% endif %}
+
+            <!-- Keywords -->
+            <div style="margin-top: 0.8rem; display: flex; flex-wrap: wrap; gap: 4px;">
+                {% for kw in ps.keywords[:5] %}
+                <span style="font-size: 0.6rem; padding: 2px 8px; background: rgba(99,102,241,0.1); color: #818cf8; border-radius: 10px;">{{ kw }}</span>
+                {% endfor %}
+                {% if ps.keywords|length > 5 %}
+                <span style="font-size: 0.6rem; color: var(--text-muted);">+{{ ps.keywords|length - 5 }}</span>
+                {% endif %}
+            </div>
+        </div>
+    </a>
+    {% else %}
+    <div class="card" style="text-align: center; padding: 3rem; grid-column: 1 / -1;">
+        <p style="font-size: 1.2rem; margin-bottom: 0.5rem;">📭</p>
+        <p style="color: var(--text-muted);">Brak aktywnych projektów monitoringu.</p>
+        <p style="color: var(--text-muted); font-size: 0.8rem;">Skontaktuj się z administratorem aby dodać projekty.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
