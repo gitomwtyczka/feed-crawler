@@ -38,6 +38,7 @@ COPY templates/ ./templates/
 COPY config/ ./config/
 COPY static/ ./static/
 COPY requirements.txt .
+COPY *.py ./
 
 # Create data directory (for crawl_state.json, SQLite fallback)
 RUN mkdir -p /app/data
