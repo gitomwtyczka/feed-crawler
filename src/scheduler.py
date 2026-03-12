@@ -535,30 +535,30 @@ def run_scheduled(interval_minutes: int = 10) -> None:
                         if result and result.get("response"):
                             resp = result["response"]
                             for line in resp.split("\n"):
-                                line = line.strip()
+                                line = line.strip().replace("**", "")  # Strip Bielik markdown bold
                                 low = line.upper()
                                 if "KATEGORIA" in low and ":" in line:
-                                    val = line.split(":", 1)[1].strip().lower()
+                                    val = line.split(":", 1)[1].strip().strip("*").lower()
                                     if val:
                                         article.ai_category = val[:100]
                                 elif "KLUCZOWE" in low and ":" in line:
-                                    val = line.split(":", 1)[1].strip()
+                                    val = line.split(":", 1)[1].strip().strip("*")
                                     if val:
                                         article.ai_keywords = val[:500]
                                 elif "SENTYMENT" in low and ":" in line:
-                                    val = line.split(":", 1)[1].strip().lower()
+                                    val = line.split(":", 1)[1].strip().strip("*").lower()
                                     if val:
                                         article.ai_sentiment = val[:20]
 
                         article.ai_processed = True
                         enriched += 1
-                        logger.debug("AI: '%s...' → cat=%s sent=%s",
-                                   article.title[:40],
-                                   article.ai_category,
-                                   article.ai_sentiment)
+                        logger.info("🧠 AI: '%s...' → %s / %s",
+                                  article.title[:40],
+                                  article.ai_category,
+                                  article.ai_sentiment)
 
                     except Exception as e:
-                        logger.debug("AI enrich failed for article %d: %s", article.id, e)
+                        logger.warning("AI enrich failed for article %d: %s", article.id, e)
                         article.ai_processed = True  # Avoid infinite retry
 
                 db.commit()
@@ -585,6 +585,7 @@ def run_scheduled(interval_minutes: int = 10) -> None:
     # Run first cycle immediately
     _cycle_job()
     _scout_job()  # Initial discovery
+    _ai_enrich_job()  # Initial AI enrichment
     send_discord(
         title="🟢 Feed Crawler started",
         description=(
