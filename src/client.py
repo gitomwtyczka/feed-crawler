@@ -461,42 +461,55 @@ def _get_latest_mention(
 
 
 def _generate_dashboard_brief(project_stats: list[dict]) -> str:
-    """Generate AI-style brief for dashboard header."""
+    """Generate AI-style brief for dashboard header. Returns HTML."""
     if not project_stats:
         return "Brak aktywnych projektów."
 
-    lines = []
+    parts = []
     for ps in project_stats:
         name = ps["project"].name
         h24 = ps["articles_24h"]
         h7d = ps["articles_7d"]
+        total = ps["total_articles"]
         sent = ps["sentiment"]
+        sources = ps.get("unique_sources", 0)
+
+        # Trend indicator
+        if h24 > 5:
+            trend = '🔥 <span style="color:#22c55e;">intensywnie</span>'
+        elif h24 > 0:
+            trend = '📈 <span style="color:#818cf8;">aktywnie</span>'
+        else:
+            trend = '📉 <span style="color:#94a3b8;">spokojnie</span>'
 
         # Dominant sentiment
+        sent_html = ""
         if sent:
-            dominant = max(sent.items(), key=lambda x: x[1] if x[1] else 0)
-            sent_label = {
-                "positive": "pozytywny",
-                "negative": "negatywny",
-                "neutral": "neutralny",
-                "mixed": "mieszany",
-            }.get(dominant[0] or "neutral", "neutral")
-            total_sent = sum(v for v in sent.values() if v)
-            pct = int(dominant[1] / total_sent * 100) if total_sent else 0
-        else:
-            sent_label = "brak danych"
-            pct = 0
+            pos = sent.get("positive", 0) or 0
+            neg = sent.get("negative", 0) or 0
+            neu = sent.get("neutral", 0) or 0
+            total_s = pos + neg + neu
+            if total_s > 0:
+                if neg > pos and neg > neu:
+                    sent_html = f'<span style="color:#ef4444;">⚠️ Uwaga: {neg} negatywnych wzmianek</span>'
+                elif pos > neg and pos > neu:
+                    sent_html = f'<span style="color:#22c55e;">✅ Dominuje pozytywny sentyment ({int(pos/total_s*100)}%)</span>'
+                else:
+                    sent_html = f'<span style="color:#94a3b8;">Sentyment neutralny ({int(neu/total_s*100)}%)</span>'
 
         # Reprint info
         reprints = ps["reprint_stats"]
         originals = reprints.get("original", 0) or 0
         reprs = reprints.get("reprint", 0) or 0
 
-        line = f"**{name}** — {h24} nowych wzmianek (24h), {h7d} w tygodniu."
-        if pct > 0:
-            line += f" Dominuje sentyment {sent_label} ({pct}%)."
+        line = f'<div style="margin-bottom:0.6rem;"><strong style="color:#a78bfa;">{name}</strong> — '
+        line += f'{trend} · <strong>{h24}</strong> nowych wzmianek (24h), <strong>{h7d}</strong> w tygodniu '
+        line += f'z <strong>{sources}</strong> portali. '
+        if sent_html:
+            line += sent_html + " "
         if reprs > 0:
-            line += f" {reprs} przedruków, {originals} oryginałów."
-        lines.append(line)
+            line += f'· 📰 {originals} oryginałów, 🔄 {reprs} przedruków'
+        line += '</div>'
+        parts.append(line)
 
-    return " | ".join(lines)
+    return "\n".join(parts)
