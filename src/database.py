@@ -24,6 +24,12 @@ if DATABASE_URL.startswith("sqlite"):
     # In-memory SQLite needs StaticPool to share DB across connections
     if DATABASE_URL == "sqlite://" or DATABASE_URL == "sqlite:///:memory:":
         extra_kwargs["poolclass"] = StaticPool
+else:
+    # PostgreSQL: 7 scheduler jobs + web requests need a bigger pool
+    extra_kwargs["pool_size"] = 20
+    extra_kwargs["max_overflow"] = 30
+    extra_kwargs["pool_recycle"] = 1800  # recycle connections every 30min
+    extra_kwargs["pool_pre_ping"] = True
 
 engine = create_engine(DATABASE_URL, connect_args=connect_args, echo=False, **extra_kwargs)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
