@@ -552,10 +552,24 @@ def run_scheduled(interval_minutes: int = 10) -> None:
 
                         article.ai_processed = True
                         enriched += 1
-                        logger.info("🧠 AI: '%s...' → %s / %s",
-                                  article.title[:40],
+
+                        # Reprint detection (after AI enrichment)
+                        try:
+                            from .reprint_detector import classify_article as classify_reprint
+                            rp = classify_reprint(article, db)
+                            article.reprint_type = rp["type"]
+                            article.original_article_id = rp["original_id"]
+                            article.similarity_score = rp["score"]
+                        except Exception as rp_err:
+                            logger.debug("Reprint detection failed: %s", rp_err)
+                            article.reprint_type = "original"
+
+                        logger.info("🧠 AI: '%s...' → %s / %s [%s %.0f%%]",
+                                  article.title[:35],
                                   article.ai_category,
-                                  article.ai_sentiment)
+                                  article.ai_sentiment,
+                                  article.reprint_type,
+                                  (article.similarity_score or 0) * 100)
 
                     except Exception as e:
                         logger.warning("AI enrich failed for article %d: %s", article.id, e)

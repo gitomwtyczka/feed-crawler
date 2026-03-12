@@ -136,6 +136,11 @@ class Article(Base):
     ai_summary = Column(Text, nullable=True, doc="AI-generated summary (Gemini)")
     ai_processed = Column(Boolean, nullable=False, default=False, doc="True if AI enrichment was done")
 
+    # Reprint detection
+    reprint_type = Column(String(20), nullable=True, doc="original, reprint, modified_reprint")
+    original_article_id = Column(Integer, ForeignKey("articles.id"), nullable=True, doc="Link to earliest matching article")
+    similarity_score = Column(Float, nullable=True, doc="0.0-1.0 similarity to closest match")
+
     # Relationships
     feed = relationship("Feed", back_populates="articles")
     departments = relationship("Department", secondary="article_departments", back_populates="articles")
