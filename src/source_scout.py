@@ -1,7 +1,7 @@
 """
 Source Scout — automatic feed discovery engine.
 
-Runs periodically (every 6h) to discover and add new RSS sources by:
+Runs periodically (every 2h) to discover and add new RSS sources by:
 1. Link mining: extract unique domains from recently fetched articles,
    probe common RSS paths (/feed, /rss, /atom.xml, etc.)
 2. HTML auto-discovery: check <link rel="alternate" type="application/rss+xml">
@@ -59,18 +59,21 @@ TLD_LANG = {
     ".pt": "pt", ".br": "pt", ".com.br": "pt",
 }
 
-# Skip these domains (too generic, social media, etc.)
+# Skip these domains (too generic, social media, CDN, etc.)
 SKIP_DOMAINS = {
     "google.com", "news.google.com", "youtube.com", "twitter.com", "x.com",
     "facebook.com", "instagram.com", "linkedin.com", "tiktok.com",
-    "reddit.com", "t.co", "bit.ly", "ow.ly", "dlvr.it",
+    "reddit.com", "t.co", "bit.ly", "ow.ly", "dlvr.it", "goo.gl",
     "apple.com", "play.google.com", "apps.apple.com",
     "wikipedia.org", "wikimedia.org",
-    "amazon.com", "ebay.com",
+    "amazon.com", "ebay.com", "aliexpress.com",
+    "cloudflare.com", "googleapis.com", "gstatic.com",
+    "doubleclick.net", "googlesyndication.com",
+    "wp.pl", "onet.pl", "interia.pl",  # already have these
 }
 
-# Max domains to probe per cycle (respect servers)
-MAX_PROBE_PER_CYCLE = 100
+# Max domains to probe per cycle
+MAX_PROBE_PER_CYCLE = 500
 
 
 def _detect_language(domain: str) -> str | None:
@@ -81,7 +84,7 @@ def _detect_language(domain: str) -> str | None:
     return "en"  # default
 
 
-def _extract_domains_from_articles(db, hours_back: int = 24, limit: int = 500) -> set[str]:
+def _extract_domains_from_articles(db, hours_back: int = 72, limit: int = 5000) -> set[str]:
     """Extract unique domains from recently fetched articles."""
     from datetime import datetime, timedelta
 
@@ -236,8 +239,13 @@ def run_discovery(dry_run: bool = False, hours_back: int = 24) -> dict:
         for (url,) in db.query(Feed.rss_url).filter(Feed.rss_url.isnot(None)).all():
             existing_urls.add(url.lower().rstrip("/"))
 
+        # Sort: PL domains first (priority), then alphabetical
+        def _sort_key(d):
+            lang = _detect_language(d)
+            return (0 if lang == "pl" else 1, d)
+
         probed = 0
-        for domain in sorted(new_domains):
+        for domain in sorted(new_domains, key=_sort_key):
             if probed >= MAX_PROBE_PER_CYCLE:
                 logger.info("Reached max probe limit (%d)", MAX_PROBE_PER_CYCLE)
                 break
@@ -261,7 +269,10 @@ def run_discovery(dry_run: bool = False, hours_back: int = 24) -> dict:
                 stats["feeds_discovered"] += 1
                 lang = _detect_language(domain)
                 tier = classify_feed(feed_url, domain)
-                name = domain.replace("www.", "").split(".")[0].title()
+                # Smart naming: use domain without extension
+                clean = domain.replace("www.", "")
+                parts = clean.rsplit(".", 1)  # ['nzherald.co', 'nz'] or ['gazeta', 'pl']
+                name = parts[0].replace(".", " ").replace("-", " ").title()
 
                 if not dry_run:
                     db.add(Feed(

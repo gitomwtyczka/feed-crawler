@@ -458,7 +458,7 @@ def run_scheduled(interval_minutes: int = 10) -> None:
     # Schedule jobs
     scheduler.add_job(_cycle_job, "interval", minutes=interval_minutes, id="rss_cycle")
     scheduler.add_job(_isbnews_job, "interval", minutes=5, id="isbnews_cycle")
-    scheduler.add_job(_scout_job, "interval", hours=6, id="source_scout")
+    scheduler.add_job(_scout_job, "interval", hours=2, id="source_scout")
 
     # Run first cycle immediately
     _cycle_job()
