@@ -168,6 +168,8 @@ TIER_RULES: list[tuple[int, list[str]]] = [
         r"antyweb", r"benchmark\.pl",
         r"chip\.pl",
         r"echo\s*dnia",
+        # Google News aggregation feeds
+        r"news\.google\.com", r"\bgnews\b",
     ]),
     # ════════════════════════════════════════════════
     # Tier 5: User-Generated, Blogs, Podcasts
