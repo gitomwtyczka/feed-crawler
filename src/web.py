@@ -26,6 +26,9 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta
 from pathlib import Path
+import re
+import html as html_module
+from html.parser import HTMLParser
 
 from fastapi import FastAPI, Form, HTTPException, Query, Request
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, StreamingResponse
@@ -95,18 +98,33 @@ def truncate(text: str | None, length: int = 200) -> str:
     return text[:length] + "..." if len(text) > length else text
 
 
-import re
+class _HTMLStripper(HTMLParser):
+    """Strip HTML tags, keeping only text content."""
+    def __init__(self):
+        super().__init__()
+        self.result = []
+    def handle_data(self, data):
+        self.result.append(data)
+    def get_text(self):
+        return ' '.join(self.result)
+
 
 def clean_html(text: str | None) -> str:
-    """Strip HTML tags from text, decode common entities."""
+    """Strip HTML tags from text, decode entities, remove URLs."""
     if not text:
         return ""
-    # Remove HTML tags
-    clean = re.sub(r'<[^>]+>', '', text)
-    # Decode common HTML entities
-    clean = clean.replace('&amp;', '&').replace('&lt;', '<').replace('&gt;', '>')
-    clean = clean.replace('&quot;', '"').replace('&#39;', "'")
-    clean = clean.replace('&nbsp;', ' ').replace('&#160;', ' ')
+    # First unescape HTML entities (&lt; → <, &amp; → &, etc.)
+    clean = html_module.unescape(str(text))
+    # Strip HTML tags using parser
+    try:
+        stripper = _HTMLStripper()
+        stripper.feed(clean)
+        clean = stripper.get_text()
+    except Exception:
+        # Fallback: regex strip
+        clean = re.sub(r'<[^>]+>', '', clean)
+    # Remove URLs (they're useless in text summaries)
+    clean = re.sub(r'https?://\S+', '', clean)
     # Collapse whitespace
     clean = re.sub(r'\s+', ' ', clean).strip()
     return clean
