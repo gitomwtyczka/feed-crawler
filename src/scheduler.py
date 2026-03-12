@@ -463,6 +463,18 @@ def run_scheduled(interval_minutes: int = 10) -> None:
         except Exception as e:
             logger.exception("Broadcast monitor failed: %s", e)
 
+    def _social_job():
+        """Social media monitor — YouTube + X/Twitter keyword search."""
+        try:
+            from .social_monitor import run_social_monitoring
+
+            stats = run_social_monitoring()
+            if stats["total_mentions"] > 0:
+                logger.info("Social: %d mentions (%d YT, %d TW)",
+                           stats["total_mentions"], stats["youtube"], stats["twitter"])
+        except Exception as e:
+            logger.exception("Social monitor failed: %s", e)
+
     signal.signal(signal.SIGTERM, _shutdown)
     signal.signal(signal.SIGINT, _shutdown)
 
@@ -471,6 +483,7 @@ def run_scheduled(interval_minutes: int = 10) -> None:
     scheduler.add_job(_isbnews_job, "interval", minutes=5, id="isbnews_cycle")
     scheduler.add_job(_scout_job, "interval", hours=2, id="source_scout")
     scheduler.add_job(_broadcast_job, "interval", minutes=2, id="broadcast_monitor")
+    scheduler.add_job(_social_job, "interval", minutes=30, id="social_monitor")
 
     # Run first cycle immediately
     _cycle_job()
@@ -478,8 +491,8 @@ def run_scheduled(interval_minutes: int = 10) -> None:
     send_discord(
         title="🟢 Feed Crawler started",
         description=(
-            f"Scheduled mode: RSS every {interval_minutes}min, ISBNews every 5min, "
-            f"Scout every 2h, Broadcast every 2min"
+            f"RSS every {interval_minutes}min, ISBNews 5min, "
+            f"Scout 2h, Broadcast 2min, Social 30min"
         ),
         level="info",
     )
