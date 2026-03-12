@@ -103,7 +103,12 @@
                         {% endif %}
                     </td>
                     <td style="font-size: 0.8rem; color: var(--text-secondary); white-space: nowrap;">
-                        {{ article.url|source_domain }}
+                        {% if article.feed and article.feed.name.startswith('GNews') %}
+                            {% set parts = article.title.split(' - ') %}
+                            {% if parts|length > 1 %}{{ parts[-1][:30] }}{% else %}{{ article.url|source_domain }}{% endif %}
+                        {% else %}
+                            {{ article.url|source_domain }}
+                        {% endif %}
                     </td>
                     <td style="font-size: 0.8rem; color: var(--text-muted); white-space: nowrap;">
                         {% if article.published_at %}
