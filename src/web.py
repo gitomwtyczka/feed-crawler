@@ -45,7 +45,7 @@ from .auth import (
 )
 from .crawl_state import get_state as get_crawl_state
 from .crawl_state import toggle_crawl
-from .models import LANGUAGES, SOURCE_TIERS, Article, Department, Feed, Journalist, Project, ProjectKeyword
+from .models import LANGUAGES, SOURCE_TIERS, Article, Department, Feed, FetchLog, Journalist, Project, ProjectKeyword
 
 # ── App Setup ──
 
@@ -531,6 +531,68 @@ def logout():
 
 
 # ── Admin Routes (auth required) ──
+
+
+@app.get("/admin/api/crawl-stats")
+def crawl_stats_api(request: Request):
+    """Lightweight crawling stats — on-demand COUNT queries, no extra writes."""
+    user = _get_current_user(request)
+    if not user:
+        return JSONResponse({"error": "unauthorized"}, status_code=401)
+    db = db_module.SessionLocal()
+    try:
+        now = datetime.utcnow()
+
+        # Article counts by time window
+        windows = {}
+        for label, hours in [("1h", 1), ("6h", 6), ("24h", 24), ("7d", 168), ("30d", 720)]:
+            cutoff = now - timedelta(hours=hours)
+            windows[label] = db.query(func.count(Article.id)).filter(Article.fetched_at >= cutoff).scalar()
+
+        # PL vs EN vs other (24h)
+        c24 = now - timedelta(hours=24)
+        pl_count = db.query(func.count(Article.id)).join(Feed).filter(
+            Article.fetched_at >= c24, Feed.language == "pl").scalar()
+        en_count = db.query(func.count(Article.id)).join(Feed).filter(
+            Article.fetched_at >= c24, Feed.language == "en").scalar()
+
+        # Fetch success rate (24h)
+        total_fetches = db.query(func.count(FetchLog.id)).filter(FetchLog.started_at >= c24).scalar()
+        ok_fetches = db.query(func.count(FetchLog.id)).filter(
+            FetchLog.started_at >= c24, FetchLog.status == "success").scalar()
+
+        # Feed health
+        errored = db.query(func.count(Feed.id)).filter(
+            Feed.consecutive_errors > 0, Feed.is_active.is_(True)).scalar()
+        disabled = db.query(func.count(Feed.id)).filter(Feed.is_active.is_(False)).scalar()
+
+        # Hourly breakdown (last 24h)
+        hourly = []
+        for h in range(24):
+            start = now - timedelta(hours=24 - h)
+            end = now - timedelta(hours=23 - h)
+            count = db.query(func.count(Article.id)).filter(
+                Article.fetched_at >= start, Article.fetched_at < end).scalar()
+            hourly.append({"hour": start.strftime("%H:00"), "count": count})
+
+        # New feeds added
+        new_24h = db.query(func.count(Feed.id)).filter(Feed.created_at >= c24).scalar()
+        new_7d = db.query(func.count(Feed.id)).filter(
+            Feed.created_at >= now - timedelta(days=7)).scalar()
+
+        return JSONResponse({
+            "windows": windows,
+            "lang_24h": {"pl": pl_count, "en": en_count, "other": windows["24h"] - pl_count - en_count},
+            "fetch_rate": {
+                "total": total_fetches, "success": ok_fetches,
+                "pct": round(ok_fetches / max(total_fetches, 1) * 100, 1),
+            },
+            "feed_health": {"errored": errored, "disabled": disabled},
+            "hourly": hourly,
+            "new_feeds": {"24h": new_24h, "7d": new_7d},
+        })
+    finally:
+        db.close()
 
 
 @app.get("/admin", response_class=HTMLResponse)

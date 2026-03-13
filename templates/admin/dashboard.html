@@ -29,27 +29,148 @@
     </div>
 </div>
 
+<!-- Crawling Activity (loaded async — zero overhead) -->
+<div class="card" style="margin-top: 1.5rem;" id="crawl-stats-section">
+    <h3 style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">
+        📈 Crawling Activity</h3>
+    <div id="crawl-stats-loading" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+        Loading stats...
+    </div>
+    <div id="crawl-stats-content" style="display: none;">
+        <!-- Time window KPIs -->
+        <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; margin-bottom: 1.5rem;">
+            <div class="mini-stat" id="cs-1h"><span class="mini-label">1h</span><span class="mini-val">—</span></div>
+            <div class="mini-stat" id="cs-6h"><span class="mini-label">6h</span><span class="mini-val">—</span></div>
+            <div class="mini-stat" id="cs-24h"><span class="mini-label">24h</span><span class="mini-val">—</span></div>
+            <div class="mini-stat" id="cs-7d"><span class="mini-label">7 dni</span><span class="mini-val">—</span></div>
+            <div class="mini-stat" id="cs-30d"><span class="mini-label">30 dni</span><span class="mini-val">—</span></div>
+        </div>
+        <!-- Chart + sidebar -->
+        <div style="display: grid; grid-template-columns: 1fr 240px; gap: 1.5rem; align-items: start;">
+            <div style="position: relative; height: 220px;">
+                <canvas id="hourlyChart"></canvas>
+            </div>
+            <div>
+                <div style="margin-bottom: 1rem;">
+                    <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.4rem;">Artykuły 24h wg języka</div>
+                    <div id="lang-breakdown" style="font-size: 0.85rem;"></div>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.4rem;">Fetch success rate</div>
+                    <div id="fetch-rate" style="font-size: 1.4rem; font-weight: 700;"></div>
+                    <div id="fetch-detail" style="font-size: 0.75rem; color: var(--text-muted);"></div>
+                </div>
+                <div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.4rem;">Feed health</div>
+                    <div id="feed-health" style="font-size: 0.85rem;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.mini-stat {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    padding: 0.6rem 0.8rem;
+    text-align: center;
+}
+.mini-stat .mini-label {
+    display: block;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 0.2rem;
+}
+.mini-stat .mini-val {
+    display: block;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script>
+(async function() {
+    try {
+        const resp = await fetch('/admin/api/crawl-stats');
+        if (!resp.ok) return;
+        const d = await resp.json();
+
+        const fmt = n => n >= 1000 ? (n/1000).toFixed(1) + 'k' : n.toLocaleString();
+        for (const [k, v] of Object.entries(d.windows)) {
+            const el = document.querySelector('#cs-' + k + ' .mini-val');
+            if (el) el.textContent = fmt(v);
+        }
+
+        document.getElementById('lang-breakdown').innerHTML =
+            '<div style="margin-bottom:4px">🇵🇱 PL: <strong>' + fmt(d.lang_24h.pl) + '</strong></div>' +
+            '<div style="margin-bottom:4px">🇬🇧 EN: <strong>' + fmt(d.lang_24h.en) + '</strong></div>' +
+            '<div>🌍 Inne: <strong>' + fmt(d.lang_24h.other) + '</strong></div>';
+
+        const color = d.fetch_rate.pct >= 95 ? '#34d399' : d.fetch_rate.pct >= 80 ? '#fbbf24' : '#f87171';
+        document.getElementById('fetch-rate').innerHTML = '<span style="color:' + color + '">' + d.fetch_rate.pct + '%</span>';
+        document.getElementById('fetch-detail').textContent = fmt(d.fetch_rate.success) + ' / ' + fmt(d.fetch_rate.total) + ' fetches';
+
+        document.getElementById('feed-health').innerHTML =
+            '<div style="margin-bottom:4px">⚠️ Z błędami: <strong>' + d.feed_health.errored + '</strong></div>' +
+            '<div>🔴 Wyłączone: <strong>' + d.feed_health.disabled + '</strong></div>';
+
+        const ctx = document.getElementById('hourlyChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: d.hourly.map(h => h.hour),
+                datasets: [{
+                    label: 'Artykuły / godzinę',
+                    data: d.hourly.map(h => h.count),
+                    borderColor: '#818cf8',
+                    backgroundColor: 'rgba(129,140,248,0.1)',
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 2,
+                    pointHoverRadius: 5,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { callbacks: { label: ctx => ctx.parsed.y.toLocaleString() + ' articles' } }
+                },
+                scales: {
+                    x: { ticks: { color: '#6b7280', font: { size: 10 }, maxRotation: 0 }, grid: { color: 'rgba(255,255,255,0.03)' } },
+                    y: { ticks: { color: '#6b7280', font: { size: 10 }, callback: v => v >= 1000 ? (v/1000).toFixed(1)+'k' : v }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                }
+            }
+        });
+
+        document.getElementById('crawl-stats-loading').style.display = 'none';
+        document.getElementById('crawl-stats-content').style.display = 'block';
+    } catch(e) {
+        document.getElementById('crawl-stats-loading').textContent = 'Failed to load stats';
+    }
+})();
+</script>
+
 <div class="grid-2">
     <!-- Top Feeds -->
     <div class="card">
-        <h3
-            style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">
+        <h3 style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">
             📊 Top Feeds by Articles</h3>
         <div class="table-wrap">
             <table>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Feed</th>
-                        <th>Articles</th>
-                    </tr>
-                </thead>
+                <thead><tr><th>#</th><th>Feed</th><th>Articles</th></tr></thead>
                 <tbody>
                     {% for feed_id, name, count in top_feeds %}
                     <tr>
                         <td style="color: var(--text-muted)">{{ loop.index }}</td>
-                        <td><a href="/feed/{{ feed_id }}" style="color: var(--accent-light); text-decoration: none;">{{
-                                name[:40] }}</a></td>
+                        <td><a href="/feed/{{ feed_id }}" style="color: var(--accent-light); text-decoration: none;">{{ name[:40] }}</a></td>
                         <td><span class="badge badge-info">{{ count }}</span></td>
                     </tr>
                     {% endfor %}
@@ -60,8 +181,7 @@
 
     <!-- Departments -->
     <div class="card">
-        <h3
-            style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">
+        <h3 style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">
             🏷️ Departments</h3>
         <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
             {% for dept in dept_stats %}
@@ -75,20 +195,11 @@
 
 <!-- Language Breakdown -->
 <div class="card" style="margin-top: 1.5rem;">
-    <h3
-        style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">
+    <h3 style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">
         🌍 Sources by Language</h3>
     <div class="table-wrap">
         <table>
-            <thead>
-                <tr>
-                    <th></th>
-                    <th>Language</th>
-                    <th>Feeds</th>
-                    <th>Articles</th>
-                    <th style="width: 40%">Coverage</th>
-                </tr>
-            </thead>
+            <thead><tr><th></th><th>Language</th><th>Feeds</th><th>Articles</th><th style="width: 40%">Coverage</th></tr></thead>
             <tbody>
                 {% for ls in lang_stats %}
                 <tr>
@@ -111,26 +222,16 @@
 
 <!-- Recent Articles -->
 <div class="card" style="margin-top: 1.5rem;">
-    <h3
-        style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">
+    <h3 style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">
         🕐 Recent Articles</h3>
     <div class="table-wrap">
         <table>
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Feed</th>
-                    <th>Fetched</th>
-                </tr>
-            </thead>
+            <thead><tr><th>Title</th><th>Feed</th><th>Fetched</th></tr></thead>
             <tbody>
                 {% for article in recent %}
                 <tr>
-                    <td><a href="/article/{{ article.id }}"
-                            style="color: var(--text-primary); text-decoration: none;">{{ article.title[:60] }}{% if
-                            article.title|length > 60 %}...{% endif %}</a></td>
-                    <td style="color: var(--text-secondary); font-size: 0.8rem;">{{ article.feed.name[:25] if
-                        article.feed else '?' }}</td>
+                    <td><a href="/article/{{ article.id }}" style="color: var(--text-primary); text-decoration: none;">{{ article.title[:60] }}{% if article.title|length > 60 %}...{% endif %}</a></td>
+                    <td style="color: var(--text-secondary); font-size: 0.8rem;">{{ article.feed.name[:25] if article.feed else '?' }}</td>
                     <td style="color: var(--text-muted); font-size: 0.8rem;">{{ article.fetched_at|timeago }}</td>
                 </tr>
                 {% endfor %}
