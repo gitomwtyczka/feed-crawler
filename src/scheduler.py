@@ -64,6 +64,8 @@ def sync_config_to_db(db: Session, sources_path: str = "config/sources.yaml", de
                 rss_url=src_cfg.rss_url,
                 feed_type=src_cfg.feed_type,
                 fetch_interval=src_cfg.fetch_interval,
+                feed_role=src_cfg.feed_role,
+                audit_interval=src_cfg.audit_interval,
             )
             db.add(feed)
             db.flush()  # get feed.id
@@ -75,7 +77,36 @@ def sync_config_to_db(db: Session, sources_path: str = "config/sources.yaml", de
                     fd = FeedDepartment(feed_id=feed.id, department_id=dept.id)
                     db.add(fd)
 
-            logger.info("Created feed: %s → %s", src_cfg.name, src_cfg.departments)
+            logger.info("Created feed: %s (role=%s) → %s", src_cfg.name, src_cfg.feed_role, src_cfg.departments)
+        else:
+            feed = existing
+
+        # Sync children (for aggregate feeds)
+        for child_cfg in src_cfg.children:
+            child_existing = db.query(Feed).filter(Feed.name == child_cfg.name).first()
+            if not child_existing and child_cfg.rss_url:
+                child_existing = db.query(Feed).filter(Feed.rss_url == child_cfg.rss_url).first()
+            if not child_existing:
+                child_feed = Feed(
+                    name=child_cfg.name,
+                    url=child_cfg.url,
+                    rss_url=child_cfg.rss_url,
+                    feed_type=child_cfg.feed_type,
+                    fetch_interval=child_cfg.fetch_interval,
+                    feed_role="child",
+                    audit_interval=child_cfg.audit_interval,
+                    parent_feed_id=feed.id,
+                )
+                db.add(child_feed)
+                db.flush()
+
+                # Link child to same departments
+                for dept_slug in child_cfg.departments:
+                    dept = db.query(Department).filter(Department.slug == dept_slug).first()
+                    if dept:
+                        db.add(FeedDepartment(feed_id=child_feed.id, department_id=dept.id))
+
+                logger.info("  Created child: %s → parent=%s", child_cfg.name, src_cfg.name)
 
     db.commit()
 
@@ -187,6 +218,166 @@ def _update_feed_health(db: Session, feed: Feed, success: bool) -> None:
             )
 
 
+def _is_audit_due(feed: Feed, now: datetime) -> bool:
+    """Check if a child feed is due for audit check."""
+    from datetime import timedelta
+
+    if not feed.last_audit:
+        return True
+    interval = timedelta(minutes=feed.audit_interval or 360)
+    return now >= feed.last_audit + interval
+
+
+async def run_audit_cycle() -> dict:
+    """Audit cycle: fetch child feeds to verify aggregate coverage.
+
+    Child feeds are fetched at their audit_interval (default 6h).
+    Articles found are stored normally — dedup ensures no duplicates
+    with articles already captured by the aggregate parent.
+    """
+    db = SessionLocal()
+    try:
+        now = datetime.utcnow()
+
+        children = db.query(Feed).filter(
+            Feed.feed_role == "child",
+            Feed.is_active.is_(True),
+        ).all()
+
+        due = [c for c in children if _is_audit_due(c, now)]
+        if not due:
+            return {"children_total": len(children), "audited": 0, "new_articles": 0}
+
+        logger.info("Audit cycle: %d/%d child feeds due", len(due), len(children))
+
+        # Fetch in batches
+        rss_due = [f for f in due if f.rss_url]
+        total_new = 0
+        total_errors = 0
+
+        for batch_idx in range(0, len(rss_due), BATCH_SIZE):
+            batch = rss_due[batch_idx:batch_idx + BATCH_SIZE]
+            feed_dicts = [{"rss_url": f.rss_url, "name": f.name} for f in batch]
+            results = await fetch_batch(feed_dicts)
+
+            for feed_obj, result in zip(batch, results):
+                is_success = result.status == "success"
+                if is_success:
+                    new_count = store_articles(db, result, feed_obj)
+                    total_new += new_count
+                    if new_count > 0:
+                        logger.info("Audit: %s found %d new articles (aggregate missed!)",
+                                   feed_obj.name, new_count)
+                else:
+                    total_errors += 1
+
+                feed_obj.last_audit = now
+                _update_feed_health(db, feed_obj, is_success)
+
+            db.commit()
+            if batch_idx + BATCH_SIZE < len(rss_due):
+                await asyncio.sleep(BATCH_PAUSE_SECONDS)
+
+        summary = {
+            "children_total": len(children),
+            "audited": len(due),
+            "new_articles": total_new,
+            "errors": total_errors,
+        }
+        if total_new > 0:
+            logger.info("Audit complete: %d child feeds audited, %d NEW articles found (gaps!)",
+                       len(due), total_new)
+        return summary
+
+    finally:
+        db.close()
+
+
+def run_healthcheck() -> dict:
+    """Daily healthcheck: compare aggregate vs child coverage.
+
+    Counts articles from last 24h per aggregate and its children.
+    If children found articles the aggregate missed, sends alert.
+    """
+    from datetime import timedelta
+
+    from .discord_notifier import send_discord
+
+    db = SessionLocal()
+    try:
+        cutoff = datetime.utcnow() - timedelta(hours=24)
+
+        aggregates = db.query(Feed).filter(Feed.feed_role == "aggregate").all()
+        if not aggregates:
+            return {"aggregates": 0, "gaps": 0}
+
+        total_gaps = 0
+        report_lines = []
+
+        for agg in aggregates:
+            agg_children = db.query(Feed).filter(Feed.parent_feed_id == agg.id).all()
+            if not agg_children:
+                continue
+
+            # Count articles from aggregate
+            agg_count = (
+                db.query(Article)
+                .filter(Article.feed_id == agg.id, Article.fetched_at >= cutoff)
+                .count()
+            )
+
+            # Count articles from children (unique by URL)
+            child_ids = [c.id for c in agg_children]
+            child_count = (
+                db.query(Article)
+                .filter(Article.feed_id.in_(child_ids), Article.fetched_at >= cutoff)
+                .count()
+            )
+
+            # Articles found ONLY by children (not by aggregate) = gaps
+            child_urls = set(
+                row[0] for row in
+                db.query(Article.url)
+                .filter(Article.feed_id.in_(child_ids), Article.fetched_at >= cutoff)
+                .all()
+            )
+            agg_urls = set(
+                row[0] for row in
+                db.query(Article.url)
+                .filter(Article.feed_id == agg.id, Article.fetched_at >= cutoff)
+                .all()
+            )
+            gaps = child_urls - agg_urls
+
+            if gaps:
+                total_gaps += len(gaps)
+                report_lines.append(
+                    f"⚠️ **{agg.name}**: {len(gaps)} gaps "
+                    f"(agg={agg_count}, children={child_count})"
+                )
+                logger.warning(
+                    "Healthcheck: %s missed %d articles (agg=%d, children=%d)",
+                    agg.name, len(gaps), agg_count, child_count,
+                )
+            else:
+                report_lines.append(
+                    f"✅ **{agg.name}**: OK (agg={agg_count}, children={child_count})"
+                )
+
+        if report_lines:
+            level = "warning" if total_gaps > 0 else "info"
+            send_discord(
+                title="📊 Daily Healthcheck — Aggregate Coverage",
+                description="\n".join(report_lines),
+                level=level,
+            )
+
+        return {"aggregates": len(aggregates), "gaps": total_gaps}
+
+    finally:
+        db.close()
+
+
 # ── Single fetch cycle ──
 
 
@@ -222,7 +413,8 @@ async def run_fetch_cycle(sources_path: str = "config/sources.yaml", departments
         )
 
         # Filter RSS/Atom feeds only (scrapers handled separately)
-        rss_feeds = [f for f in due_feeds if f.rss_url]
+        # Skip child feeds — they are fetched in audit cycle only
+        rss_feeds = [f for f in due_feeds if f.rss_url and f.feed_role != "child"]
 
         total_new = 0
         total_errors = 0
@@ -588,6 +780,34 @@ def run_scheduled(interval_minutes: int = 10) -> None:
     signal.signal(signal.SIGTERM, _shutdown)
     signal.signal(signal.SIGINT, _shutdown)
 
+    def _audit_job():
+        """Audit cycle — verify aggregate coverage via child feeds."""
+        from .crawl_state import is_crawl_enabled
+
+        if not is_crawl_enabled():
+            return
+        try:
+            result = asyncio.run(run_audit_cycle())
+            if result["new_articles"] > 0:
+                send_discord(
+                    title="🔍 Audit — aggregate gaps found",
+                    description=(
+                        f"**Audited**: {result['audited']} child feeds\n"
+                        f"**New articles**: {result['new_articles']} (missed by aggregates!)\n"
+                        f"**Errors**: {result['errors']}"
+                    ),
+                    level="warning",
+                )
+        except Exception as e:
+            logger.exception("Audit cycle failed: %s", e)
+
+    def _healthcheck_job():
+        """Daily healthcheck — compare aggregate vs child coverage."""
+        try:
+            run_healthcheck()
+        except Exception as e:
+            logger.exception("Healthcheck failed: %s", e)
+
     # Schedule interval jobs
     scheduler.add_job(_cycle_job, "interval", minutes=interval_minutes, id="rss_cycle")
     scheduler.add_job(_isbnews_job, "interval", minutes=5, id="isbnews_cycle")
@@ -595,6 +815,8 @@ def run_scheduled(interval_minutes: int = 10) -> None:
     scheduler.add_job(_broadcast_job, "interval", minutes=2, id="broadcast_monitor")
     scheduler.add_job(_social_job, "interval", minutes=30, id="social_monitor")
     scheduler.add_job(_ai_enrich_job, "interval", minutes=5, id="ai_enrichment")
+    scheduler.add_job(_audit_job, "interval", hours=6, id="audit_cycle")
+    scheduler.add_job(_healthcheck_job, "cron", hour=8, id="daily_healthcheck")
 
     # One-shot initial triggers (non-blocking — scheduler handles them)
     from datetime import timedelta

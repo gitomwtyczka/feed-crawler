@@ -30,6 +30,9 @@ class SourceConfig:
     fetch_interval: int = 30
     auth_type: str = ""
     departments: list[str] = field(default_factory=list)
+    feed_role: str = "standalone"
+    audit_interval: int = 360
+    children: list["SourceConfig"] = field(default_factory=list)
 
 
 @dataclass
@@ -166,6 +169,23 @@ def load_sources(config_path: str | Path = "config/sources.yaml") -> list[Source
 
     sources = []
     for src in data["sources"]:
+        feed_role = src.get("feed_role", "standalone")
+        departments = src.get("departments", [])
+
+        # Parse children (for aggregate feeds)
+        children = []
+        for child_src in src.get("children", []):
+            children.append(SourceConfig(
+                name=child_src["name"],
+                url=child_src.get("url", ""),
+                rss_url=child_src.get("rss_url", ""),
+                feed_type=child_src.get("feed_type", src.get("feed_type", "rss")),
+                fetch_interval=child_src.get("fetch_interval", 360),
+                departments=child_src.get("departments", departments),  # inherit
+                feed_role="child",
+                audit_interval=child_src.get("audit_interval", 360),
+            ))
+
         sources.append(SourceConfig(
             name=src["name"],
             url=src.get("url", ""),
@@ -173,7 +193,10 @@ def load_sources(config_path: str | Path = "config/sources.yaml") -> list[Source
             feed_type=src.get("feed_type", "rss"),
             fetch_interval=src.get("fetch_interval", 30),
             auth_type=src.get("auth_type", ""),
-            departments=src.get("departments", []),
+            departments=departments,
+            feed_role=feed_role,
+            audit_interval=src.get("audit_interval", 360),
+            children=children,
         ))
 
     return sources

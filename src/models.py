@@ -55,10 +55,22 @@ class Feed(Base):
     created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
     updated_at = Column(DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    # Aggregate/child feed support
+    parent_feed_id = Column(Integer, ForeignKey("feeds.id"), nullable=True,
+        doc="If set, this feed is a child under an aggregate parent")
+    feed_role = Column(String(20), nullable=False, default="standalone",
+        doc="standalone | aggregate | child")
+    audit_interval = Column(Integer, nullable=False, default=360,
+        doc="Audit check interval in minutes (for child feeds, default 6h)")
+    last_audit = Column(DateTime, nullable=True,
+        doc="Last time this child was checked in audit mode")
+
     # Relationships
     departments = relationship("Department", secondary="feed_departments", back_populates="feeds")
     articles = relationship("Article", back_populates="feed", cascade="all, delete-orphan")
     fetch_logs = relationship("FetchLog", back_populates="feed", cascade="all, delete-orphan")
+    children = relationship("Feed", backref="parent", remote_side=[id],
+        foreign_keys=[parent_feed_id])
 
     def __repr__(self) -> str:
         return f"<Feed(id={self.id}, name='{self.name}', tier={self.source_tier}, active={self.is_active})>"
