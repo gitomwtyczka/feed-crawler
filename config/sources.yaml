@@ -3808,3 +3808,94 @@ sources:
   fetch_interval: 60
   departments:
   - ekonomia
+# ── IMM gap analysis — missing major portals ──
+- name: Wprost
+  url: https://www.wprost.pl
+  rss_url: https://www.wprost.pl/rss
+  feed_type: rss
+  fetch_interval: 15
+  language: pl
+  departments:
+  - konkurencja-ogolne-lifestyle
+- name: Newsweek PL
+  url: https://www.newsweek.pl
+  rss_url: https://newsweek.pl/rss.xml
+  feed_type: rss
+  fetch_interval: 15
+  language: pl
+  departments:
+  - konkurencja-ogolne-lifestyle
+- name: Forbes PL
+  url: https://www.forbes.pl
+  rss_url: https://forbes.pl/rss.xml
+  feed_type: rss
+  fetch_interval: 15
+  language: pl
+  departments:
+  - konkurencja-biznes
+- name: OKO.press
+  url: https://oko.press
+  rss_url: https://oko.press/feed
+  feed_type: rss
+  fetch_interval: 15
+  language: pl
+  departments:
+  - konkurencja-ogolne-lifestyle
+- name: TVP Info
+  url: https://www.tvp.info
+  rss_url: http://www.tvp.info/tvp.info/rss+xml.php
+  feed_type: rss
+  fetch_interval: 15
+  language: pl
+  departments:
+  - konkurencja-ogolne-lifestyle
+- name: wPolityce.pl
+  url: https://wpolityce.pl
+  rss_url: http://feeds.feedburner.com/wPolitycepl
+  feed_type: rss
+  fetch_interval: 15
+  language: pl
+  departments:
+  - konkurencja-ogolne-lifestyle
+- name: WNP.pl
+  url: https://www.wnp.pl
+  rss_url: https://www.wnp.pl/rss/serwis_rss.xml
+  feed_type: rss
+  fetch_interval: 15
+  language: pl
+  departments:
+  - konkurencja-biznes
+  - economy-global-trade
+- name: Portal Samorządowy
+  url: https://www.portalsamorzadowy.pl
+  rss_url: https://www.portalsamorzadowy.pl/rss/samorzady.xml
+  feed_type: rss
+  fetch_interval: 30
+  language: pl
+  departments:
+  - konkurencja-ogolne-lifestyle
+- name: Parkiet
+  url: https://www.parkiet.com
+  rss_url: https://www.parkiet.com/rss_main
+  feed_type: rss
+  fetch_interval: 15
+  language: pl
+  departments:
+  - konkurencja-biznes
+- name: Rynek Zdrowia
+  url: https://www.rynekzdrowia.pl
+  rss_url: https://www.rynekzdrowia.pl/Kanal/all.xml
+  feed_type: rss
+  fetch_interval: 30
+  language: pl
+  departments:
+  - konkurencja-ogolne-lifestyle
+- name: Niedziela (agregat)
+  url: https://www.niedziela.pl
+  rss_url: https://www.niedziela.pl/rss
+  feed_type: rss
+  feed_role: aggregate
+  fetch_interval: 15
+  language: pl
+  departments:
+  - konkurencja-ogolne-lifestyle
