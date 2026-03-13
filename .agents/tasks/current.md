@@ -1,205 +1,129 @@
 ---
-feature_id: "3.1"
+feature_id: "4.1"
 status: pending
 assigned: worker
-created: 2026-03-12
+created: 2026-03-13
 priority: high
-depends_on: "2.0 (done)"
+depends_on: "aggregate feed system deployed"
 ---
 
-# Task 3.1: Model ClientAccount + migracja DB + seed
+# Task 4.1: Add Feed Aggregate Children (Subdomains)
 
-## Kontekst
-Budujemy panel monitoringu dla klientów (agencji PR). To krok 1 z 3:
-- **3.1** Model + DB (ten task) 
-- 3.2 Routes + templates
-- 3.3 AI Brief + dashboard
+## Context
+We've deployed a **Smart Crawling system** with aggregate + child feed support:
+- `feed_role: aggregate` = primary feed, fetched every 15 min
+- `feed_role: child` = backup feed, audited every 6h
+- Children are linked via `parent_feed_id` in the `Feed` model
+- Dedup prevents duplicate articles from aggregate + child
 
-## Lokalizacja kodu
-- Workspace: `c:\Users\tomas2\.gemini\antigravity\playground\emerald-gravity`
-- Models: `src/models.py`
-- Auth (referencja): `src/auth.py` — zobaczysz jak admini mają hash_password, verify_password
-- Istniejący model Project: `src/models.py` — tabela `projects`
+**Your job**: Add child feeds for existing aggregates, and discover RSS for portals without standard RSS URLs.
 
-## Implementacja
+## Workspace
+- `c:\Users\tomas2\.gemini\antigravity\playground\emerald-gravity`
+- Config: `config/sources.yaml`
+- Model reference: `src/models.py` (see `Feed.feed_role`, `Feed.parent_feed_id`)
 
-### Krok 1: Model `ClientAccount` w `src/models.py`
+## Part 1: Children for Niedziela.pl (21 Diecezji)
 
-Dodaj PO klasie `Project` (końcówka pliku):
+Add under the existing `Niedziela (agregat)` entry in `sources.yaml`:
 
-```python
-class ClientAccount(Base):
-    """Client account for media monitoring panel."""
-    __tablename__ = "client_accounts"
-
-    id = Column(Integer, primary_key=True, index=True)
-    username = Column(String(100), nullable=False, unique=True, index=True)
-    password_hash = Column(String(255), nullable=False)
-    company_name = Column(String(255), nullable=False)
-    email = Column(String(255), nullable=True)
-    tier = Column(String(20), nullable=False, default="basic")
-    is_active = Column(Boolean, nullable=False, default=True)
-    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
-
-    # Relacja do projektów
-    projects = relationship("Project", back_populates="client")
+```yaml
+- name: Niedziela (agregat)
+  url: https://www.niedziela.pl
+  rss_url: https://www.niedziela.pl/rss
+  feed_type: rss
+  feed_role: aggregate
+  fetch_interval: 15
+  language: pl
+  departments:
+    - konkurencja-ogolne-lifestyle
+  children:
+    - name: Niedziela Częstochowa
+      rss_url: https://czestochowa.niedziela.pl/rss
+      audit_interval: 360
+    - name: Niedziela Kraków
+      rss_url: https://krakow.niedziela.pl/rss
+      audit_interval: 360
+    # ... add ALL 21 diecezji from IMM list
 ```
 
-### Krok 2: Modyfikuj `Project` — dodaj `client_id`
+IMM diecezje (find RSS for each):
+bielsko, czestochowa, drohiczyn, kielce, krakow, legnica, lodz, lublin,
+plus, przemysl, radom, rzeszow, sandomierz, siedlce, sosnowiec,
+szczecin, tarnow, torun, warszawa, wlocdawek, zamosclubaczow
 
-W istniejącej klasie `Project` dodaj:
+## Part 2: Children for Existing Portals
 
-```python
-    client_id = Column(Integer, ForeignKey("client_accounts.id"), nullable=True)
-    client = relationship("ClientAccount", back_populates="projects")
-```
+For these portals we **already have the main feed**. Add children with `feed_role: aggregate` on the parent and subdomain children:
 
-`nullable=True` bo istniejące projekty (Strabag, Orlen, PZU, TVP) nie mają jeszcze klienta.
+### rp.pl (11 subdomains in IMM)
+Subdomains: biznes.rp.pl, cyfrowa.rp.pl, edukacja.rp.pl, energia.rp.pl, 
+gospodarka.rp.pl, historia.rp.pl, pieniadze.rp.pl, pro.rp.pl, archiwum.rp.pl
 
-### Krok 3: Migration script `scripts/migrate_client.sh`
+### onet.pl (6 subdomains)
+Subdomains: kobieta.onet.pl, kultura.onet.pl, przegladsportowy.onet.pl, 
+wiadomosci.onet.pl, zapytaj.onet.pl
 
-```bash
-#!/usr/bin/env bash
-set -euo pipefail
+### interia.pl (7 subdomains)
+Subdomains: biznes.interia.pl, kobieta.interia.pl, sport.interia.pl, 
+swiatseriali.interia.pl, taniomam.interia.pl, wydarzenia.interia.pl, zielona.interia.pl
 
-echo "--- Create client_accounts table ---"
-docker exec crawler-db psql -U crawler -d feed_crawler -c "
-CREATE TABLE IF NOT EXISTS client_accounts (
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(100) NOT NULL UNIQUE,
-    password_hash VARCHAR(255) NOT NULL,
-    company_name VARCHAR(255) NOT NULL,
-    email VARCHAR(255),
-    tier VARCHAR(20) NOT NULL DEFAULT 'basic',
-    is_active BOOLEAN NOT NULL DEFAULT TRUE,
-    created_at TIMESTAMP NOT NULL DEFAULT NOW()
-);"
+### gazetaprawna.pl (7 subdomains)
+Subdomains: biznes.gazetaprawna.pl, cyfrowa-gospodarka.gazetaprawna.pl, 
+edgp.gazetaprawna.pl, kultura.gazetaprawna.pl, podatki.gazetaprawna.pl, 
+serwisy.gazetaprawna.pl
 
-echo "--- Add client_id to projects ---"
-docker exec crawler-db psql -U crawler -d feed_crawler -c "
-ALTER TABLE projects ADD COLUMN IF NOT EXISTS client_id INTEGER REFERENCES client_accounts(id);"
+### pap.pl (5 subdomains)
+Subdomains: biznes.pap.pl, samorzad.pap.pl, wideo.pap.pl, zdrowie.pap.pl
 
-echo "--- Verify ---"
-docker exec crawler-db psql -U crawler -d feed_crawler -c "\d client_accounts"
-docker exec crawler-db psql -U crawler -d feed_crawler -c "\d projects"
-```
+### gazeta.pl (5 subdomains)
+Subdomains: forum.gazeta.pl, kobieta.gazeta.pl, kultura.gazeta.pl, 
+next.gazeta.pl, wiadomosci.gazeta.pl
 
-### Krok 4: Seed script `scripts/seed_client.py`
+## Part 3: Discover RSS for No-RSS Portals
 
-Uruchamiany wewnątrz kontenera Docker lub jako standalone:
+These major portals had NO standard RSS. Try to:
+1. Scrape their homepage for `<link rel="alternate" type="application/rss+xml">` tags
+2. Try common RSS paths: `/rss`, `/feed`, `/feed.xml`, `/rss.xml`, `/atom.xml`
+3. If no RSS found, skip them — they'll be covered by GNews
 
-```python
-"""Seed test client account: diaverum."""
-from src.auth import hash_password
-from src.database import SessionLocal
-from src.models import ClientAccount, Project
+Portals to check:
+- wyborcza.pl (95 articles in IMM!)
+- se.pl (Super Express)
+- medonet.pl
+- tokfm.pl
+- polskieradio24.pl
+- radiozet.pl
+- cire.pl
+- stooq.pl
+- eska.pl
+- infor.pl
 
-def seed():
-    db = SessionLocal()
-    try:
-        # Check if already seeded
-        existing = db.query(ClientAccount).filter(ClientAccount.username == "diaverum").first()
-        if existing:
-            print("Client 'diaverum' already exists, skipping")
-            return
-        
-        # Create client
-        client = ClientAccount(
-            username="diaverum",
-            password_hash=hash_password("test123"),
-            company_name="Diaverum",
-            email="monitoring@diaverum.pl",
-            tier="pro",
-            is_active=True,
-        )
-        db.add(client)
-        db.flush()  # get id
-        
-        # Assign existing projects to this client
-        for slug in ["strabag", "orlen", "pzu"]:
-            project = db.query(Project).filter(Project.slug == slug).first()
-            if project:
-                project.client_id = client.id
-                print(f"  Assigned project '{slug}' to diaverum")
-        
-        db.commit()
-        print(f"Created client: diaverum (id={client.id}, tier=pro)")
-        print(f"  Projects: strabag, orlen, pzu")
-    finally:
-        db.close()
+## Part 4: NaszeMiasto + Twoje-Miasto Subdomains
 
-if __name__ == "__main__":
-    seed()
-```
+These platforms don't have standard RSS. Research whether individual subdomains like
+`torun.naszemiasto.pl` have RSS feeds. If not, they'll be covered by GNews.
 
-### Krok 5: Testy `tests/test_client_model.py`
+Try these subdomain patterns first:
+- `https://torun.naszemiasto.pl/rss`
+- `https://krakow.naszemiasto.pl/rss`
+- `https://warszawa.naszemiasto.pl/rss`
+- Same for twoje-miasto.pl
 
-```python
-"""Tests for ClientAccount model."""
-import pytest
-from src.models import ClientAccount, Project
-from src.auth import hash_password, verify_password
+If RSS exists, create an aggregate group. If not, document findings.
 
-def test_client_account_creation(db_session):
-    client = ClientAccount(
-        username="testclient",
-        password_hash=hash_password("pass123"),
-        company_name="Test Corp",
-        tier="basic",
-        is_active=True,
-    )
-    db_session.add(client)
-    db_session.commit()
-    assert client.id is not None
-    assert client.tier == "basic"
+## Acceptance Criteria
+- [ ] Children added for Niedziela.pl (all 21 diecezji with RSS)
+- [ ] At least 3 existing portals converted to aggregate + children
+- [ ] RSS discovery attempted for all no-RSS portals
+- [ ] `config/sources.yaml` updated with new entries
+- [ ] Commit + push to main
+- [ ] Document findings (which portals have RSS, which don't)
 
-def test_client_project_relationship(db_session):
-    client = ClientAccount(
-        username="reltest",
-        password_hash=hash_password("pass"),
-        company_name="Rel Corp",
-        is_active=True,
-    )
-    db_session.add(client)
-    db_session.flush()
-    
-    project = Project(name="TestBrand", slug="testbrand", client_id=client.id, is_active=True)
-    db_session.add(project)
-    db_session.commit()
-    
-    assert len(client.projects) == 1
-    assert client.projects[0].slug == "testbrand"
-
-def test_client_password_verify():
-    hashed = hash_password("secret")
-    assert verify_password("secret", hashed)
-    assert not verify_password("wrong", hashed)
-
-def test_client_tiers(db_session):
-    for tier in ["basic", "pro", "enterprise"]:
-        client = ClientAccount(
-            username=f"tier_{tier}",
-            password_hash=hash_password("x"),
-            company_name=f"Tier {tier}",
-            tier=tier,
-            is_active=True,
-        )
-        db_session.add(client)
-    db_session.commit()
-    assert db_session.query(ClientAccount).count() == 3
-```
-
-## Kryteria gotowości
-- [ ] Model `ClientAccount` w `models.py`
-- [ ] `client_id` FK w `Project`
-- [ ] Migration script `scripts/migrate_client.sh`
-- [ ] Seed script `scripts/seed_client.py`
-- [ ] Testy: ≥4 passed
-- [ ] Commit + push
-
-## Uwagi
-- **NIE ruszaj** `web.py` — routes będą w tasku 3.2
-- **NIE twórz** templates — to task 3.2
-- Import `ClientAccount` z `models.py` — dodaj do `__all__` jeśli istnieje
-- Hashing: użyj `hash_password` z `src/auth.py` (już jest `passlib`)
-- `nullable=True` na `client_id` — istniejące projekty nie mają klienta
+## Notes
+- Use `feed_role: aggregate` on parent, `feed_role: child` on children
+- Children inherit `departments` from parent
+- `audit_interval: 360` (6h) is default for children
+- YAML format: `children:` key under parent feed
+- Don't modify `models.py` or `scheduler.py` — they're already ready
+- Run `python -c "from src.config_loader import load_sources; s = load_sources(); print(f'{len(s)} sources loaded')"` to verify YAML syntax
