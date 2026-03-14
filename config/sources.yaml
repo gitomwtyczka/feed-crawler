@@ -4010,3 +4010,102 @@ sources:
   language: pl
   departments:
   - konkurencja-biznes
+# ── Missing top PL portals (2026-03-14) ──
+- name: Spider's Web
+  url: https://spidersweb.pl
+  rss_url: https://spidersweb.pl/feed
+  feed_type: rss
+  fetch_interval: 15
+  language: pl
+  departments:
+  - science-high-tech
+  - cyber-digital
+- name: AntyWeb
+  url: https://antyweb.pl
+  rss_url: https://antyweb.pl/feed
+  feed_type: rss
+  fetch_interval: 15
+  language: pl
+  departments:
+  - science-high-tech
+  - cyber-digital
+- name: Polityka
+  url: https://www.polityka.pl
+  rss_url: https://www.polityka.pl/rss/
+  feed_type: rss
+  fetch_interval: 15
+  language: pl
+  departments:
+  - konkurencja-ogolne-lifestyle
+- name: Tygodnik Powszechny
+  url: https://www.tygodnikpowszechny.pl
+  rss_url: https://www.tygodnikpowszechny.pl/rss.xml
+  feed_type: rss
+  fetch_interval: 30
+  language: pl
+  departments:
+  - konkurencja-ogolne-lifestyle
+- name: Chip.pl
+  url: https://www.chip.pl
+  rss_url: https://www.chip.pl/feed
+  feed_type: rss
+  fetch_interval: 15
+  language: pl
+  departments:
+  - science-high-tech
+- name: Benchmark.pl
+  url: https://www.benchmark.pl
+  rss_url: https://www.benchmark.pl/rss/aktualnosci.xml
+  feed_type: rss
+  fetch_interval: 15
+  language: pl
+  departments:
+  - science-high-tech
+- name: Komputer Świat
+  url: https://www.komputerswiat.pl
+  rss_url: https://www.komputerswiat.pl/rss
+  feed_type: rss
+  fetch_interval: 15
+  language: pl
+  departments:
+  - science-high-tech
+- name: Fronda.pl
+  url: https://fronda.pl
+  rss_url: https://fronda.pl/feed
+  feed_type: rss
+  fetch_interval: 30
+  language: pl
+  departments:
+  - konkurencja-ogolne-lifestyle
+- name: PCLab.pl
+  url: https://pclab.pl
+  rss_url: https://pclab.pl/rss
+  feed_type: rss
+  fetch_interval: 30
+  language: pl
+  departments:
+  - science-high-tech
+- name: Telepolis.pl
+  url: https://www.telepolis.pl
+  rss_url: https://www.telepolis.pl/rss/articles
+  feed_type: rss
+  fetch_interval: 15
+  language: pl
+  departments:
+  - science-high-tech
+- name: GRYOnline.pl
+  url: https://www.gry-online.pl
+  rss_url: https://www.gry-online.pl/rss/news.xml
+  feed_type: rss
+  fetch_interval: 30
+  language: pl
+  departments:
+  - konkurencja-ogolne-lifestyle
+- name: Eurogamer.pl
+  url: https://www.eurogamer.pl
+  rss_url: https://www.eurogamer.pl/feed
+  feed_type: rss
+  fetch_interval: 30
+  language: pl
+  departments:
+  - konkurencja-ogolne-lifestyle
