@@ -355,6 +355,36 @@ POLISH_FEEDS: list[tuple[str, str]] = [
     ("GUS", "https://stat.gov.pl/rss/"),
     ("NBP", "https://www.nbp.pl/home.aspx?f=/rss/rss.html"),
     ("UOKiK", "https://uokik.gov.pl/rss"),
+
+    # ══════════════════════════════════════════════
+    # GŁÓWNE PORTALE INFORMACYJNE — IMM cross-check
+    # ══════════════════════════════════════════════
+
+    # TV News
+    ("TVN24", "https://tvn24.pl/najwazniejsze.xml"),
+    ("Polsat News", "https://polsatnews.pl/rss/wszystkie.xml"),
+    ("RMF24", "https://www.rmf24.pl/feed"),
+    ("wPolsce24", "https://wpolsce24.tv/rss"),
+    ("TV Republika", "https://tvrepublika.pl/rss"),
+
+    # IT / Tech (brakujące)
+    ("Spider's Web", "https://spidersweb.pl/feed"),
+    ("GSMOnline", "https://gsmonline.pl/feed"),
+    ("Telko.in", "https://telko.in/feed"),
+    ("CRN Polska", "https://crn.pl/feed"),
+
+    # Biznes / Finanse (brakujące)
+    ("Forsal", "https://forsal.pl/rss.xml"),
+    ("PulsHR", "https://pulshr.pl/rss"),
+    ("PortalSpożywczy", "https://portalspozywczy.pl/rss"),
+    ("PropertyDesign", "https://propertydesign.pl/rss"),
+    ("Strefainwestorow", "https://strefainwestorow.pl/feed"),
+
+    # Polityka / Opinia
+    ("Salon24", "https://salon24.pl/rss"),
+    ("Fronda", "https://fronda.pl/feed"),
+    ("Klub Jagielloński", "https://klubjagiellonski.pl/feed"),
+    ("DoRzeczy", "https://dorzeczy.pl/feed"),
 ]
 
 
@@ -380,6 +410,7 @@ def import_polish_feeds(dry_run: bool = False) -> dict:
                     url=url,
                     feed_type="rss",
                     source_tier=tier,
+                    language="pl",
                     is_active=True,
                 ))
             existing.add(url.lower().rstrip("/"))
