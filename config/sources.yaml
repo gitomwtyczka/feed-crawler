@@ -130,9 +130,23 @@ sources:
   url: https://www.onet.pl
   rss_url: https://wiadomosci.onet.pl/.feed
   feed_type: rss
+  feed_role: aggregate
   fetch_interval: 10
   departments:
   - konkurencja-ogolne-lifestyle
+  children:
+  - name: Onet Kobieta
+    rss_url: https://kobieta.onet.pl/.feed
+    audit_interval: 360
+  - name: Onet Wiadomości
+    rss_url: https://wiadomosci.onet.pl/.feed
+    audit_interval: 360
+  - name: Onet Kultura
+    rss_url: https://kultura.onet.pl/.feed
+    audit_interval: 360
+  - name: Onet Przegląd Sportowy
+    rss_url: https://przegladsportowy.onet.pl/.feed
+    audit_interval: 360
 - name: Portada, El Siglo de Torreón
   url: ''
   rss_url: https://www.elsiglodetorreon.com.mx/index.xml
@@ -277,9 +291,32 @@ sources:
   url: https://www.interia.pl
   rss_url: https://fakty.interia.pl/feed
   feed_type: rss
+  feed_role: aggregate
   fetch_interval: 10
   departments:
   - konkurencja-ogolne-lifestyle
+  children:
+  - name: Interia Biznes
+    rss_url: https://biznes.interia.pl/feed
+    audit_interval: 360
+  - name: Interia Kobieta
+    rss_url: https://kobieta.interia.pl/feed
+    audit_interval: 360
+  - name: Interia Sport
+    rss_url: https://sport.interia.pl/feed
+    audit_interval: 360
+  - name: Interia Świat Seriali
+    rss_url: https://swiatseriali.interia.pl/feed
+    audit_interval: 360
+  - name: Interia TanioMam
+    rss_url: https://taniomam.interia.pl/feed
+    audit_interval: 360
+  - name: Interia Wydarzenia
+    rss_url: https://wydarzenia.interia.pl/feed
+    audit_interval: 360
+  - name: Interia Zielona
+    rss_url: https://zielona.interia.pl/feed
+    audit_interval: 360
 - name: NYT > Science
   url: ''
   rss_url: https://rss.nytimes.com/services/xml/rss/nyt/Science.xml
@@ -3899,3 +3936,77 @@ sources:
   language: pl
   departments:
   - konkurencja-ogolne-lifestyle
+  children:
+  - name: Niedziela Bielsko
+    rss_url: https://bielsko.niedziela.pl/rss
+    audit_interval: 360
+  - name: Niedziela Częstochowa
+    rss_url: https://czestochowa.niedziela.pl/rss
+    audit_interval: 360
+  - name: Niedziela Drohiczyn
+    rss_url: https://drohiczyn.niedziela.pl/rss
+    audit_interval: 360
+  - name: Niedziela Kielce
+    rss_url: https://kielce.niedziela.pl/rss
+    audit_interval: 360
+  - name: Niedziela Kraków
+    rss_url: https://krakow.niedziela.pl/rss
+    audit_interval: 360
+  - name: Niedziela Legnica
+    rss_url: https://legnica.niedziela.pl/rss
+    audit_interval: 360
+  - name: Niedziela Łódź
+    rss_url: https://lodz.niedziela.pl/rss
+    audit_interval: 360
+  - name: Niedziela Lublin
+    rss_url: https://lublin.niedziela.pl/rss
+    audit_interval: 360
+  - name: Niedziela Plus
+    rss_url: https://plus.niedziela.pl/rss
+    audit_interval: 360
+  - name: Niedziela Przemyśl
+    rss_url: https://przemysl.niedziela.pl/rss
+    audit_interval: 360
+  - name: Niedziela Radom
+    rss_url: https://radom.niedziela.pl/rss
+    audit_interval: 360
+  - name: Niedziela Rzeszów
+    rss_url: https://rzeszow.niedziela.pl/rss
+    audit_interval: 360
+  - name: Niedziela Sandomierz
+    rss_url: https://sandomierz.niedziela.pl/rss
+    audit_interval: 360
+  - name: Niedziela Siedlce
+    rss_url: https://siedlce.niedziela.pl/rss
+    audit_interval: 360
+  - name: Niedziela Sosnowiec
+    rss_url: https://sosnowiec.niedziela.pl/rss
+    audit_interval: 360
+  - name: Niedziela Szczecin
+    rss_url: https://szczecin.niedziela.pl/rss
+    audit_interval: 360
+  - name: Niedziela Tarnów
+    rss_url: https://tarnow.niedziela.pl/rss
+    audit_interval: 360
+  - name: Niedziela Toruń
+    rss_url: https://torun.niedziela.pl/rss
+    audit_interval: 360
+  - name: Niedziela Warszawa
+    rss_url: https://warszawa.niedziela.pl/rss
+    audit_interval: 360
+- name: CIRE.pl
+  url: https://www.cire.pl
+  rss_url: https://www.cire.pl/rss/kraj-swiat.xml
+  feed_type: rss
+  fetch_interval: 30
+  language: pl
+  departments:
+  - konkurencja-biznes
+- name: Infor.pl
+  url: https://www.infor.pl
+  rss_url: https://www.infor.pl/rss/wszystkie.xml
+  feed_type: rss
+  fetch_interval: 30
+  language: pl
+  departments:
+  - konkurencja-biznes
