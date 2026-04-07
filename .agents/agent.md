@@ -19,6 +19,21 @@ Przeczytaj te pliki ZANIM cokolwiek zrobisz:
 
 NIE POMIJAJ. Bez przeczytania tych plików Twoje działania będą błędne.
 
+## ⚠️ KROK 0.1 — GitHub Desync Fix (KRYTYCZNE)
+
+Lokalny workspace może być niezsynchronizowany z GitHub.
+Pliki commitowane przez poprzedniego agenta przez GitHub MCP **NIE są widoczne lokalnie** bez `git pull`.
+
+**Zasada:** Raporty handoff, taski i knowledge czytaj przez GitHub MCP, NIE przez `view_file`:
+```
+mcp_github_get_file_contents:
+  owner: gitomwtyczka
+  repo: feed-crawler
+  path: .agents/reports/<nazwa-pliku>.md
+```
+
+Dotyczy: `.agents/reports/*.md`, `.agents/tasks/*.md`, `.agents/knowledge/*.md` (jeśli świeże)
+
 ## Moja rola
 - Rozwój i utrzymanie crawlera mediów (`emerald-gravity`)
 - Monitoring: RSS (1300+ feedów), TV/Radio (10 stacji), Social Media (YouTube + X)
