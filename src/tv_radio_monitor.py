@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 
 CHUNK_DURATION_SECONDS = 60  # 1-minute audio chunks
 MAX_CONCURRENT_STATIONS = 5  # Don't overload VPS
-GEMINI_MODEL = "gemini-2.0-flash"
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
 AUDIO_FORMAT = "wav"  # Gemini accepts wav
 SAMPLE_RATE = 16000    # 16kHz mono = optimal for speech
 
@@ -57,49 +57,64 @@ DEFAULT_KEYWORDS = [
 DEFAULT_STATIONS = [
     # TV
     {"name": "TVP Info", "type": "tv",
-     "url": "https://cdn-main.lolokoko.tv/TVPInfo.stream/playlist.m3u8"},
-    {"name": "TVP1", "type": "tv",
-     "url": "https://cdn-main.lolokoko.tv/TVP1.stream/playlist.m3u8"},
+     "url": "https://lowa8026-cmyk.github.io/tvpvod/399699.m3u8", "is_active": True},
     # Radio — Polskie Radio (official HTTP streams)
     {"name": "Polskie Radio 1 (Jedynka)", "type": "radio",
-     "url": "http://mp3.polskieradio.pl:8900/;"},
-    {"name": "Polskie Radio 3 (Trójka)", "type": "radio",
-     "url": "http://mp3.polskieradio.pl:8904/;"},
+     "url": "http://mp3.polskieradio.pl:8900/;", "is_active": True},
+    {"name": "Polskie Radio 24", "type": "radio",
+     "url": "http://mp3.polskieradio.pl:8908/;", "is_active": True},
     {"name": "Polskie Radio 4 (Czwórka)", "type": "radio",
-     "url": "http://mp3.polskieradio.pl:8906/;"},
+     "url": "http://mp3.polskieradio.pl:8906/;", "is_active": True},
     # Radio — commercial
     {"name": "RMF FM", "type": "radio",
-     "url": "https://rs6-krk2.rmfstream.pl/rmf_fm"},
+     "url": "https://rs6-krk2.rmfstream.pl/rmf_fm", "is_active": True},
     {"name": "Radio ZET", "type": "radio",
-     "url": "https://zt.cdn.eurozet.pl/zet-net.mp3"},
+     "url": "https://zt.cdn.eurozet.pl/zet-net.mp3", "is_active": True},
     {"name": "TOK FM", "type": "radio",
-     "url": "https://zt.cdn.eurozet.pl/tok-fm.mp3"},
+     "url": "http://radiostream.pl/tuba10-1.mp3", "is_active": True},
     {"name": "Radio Maryja", "type": "radio",
-     "url": "https://radiomaryja.fastcast4u.com/proxy/radiomaryja?mp=/1"},
+     "url": "https://radiomaryja.fastcast4u.com/proxy/radiomaryja?mp=/1", "is_active": True},
     {"name": "RMF24", "type": "radio",
-     "url": "https://rs6-krk2.rmfstream.pl/rmf_maxxx"},
+     "url": "https://rs6-krk2.rmfstream.pl/rmf_24", "is_active": True},
 ]
 
 
 def seed_stations():
-    """Seed default broadcast stations into the database."""
+    """Seed or update default broadcast stations into the database."""
     db = SessionLocal()
     try:
-        existing = {s.name for s in db.query(BroadcastStation).all()}
+        existing_stations = {s.name: s for s in db.query(BroadcastStation).all()}
         added = 0
+        updated = 0
+        default_names = {st["name"] for st in DEFAULT_STATIONS}
+
         for st in DEFAULT_STATIONS:
-            if st["name"] not in existing:
+            if st["name"] not in existing_stations:
                 db.add(BroadcastStation(
                     name=st["name"],
                     station_type=st["type"],
                     stream_url=st["url"],
                     language="pl",
-                    is_active=True,
+                    is_active=st.get("is_active", True),
                 ))
                 added += 1
+            else:
+                existing = existing_stations[st["name"]]
+                if existing.stream_url != st["url"] or existing.is_active != st.get("is_active", True):
+                    existing.stream_url = st["url"]
+                    existing.is_active = st.get("is_active", True)
+                    updated += 1
+
+        # Deactivate stations no longer in default active list (e.g. TVP1, PR3)
+        for name, station in existing_stations.items():
+            if name not in default_names and station.is_active:
+                station.is_active = False
+                updated += 1
+
         db.commit()
-        logger.info("Seeded %d broadcast stations (%d existing)", added, len(existing))
-        return added
+        logger.info("Seeded %d, updated %d broadcast stations (%d total in DB)",
+                    added, updated, len(existing_stations) + added)
+        return added + updated
     finally:
         db.close()
 
@@ -316,7 +331,7 @@ if __name__ == "__main__":
     if "--seed" in sys.argv:
         print("🌱 Seeding broadcast stations...")
         added = seed_stations()
-        print(f"  Added {added} stations")
+        print(f"  Added/Updated {added} stations")
     else:
         print("\n📡 TV/Radio Monitor — single cycle")
         print("=" * 50)
