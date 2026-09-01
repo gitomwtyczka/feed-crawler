@@ -145,7 +145,7 @@ def generate_ai_summary(result: ResearchResult) -> str:
         import google.generativeai as genai
 
         genai.configure(api_key=GEMINI_API_KEY)
-        model = genai.GenerativeModel("gemini-2.0-flash")
+        model = genai.GenerativeModel(os.getenv("GEMINI_MODEL", "gemini-2.5-flash"))
 
         # Build context from top results per tier
         context_parts = []
